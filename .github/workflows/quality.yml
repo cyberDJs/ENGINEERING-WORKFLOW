@@ -46,5 +46,8 @@ jobs:
       - name: Validate supply-chain policy and immutable workflow references
         run: python3 scripts/validate_supply_chain.py
 
+      - name: Run EW CLI self-test
+        run: ./bin/ew self-test --json
+
       - name: Run unit tests
         run: python3 -m unittest discover -s tests -v
