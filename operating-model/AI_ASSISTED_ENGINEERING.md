@@ -3,7 +3,7 @@ id: EW-OPS-005
 title: AI-Assisted Engineering Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.2.0
+version: 0.2.1
 last-reviewed: 2026-10-03
 ---
 
@@ -26,6 +26,8 @@ CONTEXT -> PLAN -> CONSTRAINED EXECUTION -> DETERMINISTIC VALIDATION -> ADVERSAR
 Every material AI task receives a bounded Project Context Packet containing project identity and Git baseline, exact objective and scope, authoritative sources, relevant supporting context, allowed and prohibited effects, validation expectations and secret boundaries.
 
 The portable schema is `../schemas/project-context-packet.schema.json`. The reference builder is `../scripts/build_project_context_packet.py`.
+
+The reference builder is provenance-only by default: it records paths and SHA-256 digests but omits source content. Source content is included only through explicit `--include-content`, and scanned inputs still fail closed on detected secret material.
 
 ## Artifact Admission
 

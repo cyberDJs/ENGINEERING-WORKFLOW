@@ -25,16 +25,16 @@ class AIControlPlaneTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
         self.assertIn("AI_CONTROL_PLANE_VALIDATION=PASSED", result.stdout)
 
-    def test_artifact_admission_requires_digest_and_rollback(self) -> None:
+    def test_artifact_admission_supports_non_runtime_artifacts_and_requires_digest(self) -> None:
         payload = {
             "schema_version": "1.0.0",
             "record_id": "AAR-test",
-            "artifact": {"id": "example/model", "type": "model", "source": "https://example.invalid/model", "revision": "abc", "digest": {"algorithm": "sha256", "value": "a" * 64}, "license": "Apache-2.0", "format": "GGUF"},
+            "artifact": {"id": "example/benchmark", "type": "benchmark", "source": "https://example.invalid/benchmark", "revision": "abc", "digest": {"algorithm": "sha256", "value": "a" * 64}, "license": "Apache-2.0", "format": "JSON"},
             "ownership": {"owner": "Technical Steward", "project_scope": ["example"]},
             "security": {"risk_class": "LOW", "executable_surface": [], "trust_remote_code": False},
-            "runtime": {"engine": "llama.cpp", "hardware_fit": "FIT"},
+            "runtime": {"engine": None, "hardware_fit": "NOT_APPLICABLE"},
             "governance": {"status": "CANDIDATE", "allowed_use": ["evaluation"], "prohibited_use": ["production-authority"], "eval_baseline_ref": None, "rollback_ref": "remove-artifact-and-registry-entry"},
-            "evidence": ["model-card"]
+            "evidence": ["source-review"]
         }
         result = self.run_record_validation("artifact-admission", payload)
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
@@ -47,19 +47,33 @@ class AIControlPlaneTest(unittest.TestCase):
             "schema_version": "1.0.0", "receipt_id": "EVAL-1", "evaluation_kind": "ARCHITECTURE_CHALLENGER", "subject": "retrieval challenger",
             "comparison": {"champion_ref": "arch-1.0", "challenger_ref": "arch-1.1-candidate"},
             "change_scope": {"changed_dimensions": ["retrieval"], "controlled_dimensions": ["decision-routing", "memory"]},
-            "corpus": {"id": "retrieval-corpus-v1", "digest": "b" * 64},
-            "metrics": [{"name": "recall_at_10", "baseline": 0.7, "candidate": 0.8}],
+            "corpus": {"id": "retrieval-corpus-v1", "digest": "b" * 64, "validation_strategy": "DISJOINT"},
+            "metrics": [{"name": "recall_at_10", "baseline": 0.7, "candidate": 0.8, "delta": 0.1}],
             "thresholds": [{"name": "recall_at_10", "operator": ">=", "value": 0.75}],
+            "security_review": {"status": "PASS", "evidence_ref": "security-review.json"},
+            "regression": {"status": "PASS", "evidence_ref": "regression.json"},
+            "rollback": {"plan_ref": "rollback.md", "verified": True},
             "verdict": "PASS", "evidence": ["results.json"], "environment": {"runtime": "cpu"}, "evaluated_at": "2026-10-03T20:00:00Z"
         }
         result = self.run_record_validation("eval-receipt", payload)
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+        payload["metrics"][0]["delta"] = 0.2
+        result = self.run_record_validation("eval-receipt", payload)
+        self.assertNotEqual(result.returncode, 0)
+        payload["metrics"][0]["delta"] = 0.1
         payload["change_scope"]["changed_dimensions"] = ["retrieval", "decision-routing"]
         result = self.run_record_validation("eval-receipt", payload)
         self.assertNotEqual(result.returncode, 0)
         payload["change_scope"]["multi_dimension_exception_ref"] = "ADR-EXPLICIT-COMBINED-CHANGE"
         result = self.run_record_validation("eval-receipt", payload)
         self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+        payload["thresholds"][0]["value"] = 0.95
+        result = self.run_record_validation("eval-receipt", payload)
+        self.assertNotEqual(result.returncode, 0)
+        payload["thresholds"][0]["value"] = 0.75
+        payload["security_review"]["evidence_ref"] = None
+        result = self.run_record_validation("eval-receipt", payload)
+        self.assertNotEqual(result.returncode, 0)
 
     def test_context_builder_binds_git_state_and_authority_digest(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -67,12 +81,14 @@ class AIControlPlaneTest(unittest.TestCase):
             result = subprocess.run([
                 sys.executable, str(BUILDER), "--project", str(ROOT), "--objective", "test context packet", "--mode", "VERIFY",
                 "--scope-in", "AI control-plane contracts", "--authority", str(ROOT / "README.md"), "--authority", str(ROOT / "SECURITY.md"),
-                "--reference-only", "--output", str(output)
+                "--output", str(output)
             ], cwd=ROOT, text=True, capture_output=True, check=False)
             self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
             packet = json.loads(output.read_text(encoding="utf-8"))
             head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
             self.assertEqual(packet["project"]["head"], head)
+            self.assertFalse(packet["build"]["content_included"])
+            self.assertEqual(packet["authority_sources"][0]["content"], "")
             self.assertEqual(packet["authority_sources"][0]["sha256"], hashlib.sha256((ROOT / "README.md").read_bytes()).hexdigest())
             valid = subprocess.run([sys.executable, str(VALIDATOR), "--kind", "project-context", "--file", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
             self.assertEqual(valid.returncode, 0, msg=valid.stdout + valid.stderr)

@@ -139,8 +139,10 @@
       ],
       "properties": {
         "engine": {
-          "type": "string",
-          "minLength": 1
+          "type": [
+            "string",
+            "null"
+          ]
         },
         "hardware_fit": {
           "enum": [
@@ -148,6 +150,7 @@
             "CONSTRAINED",
             "RESEARCH_ONLY",
             "UNSUPPORTED",
+            "NOT_APPLICABLE",
             "UNKNOWN"
           ]
         }

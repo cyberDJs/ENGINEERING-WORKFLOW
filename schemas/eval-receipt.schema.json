@@ -12,6 +12,9 @@
     "corpus",
     "metrics",
     "thresholds",
+    "security_review",
+    "regression",
+    "rollback",
     "verdict",
     "evidence",
     "environment",
@@ -85,7 +88,8 @@
       "type": "object",
       "required": [
         "id",
-        "digest"
+        "digest",
+        "validation_strategy"
       ],
       "properties": {
         "id": {
@@ -95,17 +99,75 @@
         "digest": {
           "type": "string",
           "pattern": "^[a-f0-9]{64}$"
+        },
+        "validation_strategy": {
+          "enum": [
+            "HOLDOUT",
+            "DISJOINT"
+          ]
         }
       },
       "additionalProperties": true
     },
     "metrics": {
       "type": "array",
-      "minItems": 1
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "baseline",
+          "candidate",
+          "delta"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "baseline": {
+            "type": "number"
+          },
+          "candidate": {
+            "type": "number"
+          },
+          "delta": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      }
     },
     "thresholds": {
       "type": "array",
-      "minItems": 1
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "operator",
+          "value"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "operator": {
+            "enum": [
+              ">=",
+              "<=",
+              ">",
+              "<",
+              "=="
+            ]
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "additionalProperties": true
+      }
     },
     "verdict": {
       "enum": [
@@ -125,6 +187,68 @@
     "evaluated_at": {
       "type": "string",
       "format": "date-time"
+    },
+    "security_review": {
+      "type": "object",
+      "required": [
+        "status",
+        "evidence_ref"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED",
+            "NOT_APPLICABLE"
+          ]
+        },
+        "evidence_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "regression": {
+      "type": "object",
+      "required": [
+        "status",
+        "evidence_ref"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "PASS",
+            "FAIL",
+            "BLOCKED"
+          ]
+        },
+        "evidence_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "rollback": {
+      "type": "object",
+      "required": [
+        "plan_ref",
+        "verified"
+      ],
+      "properties": {
+        "plan_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "verified": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
     }
   },
   "additionalProperties": false

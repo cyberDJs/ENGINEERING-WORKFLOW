@@ -12,6 +12,12 @@ ROOT = Path(__file__).resolve().parents[1]
 HEX40 = re.compile(r"^[a-f0-9]{40}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
 RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt"}
+ARTIFACT_TYPES = {"model", "dataset", "skill", "tool", "runtime", "adapter", "benchmark", "library", "other"}
+SECRET_PATTERNS = [
+    re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
+    re.compile(r"\bgh[pousr]_[A-Za-z0-9]{30,}\b"),
+    re.compile(r"\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b"),
+]
 
 
 def load(path: Path) -> object:
@@ -44,19 +50,45 @@ def validate_artifact_record(data: object) -> list[str]:
         errors.append("record.schema_version must be 1.0.0")
     artifact = require_mapping(record.get("artifact"), "artifact", errors)
     require_fields(artifact, ("id", "type", "source", "revision", "digest", "license", "format"), "artifact", errors)
+    if artifact.get("type") not in ARTIFACT_TYPES:
+        errors.append("artifact.type is invalid")
+    for field in ("id", "source", "revision", "license", "format"):
+        if not isinstance(artifact.get(field), str) or not artifact.get(field, "").strip():
+            errors.append(f"artifact.{field} must be a non-empty string")
     digest = require_mapping(artifact.get("digest"), "artifact.digest", errors)
     if digest.get("algorithm") != "sha256":
         errors.append("artifact.digest.algorithm must be sha256")
     validate_sha256(digest.get("value"), "artifact.digest.value", errors)
+    ownership = require_mapping(record.get("ownership"), "ownership", errors)
+    require_fields(ownership, ("owner", "project_scope"), "ownership", errors)
+    if not isinstance(ownership.get("owner"), str) or not ownership.get("owner", "").strip():
+        errors.append("ownership.owner must be a non-empty string")
+    if not isinstance(ownership.get("project_scope"), list) or not ownership.get("project_scope"):
+        errors.append("ownership.project_scope must be non-empty")
     security = require_mapping(record.get("security"), "security", errors)
+    require_fields(security, ("risk_class", "executable_surface", "trust_remote_code"), "security", errors)
     if security.get("risk_class") not in {"LOW", "MEDIUM", "HIGH", "CRITICAL", "UNKNOWN"}:
         errors.append("security.risk_class is invalid")
+    if not isinstance(security.get("executable_surface"), list):
+        errors.append("security.executable_surface must be an array")
     if not isinstance(security.get("trust_remote_code"), bool):
         errors.append("security.trust_remote_code must be boolean")
+    runtime = require_mapping(record.get("runtime"), "runtime", errors)
+    require_fields(runtime, ("engine", "hardware_fit"), "runtime", errors)
+    engine = runtime.get("engine")
+    if engine is not None and (not isinstance(engine, str) or not engine.strip()):
+        errors.append("runtime.engine must be a non-empty string or null")
+    if runtime.get("hardware_fit") not in {"FIT", "CONSTRAINED", "RESEARCH_ONLY", "UNSUPPORTED", "NOT_APPLICABLE", "UNKNOWN"}:
+        errors.append("runtime.hardware_fit is invalid")
     governance = require_mapping(record.get("governance"), "governance", errors)
+    require_fields(governance, ("status", "allowed_use", "prohibited_use", "eval_baseline_ref", "rollback_ref"), "governance", errors)
     if governance.get("status") not in {"CANDIDATE", "QUARANTINED", "PILOT", "ADMITTED", "WATCH", "REJECTED", "DEPRECATED"}:
         errors.append("governance.status is invalid")
-    if not governance.get("rollback_ref"):
+    if not isinstance(governance.get("allowed_use"), list) or not isinstance(governance.get("prohibited_use"), list):
+        errors.append("governance allowed_use/prohibited_use must be arrays")
+    if governance.get("eval_baseline_ref") is not None and not isinstance(governance.get("eval_baseline_ref"), str):
+        errors.append("governance.eval_baseline_ref must be string or null")
+    if not isinstance(governance.get("rollback_ref"), str) or not governance.get("rollback_ref", "").strip():
         errors.append("governance.rollback_ref is required")
     if not isinstance(record.get("evidence"), list) or not record.get("evidence"):
         errors.append("evidence must be a non-empty array")
@@ -76,28 +108,51 @@ def validate_context_packet(data: object) -> list[str]:
     if not isinstance(project.get("dirty"), bool):
         errors.append("project.dirty must be boolean")
     task = require_mapping(packet.get("task"), "task", errors)
+    require_fields(task, ("objective", "mode", "scope_in", "scope_out"), "task", errors)
+    if not isinstance(task.get("objective"), str) or len(task.get("objective", "").strip()) < 3:
+        errors.append("task.objective must be a meaningful string")
     if task.get("mode") not in {"AUDIT", "DESIGN", "IMPLEMENT", "VERIFY", "RELEASE", "VALIDATE", "INCIDENT"}:
         errors.append("task.mode is invalid")
     if not isinstance(task.get("scope_in"), list) or not task.get("scope_in"):
         errors.append("task.scope_in must be non-empty")
-    authorities = packet.get("authority_sources")
-    if not isinstance(authorities, list) or not authorities:
-        errors.append("authority_sources must be non-empty")
-    else:
-        for index, source in enumerate(authorities):
-            source = require_mapping(source, f"authority_sources[{index}]", errors)
-            require_fields(source, ("path", "sha256", "content"), f"authority_sources[{index}]", errors)
-            validate_sha256(source.get("sha256"), f"authority_sources[{index}].sha256", errors)
+    if not isinstance(task.get("scope_out"), list):
+        errors.append("task.scope_out must be an array")
+    for field, non_empty in (("authority_sources", True), ("context_sources", False)):
+        sources = packet.get(field)
+        if not isinstance(sources, list) or (non_empty and not sources):
+            errors.append(f"{field} must be {'non-empty ' if non_empty else ''}array")
+            continue
+        for index, source in enumerate(sources):
+            source = require_mapping(source, f"{field}[{index}]", errors)
+            require_fields(source, ("path", "sha256", "content"), f"{field}[{index}]", errors)
+            validate_sha256(source.get("sha256"), f"{field}[{index}].sha256", errors)
+            content = source.get("content")
+            if not isinstance(content, str):
+                errors.append(f"{field}[{index}].content must be a string")
+            elif any(pattern.search(content) for pattern in SECRET_PATTERNS):
+                errors.append(f"{field}[{index}].content contains possible secret material")
     constraints = require_mapping(packet.get("constraints"), "constraints", errors)
+    require_fields(constraints, ("allowed_effects", "prohibited_effects", "secret_policy"), "constraints", errors)
+    if not isinstance(constraints.get("allowed_effects"), list) or not isinstance(constraints.get("prohibited_effects"), list):
+        errors.append("constraints effects must be arrays")
     if constraints.get("secret_policy") != "no-secret-values":
         errors.append("constraints.secret_policy must be no-secret-values")
+    build = require_mapping(packet.get("build"), "build", errors)
+    require_fields(build, ("builder", "built_at", "content_included"), "build", errors)
+    if not isinstance(build.get("content_included"), bool):
+        errors.append("build.content_included must be boolean")
+    elif build.get("content_included") is False:
+        for field in ("authority_sources", "context_sources"):
+            for index, source in enumerate(packet.get(field, []) if isinstance(packet.get(field), list) else []):
+                if isinstance(source, dict) and source.get("content") not in ("", None):
+                    errors.append(f"{field}[{index}].content must be empty when content_included is false")
     return errors
 
 
 def validate_eval_receipt(data: object) -> list[str]:
     errors: list[str] = []
     receipt = require_mapping(data, "receipt", errors)
-    require_fields(receipt, ("schema_version", "receipt_id", "evaluation_kind", "subject", "comparison", "change_scope", "corpus", "metrics", "thresholds", "verdict", "evidence", "environment", "evaluated_at"), "receipt", errors)
+    require_fields(receipt, ("schema_version", "receipt_id", "evaluation_kind", "subject", "comparison", "change_scope", "corpus", "metrics", "thresholds", "security_review", "regression", "rollback", "verdict", "evidence", "environment", "evaluated_at"), "receipt", errors)
     if receipt.get("schema_version") != "1.0.0":
         errors.append("receipt.schema_version must be 1.0.0")
     kind = receipt.get("evaluation_kind")
@@ -106,6 +161,8 @@ def validate_eval_receipt(data: object) -> list[str]:
     comparison = require_mapping(receipt.get("comparison"), "comparison", errors)
     if not comparison.get("champion_ref") or not comparison.get("challenger_ref"):
         errors.append("comparison requires champion_ref and challenger_ref")
+    elif comparison.get("champion_ref") == comparison.get("challenger_ref"):
+        errors.append("comparison champion_ref and challenger_ref must differ")
     scope = require_mapping(receipt.get("change_scope"), "change_scope", errors)
     changed = scope.get("changed_dimensions")
     if not isinstance(changed, list) or not changed:
@@ -116,12 +173,82 @@ def validate_eval_receipt(data: object) -> list[str]:
         errors.append("architecture challenger changes one dimension by default; multi_dimension_exception_ref is required")
     corpus = require_mapping(receipt.get("corpus"), "corpus", errors)
     validate_sha256(corpus.get("digest"), "corpus.digest", errors)
-    if receipt.get("verdict") not in {"PASS", "FAIL", "BLOCKED", "INCONCLUSIVE"}:
-        errors.append("verdict is invalid")
-    if not isinstance(receipt.get("metrics"), list) or not receipt.get("metrics"):
+    if corpus.get("validation_strategy") not in {"HOLDOUT", "DISJOINT"}:
+        errors.append("corpus.validation_strategy must be HOLDOUT or DISJOINT")
+    metrics = receipt.get("metrics")
+    metric_values: dict[str, float] = {}
+    if not isinstance(metrics, list) or not metrics:
         errors.append("metrics must be non-empty")
-    if not isinstance(receipt.get("thresholds"), list) or not receipt.get("thresholds"):
+    else:
+        metric_names: list[str] = []
+        for index, metric in enumerate(metrics):
+            metric = require_mapping(metric, f"metrics[{index}]", errors)
+            require_fields(metric, ("name", "baseline", "candidate", "delta"), f"metrics[{index}]", errors)
+            values = (metric.get("baseline"), metric.get("candidate"), metric.get("delta"))
+            if not all(isinstance(value, (int, float)) and not isinstance(value, bool) for value in values):
+                errors.append(f"metrics[{index}] baseline/candidate/delta must be numeric")
+            elif abs((values[1] - values[0]) - values[2]) > 1e-9:
+                errors.append(f"metrics[{index}].delta must equal candidate - baseline")
+            name = metric.get("name")
+            if not isinstance(name, str) or not name.strip():
+                errors.append(f"metrics[{index}].name must be non-empty")
+            else:
+                metric_names.append(name)
+                if isinstance(metric.get("candidate"), (int, float)) and not isinstance(metric.get("candidate"), bool):
+                    metric_values[name] = float(metric["candidate"])
+        if len(metric_names) != len(set(metric_names)):
+            errors.append("metric names must be unique")
+    thresholds = receipt.get("thresholds")
+    if not isinstance(thresholds, list) or not thresholds:
         errors.append("thresholds must be non-empty")
+    else:
+        threshold_names: list[str] = []
+        for index, threshold in enumerate(thresholds):
+            threshold = require_mapping(threshold, f"thresholds[{index}]", errors)
+            require_fields(threshold, ("name", "operator", "value"), f"thresholds[{index}]", errors)
+            name = threshold.get("name")
+            if isinstance(name, str):
+                threshold_names.append(name)
+            if threshold.get("operator") not in {">=", "<=", ">", "<", "=="}:
+                errors.append(f"thresholds[{index}].operator is invalid")
+            if not isinstance(threshold.get("value"), (int, float)) or isinstance(threshold.get("value"), bool):
+                errors.append(f"thresholds[{index}].value must be numeric")
+        if len(threshold_names) != len(set(threshold_names)):
+            errors.append("threshold names must be unique")
+    security = require_mapping(receipt.get("security_review"), "security_review", errors)
+    if security.get("status") not in {"PASS", "FAIL", "BLOCKED", "NOT_APPLICABLE"}:
+        errors.append("security_review.status is invalid")
+    if security.get("status") != "NOT_APPLICABLE" and not security.get("evidence_ref"):
+        errors.append("security_review.evidence_ref is required unless NOT_APPLICABLE")
+    regression = require_mapping(receipt.get("regression"), "regression", errors)
+    if regression.get("status") not in {"PASS", "FAIL", "BLOCKED"} or not regression.get("evidence_ref"):
+        errors.append("regression requires valid status and evidence_ref")
+    rollback = require_mapping(receipt.get("rollback"), "rollback", errors)
+    if not rollback.get("plan_ref") or not isinstance(rollback.get("verified"), bool):
+        errors.append("rollback requires plan_ref and boolean verified")
+    verdict = receipt.get("verdict")
+    if verdict not in {"PASS", "FAIL", "BLOCKED", "INCONCLUSIVE"}:
+        errors.append("verdict is invalid")
+    if verdict == "PASS":
+        if kind == "ARCHITECTURE_CHALLENGER" and security.get("status") != "PASS":
+            errors.append("PASS architecture challenger requires security_review PASS")
+        if regression.get("status") != "PASS":
+            errors.append("PASS requires regression PASS")
+        if rollback.get("verified") is not True:
+            errors.append("PASS requires verified rollback")
+        operators = {
+            ">=": lambda a, b: a >= b, "<=": lambda a, b: a <= b,
+            ">": lambda a, b: a > b, "<": lambda a, b: a < b, "==": lambda a, b: a == b,
+        }
+        if isinstance(thresholds, list):
+            for index, threshold in enumerate(thresholds):
+                if not isinstance(threshold, dict):
+                    continue
+                name, operator, value = threshold.get("name"), threshold.get("operator"), threshold.get("value")
+                if name not in metric_values:
+                    errors.append(f"PASS threshold {name!r} has no matching metric")
+                elif operator in operators and isinstance(value, (int, float)) and not isinstance(value, bool) and not operators[operator](metric_values[name], float(value)):
+                    errors.append(f"PASS threshold {name!r} is not satisfied by candidate metric")
     if not isinstance(receipt.get("evidence"), list) or not receipt.get("evidence"):
         errors.append("evidence must be non-empty")
     return errors
@@ -137,16 +264,33 @@ def validate_policy(data: object) -> list[str]:
     promotion = require_mapping(policy.get("promotion_policy"), "promotion_policy", errors)
     if stable.get("production_eligible") is not True:
         errors.append("stable lane must be production eligible")
+    for key in ("requires_governance", "requires_regression", "requires_evidence", "requires_rollback"):
+        if stable.get(key) is not True:
+            errors.append(f"stable_lane.{key} must be true")
     if lab.get("production_eligible") is not False or lab.get("production_mutation_allowed") is not False:
         errors.append("lab lane must be isolated from production effects")
-    for key in ("champion_challenger", "single_dimension_default", "multi_dimension_change_requires_exception", "security_review_required", "regression_required", "rollback_required"):
+    if lab.get("isolation_required") is not True:
+        errors.append("lab_lane.isolation_required must be true")
+    if not isinstance(lab.get("candidate_dimensions"), list) or not lab.get("candidate_dimensions"):
+        errors.append("lab_lane.candidate_dimensions must be non-empty")
+    for key in ("champion_challenger", "single_dimension_default", "multi_dimension_change_requires_exception", "holdout_or_disjoint_validation_required", "security_review_required", "regression_required", "rollback_required"):
         if promotion.get(key) is not True:
             errors.append(f"promotion_policy.{key} must be true")
     if promotion.get("production_mutation_from_lab") is not False:
         errors.append("promotion_policy.production_mutation_from_lab must be false")
+    expected_pipeline = ["IDEA", "RESEARCH", "ISOLATED_PROTOTYPE", "BENCHMARK", "SECURITY_REVIEW", "CHAMPION_CHALLENGER", "REGRESSION", "ADOPT_OR_REJECT", "VERSIONED_ARCHITECTURE_RELEASE"]
+    if policy.get("promotion_pipeline") != expected_pipeline:
+        errors.append("promotion_pipeline must preserve the governed champion/challenger sequence")
     expected_fields = {"why", "evidence", "benchmark", "risk", "migration", "rollback"}
     if set(policy.get("architecture_release_fields", [])) != expected_fields:
         errors.append("architecture_release_fields must contain WHY/EVIDENCE/BENCHMARK/RISK/MIGRATION/ROLLBACK")
+    expected_contracts = {
+        "artifact_admission": "../schemas/artifact-admission-record.schema.json",
+        "project_context_packet": "../schemas/project-context-packet.schema.json",
+        "eval_receipt": "../schemas/eval-receipt.schema.json",
+    }
+    if policy.get("contracts") != expected_contracts:
+        errors.append("policy.contracts must bind the canonical portable schemas")
     return errors
 
 

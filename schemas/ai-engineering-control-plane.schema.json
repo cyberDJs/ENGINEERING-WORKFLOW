@@ -34,10 +34,58 @@
       "minLength": 20
     },
     "stable_lane": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "production_eligible",
+        "requires_governance",
+        "requires_regression",
+        "requires_evidence",
+        "requires_rollback"
+      ],
+      "properties": {
+        "production_eligible": {
+          "const": true
+        },
+        "requires_governance": {
+          "const": true
+        },
+        "requires_regression": {
+          "const": true
+        },
+        "requires_evidence": {
+          "const": true
+        },
+        "requires_rollback": {
+          "const": true
+        }
+      },
+      "additionalProperties": true
     },
     "lab_lane": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "production_eligible",
+        "production_mutation_allowed",
+        "isolation_required",
+        "candidate_dimensions"
+      ],
+      "properties": {
+        "production_eligible": {
+          "const": false
+        },
+        "production_mutation_allowed": {
+          "const": false
+        },
+        "isolation_required": {
+          "const": true
+        },
+        "candidate_dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": true
     },
     "promotion_pipeline": {
       "type": "array",
@@ -45,7 +93,44 @@
       "uniqueItems": true
     },
     "promotion_policy": {
-      "type": "object"
+      "type": "object",
+      "required": [
+        "champion_challenger",
+        "single_dimension_default",
+        "multi_dimension_change_requires_exception",
+        "holdout_or_disjoint_validation_required",
+        "security_review_required",
+        "regression_required",
+        "rollback_required",
+        "production_mutation_from_lab"
+      ],
+      "properties": {
+        "champion_challenger": {
+          "const": true
+        },
+        "single_dimension_default": {
+          "const": true
+        },
+        "multi_dimension_change_requires_exception": {
+          "const": true
+        },
+        "holdout_or_disjoint_validation_required": {
+          "const": true
+        },
+        "security_review_required": {
+          "const": true
+        },
+        "regression_required": {
+          "const": true
+        },
+        "rollback_required": {
+          "const": true
+        },
+        "production_mutation_from_lab": {
+          "const": false
+        }
+      },
+      "additionalProperties": true
     },
     "architecture_release_fields": {
       "type": "array",

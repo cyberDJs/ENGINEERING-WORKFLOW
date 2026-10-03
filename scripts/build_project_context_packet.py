@@ -56,7 +56,7 @@ def main() -> int:
     parser.add_argument("--context", action="append", type=Path, default=[])
     parser.add_argument("--allowed-effect", action="append", default=[])
     parser.add_argument("--prohibited-effect", action="append", default=[])
-    parser.add_argument("--reference-only", action="store_true", help="Store hashes but omit source contents")
+    parser.add_argument("--include-content", action="store_true", help="Explicitly include scanned source contents; default is provenance-only")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
 
@@ -70,7 +70,7 @@ def main() -> int:
         control = json.loads(project_control.read_text(encoding="utf-8"))
         project_id = control.get("project", {}).get("id", project_id)
 
-    include_content = not args.reference_only
+    include_content = args.include_content
     authorities = [read_source(path, include_content) for path in args.authority]
     contexts = [read_source(path, include_content) for path in args.context]
     seed = "|".join([project_id, head, args.objective, *args.scope_in])
