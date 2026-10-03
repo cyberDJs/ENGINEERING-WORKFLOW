@@ -62,6 +62,7 @@
     "capability_mapping": "../schemas/capability-mapping-record.schema.json",
     "evaluation_suite": "../schemas/evaluation-suite.schema.json",
     "architecture_promotion": "../schemas/architecture-promotion-record.schema.json",
-    "adversarial_review_suite": "../schemas/adversarial-review-suite.schema.json"
+    "adversarial_review_suite": "../schemas/adversarial-review-suite.schema.json",
+    "ai_dependency_inventory": "../schemas/ai-dependency-inventory.schema.json"
   }
 }

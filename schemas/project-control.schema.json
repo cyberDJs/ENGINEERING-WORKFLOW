@@ -79,7 +79,8 @@
         "capability_mapping_schema",
         "evaluation_suite_schema",
         "architecture_promotion_schema",
-        "adversarial_review_suite_schema"
+        "adversarial_review_suite_schema",
+        "ai_dependency_inventory_schema"
       ],
       "additionalProperties": true
     },

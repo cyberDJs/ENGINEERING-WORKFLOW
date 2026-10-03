@@ -147,7 +147,8 @@
         "capability_mapping",
         "evaluation_suite",
         "architecture_promotion",
-        "adversarial_review_suite"
+        "adversarial_review_suite",
+        "ai_dependency_inventory"
       ],
       "properties": {
         "artifact_admission": {
@@ -175,6 +176,10 @@
           "minLength": 1
         },
         "adversarial_review_suite": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ai_dependency_inventory": {
           "type": "string",
           "minLength": 1
         }

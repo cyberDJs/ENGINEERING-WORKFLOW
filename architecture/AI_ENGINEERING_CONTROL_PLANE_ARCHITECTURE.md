@@ -3,7 +3,7 @@ id: EW-ARCH-AI-001
 title: AI Engineering Control Plane
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.6.0
+version: 0.7.0
 last-reviewed: 2026-10-04
 ---
 
@@ -67,6 +67,7 @@ The first portable control-plane contracts are:
 5. Evaluation Suite Manifest: frozen case-set identity, evaluator authority, paired baseline/candidate requirements, metric thresholds and regression policy. `scripts/compare_evaluation_runs.py` only produces a functional comparison; it has no promotion authority and never substitutes for a separate security evaluation or Eval Receipt.
 6. Architecture Promotion Record: fail-closed closure of `ADOPT | REJECT | WATCH` against exact evaluation, security, regression, rollback and decision-authority evidence. `ADOPT` additionally requires a versioned architecture, existing Release Record and Release Authority reference. The record itself grants neither execution nor release authority.
 7. Adversarial Review Suite: frozen threat model and adversarial case-set identity plus a deterministic security gate over project-native or existing red-team harness output. Critical/high failures, unauthorized effects, secret exposure, privilege escalation or external effects block; a clean behavioral run remains `BLOCKED` until attributable independent review is complete. The gate has no promotion or production authority.
+8. AI Dependency Inventory Snapshot: read-only project inventory of model artifacts and provider/runtime boundaries, bound to exact admission references, revisions and digests plus data-transfer, retention, training-use and credential metadata. Unknown data boundaries block activation; the snapshot grants no activation, execution or release authority.
 
 Registry ownership stays with the existing domain authority. Voodoo-One owns its executable capability definitions and activations; CyberSKILLS owns skill discovery/trust/distribution state; SKILLS runtime owns skill/tool routing state. The AI Engineering Control Plane references those authorities rather than creating a competing registry.
 

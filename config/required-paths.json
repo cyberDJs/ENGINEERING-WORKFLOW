@@ -137,6 +137,8 @@
     "tests/test_architecture_promotion.py",
     "schemas/adversarial-review-suite.schema.json",
     "scripts/evaluate_adversarial_results.py",
-    "tests/test_adversarial_review.py"
+    "tests/test_adversarial_review.py",
+    "schemas/ai-dependency-inventory.schema.json",
+    "tests/test_ai_dependency_inventory.py"
   ]
 }

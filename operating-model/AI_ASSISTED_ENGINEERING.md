@@ -3,7 +3,7 @@ id: EW-OPS-005
 title: AI-Assisted Engineering Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.7.0
+version: 0.8.0
 last-reviewed: 2026-10-04
 ---
 
@@ -50,6 +50,12 @@ Functional evaluations use a frozen Evaluation Suite Manifest plus paired baseli
 Eval Fabric is not a model runner and does not replace project-native QA or SKILLS evaluators. Existing harnesses produce the per-case evidence; the comparator normalizes their paired comparison. Its output is functional-only, records `promotion_authority=false`, and leaves security as `NOT_EVALUATED` until a separate security gate runs.
 
 The portable manifest schema is `../schemas/evaluation-suite.schema.json`.
+
+## AI Dependency Inventory
+
+Every material AI workflow maintains a read-only inventory of the exact models and provider/runtime boundaries it depends on. Each model is bound to its Artifact Admission reference, revision, digest, license, role, use scope and non-authoritative mode. Each provider/runtime records immutable identity evidence plus network scope, external data transfer, retention behavior, provider training use, credential requirement and data-policy reference where applicable.
+
+Unknown retention or training-use boundaries make the snapshot `BLOCKED`; they are never converted into permission. Inventory records do not activate a model, grant tool execution, authorize external data transfer, or approve release. The portable schema is `../schemas/ai-dependency-inventory.schema.json`.
 
 ## Adversarial Review Gate
 
