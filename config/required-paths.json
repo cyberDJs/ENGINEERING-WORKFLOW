@@ -127,6 +127,7 @@
     "schemas/eval-receipt.schema.json",
     "scripts/build_project_context_packet.py",
     "scripts/validate_ai_control_plane.py",
-    "tests/test_ai_control_plane.py"
+    "tests/test_ai_control_plane.py",
+    "schemas/capability-mapping-record.schema.json"
   ]
 }

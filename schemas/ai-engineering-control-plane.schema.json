@@ -138,7 +138,32 @@
       "uniqueItems": true
     },
     "contracts": {
-      "type": "object"
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_admission",
+        "project_context_packet",
+        "eval_receipt",
+        "capability_mapping"
+      ],
+      "properties": {
+        "artifact_admission": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_context_packet": {
+          "type": "string",
+          "minLength": 1
+        },
+        "eval_receipt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capability_mapping": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
     }
   },
   "additionalProperties": false

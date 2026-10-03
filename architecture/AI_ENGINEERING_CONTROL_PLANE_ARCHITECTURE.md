@@ -3,7 +3,7 @@ id: EW-ARCH-AI-001
 title: AI Engineering Control Plane
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.1.0
+version: 0.2.0
 last-reviewed: 2026-10-03
 ---
 
@@ -63,6 +63,9 @@ The first portable control-plane contracts are:
 1. Artifact Admission Record: identity, provenance, license, executable surface, allowed use, evaluation and rollback.
 2. Project Context Packet: project truth, authority, scoped context, constraints, Git baseline and provenance.
 3. Eval Receipt: baseline, candidate, corpus, metrics, thresholds, delta, verdict and evidence.
+4. Capability Mapping Record: evidence-backed mapping from an admitted capability to an existing registry authority and project-specific permission state. The mapping is a read model and never grants execution authority.
+
+Registry ownership stays with the existing domain authority. Voodoo-One owns its executable capability definitions and activations; CyberSKILLS owns skill discovery/trust/distribution state; SKILLS runtime owns skill/tool routing state. The AI Engineering Control Plane references those authorities rather than creating a competing registry.
 
 The machine-readable operating policy is `../config/ai-engineering-control-plane.json`.
 

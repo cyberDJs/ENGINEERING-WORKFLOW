@@ -58,6 +58,7 @@
   "contracts": {
     "artifact_admission": "../schemas/artifact-admission-record.schema.json",
     "project_context_packet": "../schemas/project-context-packet.schema.json",
-    "eval_receipt": "../schemas/eval-receipt.schema.json"
+    "eval_receipt": "../schemas/eval-receipt.schema.json",
+    "capability_mapping": "../schemas/capability-mapping-record.schema.json"
   }
 }

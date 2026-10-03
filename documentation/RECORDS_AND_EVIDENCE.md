@@ -3,7 +3,7 @@ id: EW-DOC-004
 title: Records and Evidence Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.2.0
+version: 0.3.0
 last-reviewed: 2026-10-03
 ---
 
@@ -23,9 +23,10 @@ last-reviewed: 2026-10-03
 - Exception Record;
 - Artifact Admission Record;
 - Project Context Packet;
-- Eval Receipt.
+- Eval Receipt;
+- Capability Mapping Record.
 
-The three AI Engineering Control Plane records are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`.
+The four AI Engineering Control Plane records are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`.
 
 ## Evidence properties
 
@@ -46,7 +47,8 @@ EVIDENCE_BUNDLE/
 ├── ai/
 │   ├── artifact-admission.json
 │   ├── project-context-packet.json
-│   └── eval-receipt.json
+│   ├── eval-receipt.json
+│   └── capability-mapping.json
 ├── review/
 ├── release/
 └── SHA256SUMS

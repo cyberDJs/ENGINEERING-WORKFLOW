@@ -75,6 +75,29 @@ class AIControlPlaneTest(unittest.TestCase):
         result = self.run_record_validation("eval-receipt", payload)
         self.assertNotEqual(result.returncode, 0)
 
+    def test_capability_mapping_never_grants_execution_and_enabled_requires_external_authority(self) -> None:
+        payload = {
+            "schema_version": "1.0.0",
+            "record_id": "CMR-test",
+            "capability": {"id": "decision-routing/jebadiah-native", "class": "decision-routing", "authority_mode": "ADVISORY", "lifecycle_status": "WATCH"},
+            "admission_refs": ["artifact-admission.json"],
+            "evaluation_refs": ["eval-receipt.json"],
+            "registry_binding": {"authority_type": "VOODOO_ONE_EXECUTION_CAPABILITY", "registry_ref": "Voodoo-One:ImmutableCapabilityRegistry", "capability_ref": None, "binding_status": "UNBOUND"},
+            "project_mappings": [{"project_id": "Voodoo-One", "project_ref": "PROJECT_CONSTITUTION.md", "status": "WATCH", "allowed_use": ["isolated-evaluation"], "prohibited_use": ["production-authority"], "environments": ["local-eval"], "execution_authority_ref": None, "production_eligible": False, "evidence_refs": ["eval-receipt.json"]}],
+            "governance": {"mapping_grants_execution": False, "project_authority_required": True, "fail_closed_on_missing_binding": True},
+            "evidence": ["promotion-decision.json"]
+        }
+        result = self.run_record_validation("capability-mapping", payload)
+        self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+        payload["governance"]["mapping_grants_execution"] = True
+        result = self.run_record_validation("capability-mapping", payload)
+        self.assertNotEqual(result.returncode, 0)
+        payload["governance"]["mapping_grants_execution"] = False
+        payload["project_mappings"][0]["status"] = "ENABLED"
+        payload["project_mappings"][0]["production_eligible"] = True
+        result = self.run_record_validation("capability-mapping", payload)
+        self.assertNotEqual(result.returncode, 0)
+
     def test_context_builder_binds_git_state_and_authority_digest(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "context.json"

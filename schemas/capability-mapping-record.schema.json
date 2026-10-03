@@ -1,0 +1,241 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Capability Mapping Record",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "record_id",
+    "capability",
+    "admission_refs",
+    "evaluation_refs",
+    "registry_binding",
+    "project_mappings",
+    "governance",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "capability": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "id",
+        "class",
+        "authority_mode",
+        "lifecycle_status"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "class": {
+          "enum": [
+            "decision-routing",
+            "retrieval",
+            "memory",
+            "skill",
+            "tool",
+            "worker",
+            "model-runtime",
+            "evaluator",
+            "other"
+          ]
+        },
+        "authority_mode": {
+          "enum": [
+            "EVALUATION_ONLY",
+            "ADVISORY",
+            "READ_ONLY",
+            "BOUNDED_EXECUTION"
+          ]
+        },
+        "lifecycle_status": {
+          "enum": [
+            "CANDIDATE",
+            "PILOT",
+            "WATCH",
+            "ADMITTED",
+            "DEPRECATED",
+            "REJECTED"
+          ]
+        }
+      }
+    },
+    "admission_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "evaluation_refs": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "registry_binding": {
+      "type": "object",
+      "additionalProperties": true,
+      "required": [
+        "authority_type",
+        "registry_ref",
+        "capability_ref",
+        "binding_status"
+      ],
+      "properties": {
+        "authority_type": {
+          "enum": [
+            "VOODOO_ONE_EXECUTION_CAPABILITY",
+            "CYBERSKILLS_DISCOVERY",
+            "SKILLS_RUNTIME",
+            "PROJECT_NATIVE",
+            "NONE"
+          ]
+        },
+        "registry_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "capability_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "binding_status": {
+          "enum": [
+            "UNBOUND",
+            "DISCOVERED",
+            "REGISTERED",
+            "ACTIVATED",
+            "REVOKED"
+          ]
+        }
+      }
+    },
+    "project_mappings": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": [
+          "project_id",
+          "project_ref",
+          "status",
+          "allowed_use",
+          "prohibited_use",
+          "environments",
+          "execution_authority_ref",
+          "production_eligible",
+          "evidence_refs"
+        ],
+        "properties": {
+          "project_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "project_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "enum": [
+              "CANDIDATE",
+              "PILOT",
+              "WATCH",
+              "ENABLED",
+              "REJECTED",
+              "REVOKED"
+            ]
+          },
+          "allowed_use": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "prohibited_use": {
+            "type": "array",
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "environments": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string"
+            }
+          },
+          "execution_authority_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "production_eligible": {
+            "type": "boolean"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "mapping_grants_execution",
+        "project_authority_required",
+        "fail_closed_on_missing_binding"
+      ],
+      "properties": {
+        "mapping_grants_execution": {
+          "const": false
+        },
+        "project_authority_required": {
+          "const": true
+        },
+        "fail_closed_on_missing_binding": {
+          "const": true
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": false
+}

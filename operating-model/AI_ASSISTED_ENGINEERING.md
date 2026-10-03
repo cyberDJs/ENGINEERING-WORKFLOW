@@ -3,7 +3,7 @@ id: EW-OPS-005
 title: AI-Assisted Engineering Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.2.1
+version: 0.3.0
 last-reviewed: 2026-10-03
 ---
 
@@ -40,6 +40,14 @@ The portable schema is `../schemas/artifact-admission-record.schema.json`.
 Every material AI change compares an identified baseline with an identified candidate and records corpus identity, metrics, thresholds, delta, verdict, environment and evidence. Architecture challengers change one primary dimension at a time by default so improvement remains attributable.
 
 The portable schema is `../schemas/eval-receipt.schema.json`.
+
+## Capability Mapping
+
+An admitted capability may be mapped to projects only through an evidence-backed Capability Mapping Record. The mapping points to the existing registry authority for that capability class and records project-specific allowed use, prohibited use, environments, lifecycle status and any external execution-authority reference.
+
+A Capability Mapping Record is observational. It never creates or activates an executable capability and `mapping_grants_execution` is always false. Voodoo-One, CyberSKILLS, SKILLS runtime or a project-native registry remain authoritative for their own entity classes.
+
+The portable schema is `../schemas/capability-mapping-record.schema.json`.
 
 ## Stable architecture and Architecture Lab
 

@@ -75,7 +75,8 @@
         "ai_engineering_control_plane",
         "artifact_admission_schema",
         "project_context_packet_schema",
-        "eval_receipt_schema"
+        "eval_receipt_schema",
+        "capability_mapping_schema"
       ],
       "additionalProperties": true
     },

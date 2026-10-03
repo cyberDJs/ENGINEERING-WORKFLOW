@@ -26,7 +26,8 @@
     "ai_engineering_control_plane": "config/ai-engineering-control-plane.json",
     "artifact_admission_schema": "schemas/artifact-admission-record.schema.json",
     "project_context_packet_schema": "schemas/project-context-packet.schema.json",
-    "eval_receipt_schema": "schemas/eval-receipt.schema.json"
+    "eval_receipt_schema": "schemas/eval-receipt.schema.json",
+    "capability_mapping_schema": "schemas/capability-mapping-record.schema.json"
   },
   "quality": {
     "validator": "python3 scripts/validate_repository.py",

@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HEX40 = re.compile(r"^[a-f0-9]{40}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
-RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt"}
+RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping"}
 ARTIFACT_TYPES = {"model", "dataset", "skill", "tool", "runtime", "adapter", "benchmark", "library", "other"}
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -254,6 +254,75 @@ def validate_eval_receipt(data: object) -> list[str]:
     return errors
 
 
+def validate_capability_mapping(data: object) -> list[str]:
+    errors: list[str] = []
+    record = require_mapping(data, "mapping", errors)
+    require_fields(record, ("schema_version", "record_id", "capability", "admission_refs", "evaluation_refs", "registry_binding", "project_mappings", "governance", "evidence"), "mapping", errors)
+    if record.get("schema_version") != "1.0.0":
+        errors.append("mapping.schema_version must be 1.0.0")
+    capability = require_mapping(record.get("capability"), "capability", errors)
+    require_fields(capability, ("id", "class", "authority_mode", "lifecycle_status"), "capability", errors)
+    if not isinstance(capability.get("id"), str) or not capability.get("id", "").strip():
+        errors.append("capability.id must be non-empty")
+    if capability.get("class") not in {"decision-routing", "retrieval", "memory", "skill", "tool", "worker", "model-runtime", "evaluator", "other"}:
+        errors.append("capability.class is invalid")
+    if capability.get("authority_mode") not in {"EVALUATION_ONLY", "ADVISORY", "READ_ONLY", "BOUNDED_EXECUTION"}:
+        errors.append("capability.authority_mode is invalid")
+    if capability.get("lifecycle_status") not in {"CANDIDATE", "PILOT", "WATCH", "ADMITTED", "DEPRECATED", "REJECTED"}:
+        errors.append("capability.lifecycle_status is invalid")
+    for field in ("admission_refs", "evaluation_refs", "evidence"):
+        value = record.get(field)
+        if not isinstance(value, list) or not value or not all(isinstance(item, str) and item.strip() for item in value):
+            errors.append(f"{field} must be a non-empty string array")
+        elif len(value) != len(set(value)):
+            errors.append(f"{field} must contain unique entries")
+    binding = require_mapping(record.get("registry_binding"), "registry_binding", errors)
+    require_fields(binding, ("authority_type", "registry_ref", "capability_ref", "binding_status"), "registry_binding", errors)
+    if binding.get("authority_type") not in {"VOODOO_ONE_EXECUTION_CAPABILITY", "CYBERSKILLS_DISCOVERY", "SKILLS_RUNTIME", "PROJECT_NATIVE", "NONE"}:
+        errors.append("registry_binding.authority_type is invalid")
+    if binding.get("binding_status") not in {"UNBOUND", "DISCOVERED", "REGISTERED", "ACTIVATED", "REVOKED"}:
+        errors.append("registry_binding.binding_status is invalid")
+    if binding.get("binding_status") in {"REGISTERED", "ACTIVATED", "REVOKED"}:
+        if not isinstance(binding.get("registry_ref"), str) or not binding.get("registry_ref", "").strip():
+            errors.append("bound registry state requires registry_ref")
+        if not isinstance(binding.get("capability_ref"), str) or not binding.get("capability_ref", "").strip():
+            errors.append("bound registry state requires capability_ref")
+    mappings = record.get("project_mappings")
+    if not isinstance(mappings, list) or not mappings:
+        errors.append("project_mappings must be non-empty")
+    else:
+        seen: set[str] = set()
+        for index, item in enumerate(mappings):
+            item = require_mapping(item, f"project_mappings[{index}]", errors)
+            require_fields(item, ("project_id", "project_ref", "status", "allowed_use", "prohibited_use", "environments", "execution_authority_ref", "production_eligible", "evidence_refs"), f"project_mappings[{index}]", errors)
+            project_id = item.get("project_id")
+            if not isinstance(project_id, str) or not project_id.strip():
+                errors.append(f"project_mappings[{index}].project_id must be non-empty")
+            elif project_id in seen:
+                errors.append("project_mappings project_id values must be unique")
+            else:
+                seen.add(project_id)
+            if item.get("status") not in {"CANDIDATE", "PILOT", "WATCH", "ENABLED", "REJECTED", "REVOKED"}:
+                errors.append(f"project_mappings[{index}].status is invalid")
+            for field in ("allowed_use", "prohibited_use", "environments", "evidence_refs"):
+                if not isinstance(item.get(field), list):
+                    errors.append(f"project_mappings[{index}].{field} must be an array")
+            if type(item.get("production_eligible")) is not bool:
+                errors.append(f"project_mappings[{index}].production_eligible must be boolean")
+            authority_ref = item.get("execution_authority_ref")
+            if item.get("status") == "ENABLED" and (not isinstance(authority_ref, str) or not authority_ref.strip()):
+                errors.append(f"project_mappings[{index}] ENABLED requires external execution_authority_ref")
+            if item.get("production_eligible") is True and item.get("status") != "ENABLED":
+                errors.append(f"project_mappings[{index}] production_eligible requires ENABLED status")
+    governance = require_mapping(record.get("governance"), "governance", errors)
+    if governance.get("mapping_grants_execution") is not False:
+        errors.append("capability mapping must never grant execution authority")
+    if governance.get("project_authority_required") is not True:
+        errors.append("capability mapping requires project authority")
+    if governance.get("fail_closed_on_missing_binding") is not True:
+        errors.append("capability mapping must fail closed on missing binding")
+    return errors
+
 def validate_policy(data: object) -> list[str]:
     errors: list[str] = []
     policy = require_mapping(data, "policy", errors)
@@ -288,6 +357,7 @@ def validate_policy(data: object) -> list[str]:
         "artifact_admission": "../schemas/artifact-admission-record.schema.json",
         "project_context_packet": "../schemas/project-context-packet.schema.json",
         "eval_receipt": "../schemas/eval-receipt.schema.json",
+        "capability_mapping": "../schemas/capability-mapping-record.schema.json",
     }
     if policy.get("contracts") != expected_contracts:
         errors.append("policy.contracts must bind the canonical portable schemas")
@@ -301,6 +371,8 @@ def validate_record(kind: str, data: object) -> list[str]:
         return validate_context_packet(data)
     if kind == "eval-receipt":
         return validate_eval_receipt(data)
+    if kind == "capability-mapping":
+        return validate_capability_mapping(data)
     return [f"unknown record kind: {kind}"]
 
 
@@ -313,6 +385,7 @@ def validate_repository_contract() -> list[str]:
         "schemas/artifact-admission-record.schema.json",
         "schemas/project-context-packet.schema.json",
         "schemas/eval-receipt.schema.json",
+        "schemas/capability-mapping-record.schema.json",
         "scripts/build_project_context_packet.py",
         "scripts/validate_ai_control_plane.py",
     ]
@@ -321,7 +394,7 @@ def validate_repository_contract() -> list[str]:
             errors.append(f"missing required AI control-plane file: {rel}")
     if errors:
         return errors
-    for rel in required[2:6]:
+    for rel in required[2:7]:
         schema = load(ROOT / rel)
         if not isinstance(schema, dict) or schema.get("type") != "object" or "$schema" not in schema:
             errors.append(f"{rel}: invalid schema envelope")
@@ -332,6 +405,7 @@ def validate_repository_contract() -> list[str]:
         "artifact_admission_schema": "schemas/artifact-admission-record.schema.json",
         "project_context_packet_schema": "schemas/project-context-packet.schema.json",
         "eval_receipt_schema": "schemas/eval-receipt.schema.json",
+        "capability_mapping_schema": "schemas/capability-mapping-record.schema.json",
     }
     control_section = control.get("control", {}) if isinstance(control, dict) else {}
     for key, expected in expected_control.items():
