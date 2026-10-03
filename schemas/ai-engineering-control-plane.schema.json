@@ -146,7 +146,8 @@
         "eval_receipt",
         "capability_mapping",
         "evaluation_suite",
-        "architecture_promotion"
+        "architecture_promotion",
+        "adversarial_review_suite"
       ],
       "properties": {
         "artifact_admission": {
@@ -170,6 +171,10 @@
           "minLength": 1
         },
         "architecture_promotion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "adversarial_review_suite": {
           "type": "string",
           "minLength": 1
         }

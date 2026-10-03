@@ -24,6 +24,7 @@ All notable changes are recorded here. Versions follow Semantic Versioning.
 - trust-aware Project Context Packet assembly from governed runtime sessions with Git-drift rejection and experimental-source exclusion;
 - deterministic Eval Fabric manifest and paired-run comparator with frozen case-set identity, critical-failure override, regression detection and no promotion authority;
 - fail-closed Architecture Promotion Record linking `ADOPT | REJECT | WATCH` to evaluation, security, regression, rollback and existing Decision/Release authority without granting protected operations;
+- deterministic adversarial-review suite and security gate with frozen threat/case identity, critical-effect hard stops, independent-review requirement and no promotion authority;
 - deterministic reference artifact packaging and SHA-256 manifests;
 - CycloneDX SBOM generation and blocking vulnerability policy;
 - supply-chain evidence, provenance, keyless signing and identity-verification workflow;

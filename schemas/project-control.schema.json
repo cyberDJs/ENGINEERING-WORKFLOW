@@ -78,7 +78,8 @@
         "eval_receipt_schema",
         "capability_mapping_schema",
         "evaluation_suite_schema",
-        "architecture_promotion_schema"
+        "architecture_promotion_schema",
+        "adversarial_review_suite_schema"
       ],
       "additionalProperties": true
     },
@@ -93,7 +94,8 @@
         "release_requires_clean_validation",
         "ai_control_plane_validator",
         "trusted_context_builder",
-        "eval_comparator"
+        "eval_comparator",
+        "adversarial_review_gate"
       ],
       "additionalProperties": true
     }

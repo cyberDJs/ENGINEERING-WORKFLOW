@@ -29,7 +29,8 @@
     "eval_receipt_schema": "schemas/eval-receipt.schema.json",
     "capability_mapping_schema": "schemas/capability-mapping-record.schema.json",
     "evaluation_suite_schema": "schemas/evaluation-suite.schema.json",
-    "architecture_promotion_schema": "schemas/architecture-promotion-record.schema.json"
+    "architecture_promotion_schema": "schemas/architecture-promotion-record.schema.json",
+    "adversarial_review_suite_schema": "schemas/adversarial-review-suite.schema.json"
   },
   "quality": {
     "validator": "python3 scripts/validate_repository.py",
@@ -40,6 +41,7 @@
     "release_requires_clean_validation": true,
     "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py",
     "trusted_context_builder": "python3 scripts/build_project_context_packet_from_session.py",
-    "eval_comparator": "python3 scripts/compare_evaluation_runs.py"
+    "eval_comparator": "python3 scripts/compare_evaluation_runs.py",
+    "adversarial_review_gate": "python3 scripts/evaluate_adversarial_results.py"
   }
 }

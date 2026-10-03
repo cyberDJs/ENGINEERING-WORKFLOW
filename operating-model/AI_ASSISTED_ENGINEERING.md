@@ -3,7 +3,7 @@ id: EW-OPS-005
 title: AI-Assisted Engineering Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.6.0
+version: 0.7.0
 last-reviewed: 2026-10-04
 ---
 
@@ -50,6 +50,12 @@ Functional evaluations use a frozen Evaluation Suite Manifest plus paired baseli
 Eval Fabric is not a model runner and does not replace project-native QA or SKILLS evaluators. Existing harnesses produce the per-case evidence; the comparator normalizes their paired comparison. Its output is functional-only, records `promotion_authority=false`, and leaves security as `NOT_EVALUATED` until a separate security gate runs.
 
 The portable manifest schema is `../schemas/evaluation-suite.schema.json`.
+
+## Adversarial Review Gate
+
+Security evaluation is separate from functional Eval Fabric. An Adversarial Review Suite binds an explicit threat model, a frozen case-set digest, approved isolated test environment and blocking policy. Existing project-native or SKILLS red-team harnesses execute the cases; `../scripts/evaluate_adversarial_results.py` verifies the result contract and fails closed on critical/high failures, unauthorized effects, secret exposure, privilege escalation or external effects.
+
+A clean behavioral run is not sufficient by itself. Independent review is mandatory; until an attributable reviewer and review evidence are present, the security verdict is `BLOCKED`. The gate never grants promotion, release, deployment or production authority. The portable suite schema is `../schemas/adversarial-review-suite.schema.json`.
 
 ## Architecture Promotion Closure
 

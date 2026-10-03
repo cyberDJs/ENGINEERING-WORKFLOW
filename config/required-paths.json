@@ -134,6 +134,9 @@
     "scripts/compare_evaluation_runs.py",
     "tests/test_eval_fabric.py",
     "schemas/architecture-promotion-record.schema.json",
-    "tests/test_architecture_promotion.py"
+    "tests/test_architecture_promotion.py",
+    "schemas/adversarial-review-suite.schema.json",
+    "scripts/evaluate_adversarial_results.py",
+    "tests/test_adversarial_review.py"
   ]
 }

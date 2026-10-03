@@ -3,7 +3,7 @@ id: EW-DOC-004
 title: Records and Evidence Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.5.0
+version: 0.6.0
 last-reviewed: 2026-10-04
 ---
 
@@ -26,9 +26,10 @@ last-reviewed: 2026-10-04
 - Eval Receipt;
 - Capability Mapping Record;
 - Evaluation Suite Manifest and functional comparison result;
-- Architecture Promotion Record.
+- Architecture Promotion Record;
+- Adversarial Review Suite and security-gate result.
 
-The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority. Architecture Promotion Records bind the final `ADOPT | REJECT | WATCH` state to existing Decision/Release authority without granting protected-operation permission.
+The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority. Architecture Promotion Records bind the final `ADOPT | REJECT | WATCH` state to existing Decision/Release authority without granting protected-operation permission. Adversarial Review evidence remains distinct from functional evaluation and requires independent review before it can support a passing security gate.
 
 ## Evidence properties
 
@@ -53,7 +54,9 @@ EVIDENCE_BUNDLE/
 │   ├── capability-mapping.json
 │   ├── evaluation-suite.json
 │   ├── evaluation-comparison.json
-│   └── architecture-promotion.json
+│   ├── architecture-promotion.json
+│   ├── adversarial-review-suite.json
+│   └── adversarial-review-result.json
 ├── review/
 ├── release/
 └── SHA256SUMS

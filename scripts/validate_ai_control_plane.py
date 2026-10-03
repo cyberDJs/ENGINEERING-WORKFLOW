@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HEX40 = re.compile(r"^[a-f0-9]{40}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
-RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite", "architecture-promotion"}
+RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite", "architecture-promotion", "adversarial-review-suite"}
 ARTIFACT_TYPES = {"model", "dataset", "skill", "tool", "runtime", "adapter", "benchmark", "library", "other"}
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -424,6 +424,95 @@ def validate_architecture_promotion(data: object) -> list[str]:
             errors.append(f"{outcome} requires production_eligible false")
     return errors
 
+
+def validate_adversarial_review_suite(data: object) -> list[str]:
+    errors: list[str] = []
+    suite = require_mapping(data, "adversarial_suite", errors)
+    require_fields(
+        suite,
+        (
+            "schema_version", "suite_id", "security_scope", "executor",
+            "threat_model_ref", "case_set", "blocking_policy",
+            "independent_review", "governance",
+        ),
+        "adversarial_suite",
+        errors,
+    )
+    if suite.get("schema_version") != "1.0.0":
+        errors.append("adversarial_suite.schema_version must be 1.0.0")
+    if not isinstance(suite.get("suite_id"), str) or not suite.get("suite_id", "").strip():
+        errors.append("adversarial_suite.suite_id must be non-empty")
+    scope = suite.get("security_scope")
+    if (
+        not isinstance(scope, list)
+        or not scope
+        or not all(isinstance(item, str) and item.strip() for item in scope)
+        or len(scope) != len(set(scope))
+    ):
+        errors.append("security_scope must be unique non-empty strings")
+
+    executor = require_mapping(suite.get("executor"), "executor", errors)
+    if executor.get("authority_type") not in {"APPSEC_CANONICAL", "AI_RED_TEAM_OVERLAY", "SPECIALIZED_HARNESS"}:
+        errors.append("executor.authority_type is invalid")
+    if not isinstance(executor.get("ref"), str) or not executor.get("ref", "").strip():
+        errors.append("executor.ref must be non-empty")
+    if not isinstance(suite.get("threat_model_ref"), str) or not suite.get("threat_model_ref", "").strip():
+        errors.append("threat_model_ref must be non-empty")
+
+    case_set = require_mapping(suite.get("case_set"), "case_set", errors)
+    if not isinstance(case_set.get("id"), str) or not case_set.get("id", "").strip():
+        errors.append("case_set.id must be non-empty")
+    validate_sha256(case_set.get("digest"), "case_set.digest", errors)
+    case_ids = case_set.get("case_ids")
+    if (
+        not isinstance(case_ids, list)
+        or not case_ids
+        or not all(isinstance(item, str) and item.strip() for item in case_ids)
+        or len(case_ids) != len(set(case_ids))
+    ):
+        errors.append("case_set.case_ids must be unique non-empty strings")
+    if case_set.get("data_class") not in {"SYNTHETIC", "APPROVED_TEST_DATA"}:
+        errors.append("case_set.data_class is invalid")
+    if case_set.get("environment") not in {"LOCAL_ISOLATED", "CI_ISOLATED", "APPROVED_STAGING"}:
+        errors.append("case_set.environment is invalid")
+
+    policy = require_mapping(suite.get("blocking_policy"), "blocking_policy", errors)
+    severities = policy.get("blocking_severities")
+    allowed_severities = {"critical", "high", "medium", "low"}
+    if (
+        not isinstance(severities, list)
+        or not severities
+        or len(severities) != len(set(severities))
+        or any(item not in allowed_severities for item in severities)
+    ):
+        errors.append("blocking_policy.blocking_severities is invalid")
+    else:
+        if "critical" not in severities or "high" not in severities:
+            errors.append("blocking_policy.blocking_severities must include critical and high")
+    for field in (
+        "block_on_unauthorized_effect",
+        "block_on_secret_exposure",
+        "block_on_privilege_escalation",
+        "block_on_external_effect",
+    ):
+        if policy.get(field) is not True:
+            errors.append(f"blocking_policy.{field} must be true")
+
+    independent = require_mapping(suite.get("independent_review"), "independent_review", errors)
+    if independent.get("required") is not True:
+        errors.append("independent_review.required must be true")
+
+    governance = require_mapping(suite.get("governance"), "governance", errors)
+    if governance.get("security_only") is not True:
+        errors.append("governance.security_only must be true")
+    if governance.get("functional_eval_separate") is not True:
+        errors.append("governance.functional_eval_separate must be true")
+    if governance.get("promotion_authority") is not False:
+        errors.append("adversarial review suite must not have promotion authority")
+    if governance.get("production_effects_allowed") is not False:
+        errors.append("adversarial review suite must not allow production effects")
+    return errors
+
 def validate_evaluation_suite(data: object) -> list[str]:
     errors: list[str] = []
     suite = require_mapping(data, "suite", errors)
@@ -530,6 +619,7 @@ def validate_policy(data: object) -> list[str]:
         "capability_mapping": "../schemas/capability-mapping-record.schema.json",
         "evaluation_suite": "../schemas/evaluation-suite.schema.json",
         "architecture_promotion": "../schemas/architecture-promotion-record.schema.json",
+        "adversarial_review_suite": "../schemas/adversarial-review-suite.schema.json",
     }
     if policy.get("contracts") != expected_contracts:
         errors.append("policy.contracts must bind the canonical portable schemas")
@@ -549,6 +639,8 @@ def validate_record(kind: str, data: object) -> list[str]:
         return validate_evaluation_suite(data)
     if kind == "architecture-promotion":
         return validate_architecture_promotion(data)
+    if kind == "adversarial-review-suite":
+        return validate_adversarial_review_suite(data)
     return [f"unknown record kind: {kind}"]
 
 
@@ -564,6 +656,7 @@ def validate_repository_contract() -> list[str]:
         "schemas/capability-mapping-record.schema.json",
         "schemas/evaluation-suite.schema.json",
         "schemas/architecture-promotion-record.schema.json",
+        "schemas/adversarial-review-suite.schema.json",
         "scripts/build_project_context_packet.py",
         "scripts/build_project_context_packet_from_session.py",
         "scripts/compare_evaluation_runs.py",
@@ -574,7 +667,7 @@ def validate_repository_contract() -> list[str]:
             errors.append(f"missing required AI control-plane file: {rel}")
     if errors:
         return errors
-    for rel in required[2:9]:
+    for rel in required[2:10]:
         schema = load(ROOT / rel)
         if not isinstance(schema, dict) or schema.get("type") != "object" or "$schema" not in schema:
             errors.append(f"{rel}: invalid schema envelope")
@@ -588,6 +681,7 @@ def validate_repository_contract() -> list[str]:
         "capability_mapping_schema": "schemas/capability-mapping-record.schema.json",
         "evaluation_suite_schema": "schemas/evaluation-suite.schema.json",
         "architecture_promotion_schema": "schemas/architecture-promotion-record.schema.json",
+        "adversarial_review_suite_schema": "schemas/adversarial-review-suite.schema.json",
     }
     control_section = control.get("control", {}) if isinstance(control, dict) else {}
     for key, expected in expected_control.items():
@@ -600,6 +694,8 @@ def validate_repository_contract() -> list[str]:
         errors.append("project-control.json quality.trusted_context_builder is missing")
     if quality.get("eval_comparator") != "python3 scripts/compare_evaluation_runs.py":
         errors.append("project-control.json quality.eval_comparator is missing")
+    if quality.get("adversarial_review_gate") != "python3 scripts/evaluate_adversarial_results.py":
+        errors.append("project-control.json quality.adversarial_review_gate is missing")
     return errors
 
 
