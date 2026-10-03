@@ -163,7 +163,7 @@ def validate_record(kind: str, data: object) -> list[str]:
 def validate_repository_contract() -> list[str]:
     errors: list[str] = []
     required = [
-        "architecture/AI_ENGINEERING_CONTROL_PLANE.md",
+        "architecture/AI_ENGINEERING_CONTROL_PLANE_ARCHITECTURE.md",
         "config/ai-engineering-control-plane.json",
         "schemas/ai-engineering-control-plane.schema.json",
         "schemas/artifact-admission-record.schema.json",

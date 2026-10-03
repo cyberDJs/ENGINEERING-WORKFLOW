@@ -119,7 +119,7 @@
     ".github/workflows/scorecard.yml",
     ".github/workflows/supply-chain.yml",
     ".github/pull_request_template.md",
-    "architecture/AI_ENGINEERING_CONTROL_PLANE.md",
+    "architecture/AI_ENGINEERING_CONTROL_PLANE_ARCHITECTURE.md",
     "config/ai-engineering-control-plane.json",
     "schemas/ai-engineering-control-plane.schema.json",
     "schemas/artifact-admission-record.schema.json",
