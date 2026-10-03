@@ -3,7 +3,7 @@ id: EW-DOC-004
 title: Records and Evidence Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.4.0
+version: 0.5.0
 last-reviewed: 2026-10-04
 ---
 
@@ -25,9 +25,10 @@ last-reviewed: 2026-10-04
 - Project Context Packet;
 - Eval Receipt;
 - Capability Mapping Record;
-- Evaluation Suite Manifest and functional comparison result.
+- Evaluation Suite Manifest and functional comparison result;
+- Architecture Promotion Record.
 
-The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority.
+The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority. Architecture Promotion Records bind the final `ADOPT | REJECT | WATCH` state to existing Decision/Release authority without granting protected-operation permission.
 
 ## Evidence properties
 
@@ -51,7 +52,8 @@ EVIDENCE_BUNDLE/
 │   ├── eval-receipt.json
 │   ├── capability-mapping.json
 │   ├── evaluation-suite.json
-│   └── evaluation-comparison.json
+│   ├── evaluation-comparison.json
+│   └── architecture-promotion.json
 ├── review/
 ├── release/
 └── SHA256SUMS

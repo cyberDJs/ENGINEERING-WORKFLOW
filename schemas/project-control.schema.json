@@ -77,7 +77,8 @@
         "project_context_packet_schema",
         "eval_receipt_schema",
         "capability_mapping_schema",
-        "evaluation_suite_schema"
+        "evaluation_suite_schema",
+        "architecture_promotion_schema"
       ],
       "additionalProperties": true
     },

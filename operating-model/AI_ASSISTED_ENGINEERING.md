@@ -3,7 +3,7 @@ id: EW-OPS-005
 title: AI-Assisted Engineering Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.5.0
+version: 0.6.0
 last-reviewed: 2026-10-04
 ---
 
@@ -50,6 +50,12 @@ Functional evaluations use a frozen Evaluation Suite Manifest plus paired baseli
 Eval Fabric is not a model runner and does not replace project-native QA or SKILLS evaluators. Existing harnesses produce the per-case evidence; the comparator normalizes their paired comparison. Its output is functional-only, records `promotion_authority=false`, and leaves security as `NOT_EVALUATED` until a separate security gate runs.
 
 The portable manifest schema is `../schemas/evaluation-suite.schema.json`.
+
+## Architecture Promotion Closure
+
+A candidate leaves the Architecture Lab only through an Architecture Promotion Record. `WATCH` and `REJECT` may be closed by fail-closed project policy and remain non-production. `ADOPT` requires a passing Eval Receipt, passing security and regression gates, verified rollback, an attributable non-policy Decision Authority, a versioned architecture, and references to an existing Release Record and Release Authority.
+
+The promotion record is evidence of closure, not permission to execute, merge, release, deploy or change activation state. Protected operations remain separately authorized under project governance. The portable schema is `../schemas/architecture-promotion-record.schema.json`.
 
 ## Capability Mapping
 

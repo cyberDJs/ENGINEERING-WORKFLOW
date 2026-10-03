@@ -132,6 +132,8 @@
     "scripts/build_project_context_packet_from_session.py",
     "schemas/evaluation-suite.schema.json",
     "scripts/compare_evaluation_runs.py",
-    "tests/test_eval_fabric.py"
+    "tests/test_eval_fabric.py",
+    "schemas/architecture-promotion-record.schema.json",
+    "tests/test_architecture_promotion.py"
   ]
 }

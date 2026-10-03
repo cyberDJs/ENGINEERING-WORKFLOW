@@ -28,7 +28,8 @@
     "project_context_packet_schema": "schemas/project-context-packet.schema.json",
     "eval_receipt_schema": "schemas/eval-receipt.schema.json",
     "capability_mapping_schema": "schemas/capability-mapping-record.schema.json",
-    "evaluation_suite_schema": "schemas/evaluation-suite.schema.json"
+    "evaluation_suite_schema": "schemas/evaluation-suite.schema.json",
+    "architecture_promotion_schema": "schemas/architecture-promotion-record.schema.json"
   },
   "quality": {
     "validator": "python3 scripts/validate_repository.py",

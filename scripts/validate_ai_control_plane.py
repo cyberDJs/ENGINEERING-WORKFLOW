@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HEX40 = re.compile(r"^[a-f0-9]{40}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
-RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite"}
+RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite", "architecture-promotion"}
 ARTIFACT_TYPES = {"model", "dataset", "skill", "tool", "runtime", "adapter", "benchmark", "library", "other"}
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -323,6 +323,107 @@ def validate_capability_mapping(data: object) -> list[str]:
         errors.append("capability mapping must fail closed on missing binding")
     return errors
 
+
+def validate_architecture_promotion(data: object) -> list[str]:
+    errors: list[str] = []
+    record = require_mapping(data, "promotion", errors)
+    require_fields(record, ("schema_version", "record_id", "architecture", "decision", "gates", "release", "governance", "evidence", "residual_risks"), "promotion", errors)
+    if record.get("schema_version") != "1.0.0":
+        errors.append("promotion.schema_version must be 1.0.0")
+    if not isinstance(record.get("record_id"), str) or len(record.get("record_id", "").strip()) < 3:
+        errors.append("promotion.record_id must be meaningful")
+
+    architecture = require_mapping(record.get("architecture"), "architecture", errors)
+    require_fields(architecture, ("family", "current_champion_ref", "candidate_ref", "changed_dimensions"), "architecture", errors)
+    for field in ("family", "current_champion_ref", "candidate_ref"):
+        if not isinstance(architecture.get(field), str) or not architecture.get(field, "").strip():
+            errors.append(f"architecture.{field} must be non-empty")
+    if architecture.get("current_champion_ref") == architecture.get("candidate_ref"):
+        errors.append("architecture current champion and candidate must differ")
+    changed = architecture.get("changed_dimensions")
+    if not isinstance(changed, list) or not changed or not all(isinstance(item, str) and item.strip() for item in changed):
+        errors.append("architecture.changed_dimensions must be non-empty strings")
+    elif len(changed) != len(set(changed)):
+        errors.append("architecture.changed_dimensions must be unique")
+
+    decision = require_mapping(record.get("decision"), "decision", errors)
+    require_fields(decision, ("outcome", "decision_record_ref", "decision_authority_type", "decision_authority_ref", "decided_at"), "decision", errors)
+    outcome = decision.get("outcome")
+    if outcome not in {"ADOPT", "REJECT", "WATCH"}:
+        errors.append("decision.outcome is invalid")
+    if decision.get("decision_authority_type") not in {"POLICY", "OPERATOR", "PROJECT_AUTHORITY"}:
+        errors.append("decision.decision_authority_type is invalid")
+    for field in ("decision_record_ref", "decision_authority_ref", "decided_at"):
+        if not isinstance(decision.get(field), str) or not decision.get(field, "").strip():
+            errors.append(f"decision.{field} must be non-empty")
+
+    gates = require_mapping(record.get("gates"), "gates", errors)
+    require_fields(gates, ("eval_receipt_ref", "eval_verdict", "security_status", "security_evidence_ref", "regression_status", "regression_evidence_ref", "rollback_verified", "rollback_ref"), "gates", errors)
+    for field in ("eval_receipt_ref", "regression_evidence_ref", "rollback_ref"):
+        if not isinstance(gates.get(field), str) or not gates.get(field, "").strip():
+            errors.append(f"gates.{field} must be non-empty")
+    if gates.get("eval_verdict") not in {"PASS", "FAIL", "BLOCKED", "INCONCLUSIVE"}:
+        errors.append("gates.eval_verdict is invalid")
+    security_status = gates.get("security_status")
+    if security_status not in {"PASS", "FAIL", "BLOCKED", "NOT_APPLICABLE"}:
+        errors.append("gates.security_status is invalid")
+    if security_status != "NOT_APPLICABLE" and (not isinstance(gates.get("security_evidence_ref"), str) or not gates.get("security_evidence_ref", "").strip()):
+        errors.append("gates.security_evidence_ref is required unless security is NOT_APPLICABLE")
+    if gates.get("regression_status") not in {"PASS", "FAIL", "BLOCKED"}:
+        errors.append("gates.regression_status is invalid")
+    if type(gates.get("rollback_verified")) is not bool:
+        errors.append("gates.rollback_verified must be boolean")
+
+    release = require_mapping(record.get("release"), "release", errors)
+    require_fields(release, ("architecture_version", "release_record_ref", "release_authority_ref", "production_eligible"), "release", errors)
+    if type(release.get("production_eligible")) is not bool:
+        errors.append("release.production_eligible must be boolean")
+    for field in ("architecture_version", "release_record_ref", "release_authority_ref"):
+        value = release.get(field)
+        if value is not None and (not isinstance(value, str) or not value.strip()):
+            errors.append(f"release.{field} must be non-empty string or null")
+
+    governance = require_mapping(record.get("governance"), "governance", errors)
+    if governance.get("record_grants_execution") is not False:
+        errors.append("architecture promotion record must never grant execution")
+    if governance.get("record_grants_release") is not False:
+        errors.append("architecture promotion record must never grant release authority")
+    if governance.get("protected_operations_require_separate_authorization") is not True:
+        errors.append("protected operations require separate authorization")
+
+    for field in ("evidence", "residual_risks"):
+        value = record.get(field)
+        if not isinstance(value, list) or not all(isinstance(item, str) and item.strip() for item in value):
+            errors.append(f"{field} must be a string array")
+        elif field == "evidence" and not value:
+            errors.append("evidence must be non-empty")
+        elif len(value) != len(set(value)):
+            errors.append(f"{field} must contain unique entries")
+
+    if outcome == "ADOPT":
+        if decision.get("decision_authority_type") not in {"OPERATOR", "PROJECT_AUTHORITY"}:
+            errors.append("ADOPT requires non-policy decision authority")
+        if gates.get("eval_verdict") != "PASS":
+            errors.append("ADOPT requires eval_verdict PASS")
+        if security_status != "PASS":
+            errors.append("ADOPT requires security_status PASS")
+        if gates.get("regression_status") != "PASS":
+            errors.append("ADOPT requires regression_status PASS")
+        if gates.get("rollback_verified") is not True:
+            errors.append("ADOPT requires verified rollback")
+        for field in ("architecture_version", "release_record_ref", "release_authority_ref"):
+            if not isinstance(release.get(field), str) or not release.get(field, "").strip():
+                errors.append(f"ADOPT requires release.{field}")
+        if release.get("production_eligible") is not True:
+            errors.append("ADOPT requires production_eligible true")
+    elif outcome in {"WATCH", "REJECT"}:
+        for field in ("architecture_version", "release_record_ref", "release_authority_ref"):
+            if release.get(field) is not None:
+                errors.append(f"{outcome} requires release.{field} null")
+        if release.get("production_eligible") is not False:
+            errors.append(f"{outcome} requires production_eligible false")
+    return errors
+
 def validate_evaluation_suite(data: object) -> list[str]:
     errors: list[str] = []
     suite = require_mapping(data, "suite", errors)
@@ -428,6 +529,7 @@ def validate_policy(data: object) -> list[str]:
         "eval_receipt": "../schemas/eval-receipt.schema.json",
         "capability_mapping": "../schemas/capability-mapping-record.schema.json",
         "evaluation_suite": "../schemas/evaluation-suite.schema.json",
+        "architecture_promotion": "../schemas/architecture-promotion-record.schema.json",
     }
     if policy.get("contracts") != expected_contracts:
         errors.append("policy.contracts must bind the canonical portable schemas")
@@ -445,6 +547,8 @@ def validate_record(kind: str, data: object) -> list[str]:
         return validate_capability_mapping(data)
     if kind == "evaluation-suite":
         return validate_evaluation_suite(data)
+    if kind == "architecture-promotion":
+        return validate_architecture_promotion(data)
     return [f"unknown record kind: {kind}"]
 
 
@@ -459,6 +563,7 @@ def validate_repository_contract() -> list[str]:
         "schemas/eval-receipt.schema.json",
         "schemas/capability-mapping-record.schema.json",
         "schemas/evaluation-suite.schema.json",
+        "schemas/architecture-promotion-record.schema.json",
         "scripts/build_project_context_packet.py",
         "scripts/build_project_context_packet_from_session.py",
         "scripts/compare_evaluation_runs.py",
@@ -469,7 +574,7 @@ def validate_repository_contract() -> list[str]:
             errors.append(f"missing required AI control-plane file: {rel}")
     if errors:
         return errors
-    for rel in required[2:8]:
+    for rel in required[2:9]:
         schema = load(ROOT / rel)
         if not isinstance(schema, dict) or schema.get("type") != "object" or "$schema" not in schema:
             errors.append(f"{rel}: invalid schema envelope")
@@ -482,6 +587,7 @@ def validate_repository_contract() -> list[str]:
         "eval_receipt_schema": "schemas/eval-receipt.schema.json",
         "capability_mapping_schema": "schemas/capability-mapping-record.schema.json",
         "evaluation_suite_schema": "schemas/evaluation-suite.schema.json",
+        "architecture_promotion_schema": "schemas/architecture-promotion-record.schema.json",
     }
     control_section = control.get("control", {}) if isinstance(control, dict) else {}
     for key, expected in expected_control.items():

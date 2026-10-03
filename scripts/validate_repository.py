@@ -128,6 +128,7 @@ def main() -> int:
         "eval_receipt_schema",
         "capability_mapping_schema",
         "evaluation_suite_schema",
+        "architecture_promotion_schema",
     ):
         rel = control.get("control", {}).get(key)
         if not rel or not (ROOT / rel).is_file():
