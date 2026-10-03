@@ -36,6 +36,7 @@
     "supply_chain_validator": "python3 scripts/validate_supply_chain.py",
     "tests": "python3 -m unittest discover -s tests -v",
     "release_requires_clean_validation": true,
-    "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py"
+    "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py",
+    "trusted_context_builder": "python3 scripts/build_project_context_packet_from_session.py"
   }
 }

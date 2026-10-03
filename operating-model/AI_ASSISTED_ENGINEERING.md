@@ -3,7 +3,7 @@ id: EW-OPS-005
 title: AI-Assisted Engineering Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.3.0
+version: 0.4.0
 last-reviewed: 2026-10-03
 ---
 
@@ -28,6 +28,8 @@ Every material AI task receives a bounded Project Context Packet containing proj
 The portable schema is `../schemas/project-context-packet.schema.json`. The reference builder is `../scripts/build_project_context_packet.py`.
 
 The reference builder is provenance-only by default: it records paths and SHA-256 digests but omits source content. Source content is included only through explicit `--include-content`, and scanned inputs still fail closed on detected secret material.
+
+For governed project work, `../scripts/build_project_context_packet_from_session.py` consumes a `READY` SKILLS runtime session instead of rediscovering context. It binds the packet to the session SHA-256 and exact Git root/branch/HEAD/dirty state, fails on drift, preserves source status/provenance, and admits only `CURRENT_CANONICAL` and `CURRENT_SUPPORTING` context by default. Project authority files remain a separate higher-priority source class.
 
 ## Artifact Admission
 

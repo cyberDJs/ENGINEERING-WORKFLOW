@@ -11,6 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 VALIDATOR = ROOT / "scripts/validate_ai_control_plane.py"
 BUILDER = ROOT / "scripts/build_project_context_packet.py"
+SESSION_BUILDER = ROOT / "scripts/build_project_context_packet_from_session.py"
 
 
 class AIControlPlaneTest(unittest.TestCase):
@@ -97,6 +98,43 @@ class AIControlPlaneTest(unittest.TestCase):
         payload["project_mappings"][0]["production_eligible"] = True
         result = self.run_record_validation("capability-mapping", payload)
         self.assertNotEqual(result.returncode, 0)
+
+    def test_session_context_builder_excludes_experimental_and_rejects_git_drift(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+            branch = subprocess.check_output(["git", "branch", "--show-current"], cwd=ROOT, text=True).strip()
+            dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip())
+            session = {
+                "status": "READY",
+                "task": "assemble trusted context",
+                "project": {
+                    "path": str(ROOT),
+                    "authority_files": [str(ROOT / "README.md"), str(ROOT / "SECURITY.md")],
+                    "git": {"root": str(ROOT), "head": head, "branch": branch, "dirty": dirty},
+                },
+                "architecture_retrieval": {"load_set": [
+                    {"path": str(ROOT / "architecture/AI_ENGINEERING_CONTROL_PLANE_ARCHITECTURE.md"), "status": "CURRENT_SUPPORTING", "source": "project", "title": "AI control plane", "reasons": ["project-truth-priority"]},
+                    {"path": str(ROOT / "roadmap/IMPLEMENTATION_ROADMAP.md"), "status": "EXPERIMENTAL", "source": "workflow_graph", "title": "experimental", "reasons": ["test"]},
+                ]},
+            }
+            session_path = tmp_path / "session.json"
+            output = tmp_path / "packet.json"
+            session_path.write_text(json.dumps(session), encoding="utf-8")
+            result = subprocess.run([sys.executable, str(SESSION_BUILDER), "--session", str(session_path), "--task-mode", "VERIFY", "--scope-in", "trusted context", "--output", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
+            self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
+            packet = json.loads(output.read_text(encoding="utf-8"))
+            self.assertFalse(packet["build"]["content_included"])
+            self.assertEqual(packet["build"]["excluded_status_counts"], {"EXPERIMENTAL": 1})
+            self.assertEqual(len(packet["context_sources"]), 1)
+            self.assertEqual(packet["context_sources"][0]["source_status"], "CURRENT_SUPPORTING")
+            valid = subprocess.run([sys.executable, str(VALIDATOR), "--kind", "project-context", "--file", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
+            self.assertEqual(valid.returncode, 0, msg=valid.stdout + valid.stderr)
+            session["project"]["git"]["head"] = "0" * 40
+            session_path.write_text(json.dumps(session), encoding="utf-8")
+            drift = subprocess.run([sys.executable, str(SESSION_BUILDER), "--session", str(session_path), "--task-mode", "VERIFY", "--scope-in", "trusted context", "--output", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
+            self.assertNotEqual(drift.returncode, 0)
+            self.assertIn("HEAD drifted", drift.stderr)
 
     def test_context_builder_binds_git_state_and_authority_digest(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

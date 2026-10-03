@@ -21,6 +21,7 @@ All notable changes are recorded here. Versions follow Semantic Versioning.
 - secure-by-default context packets with provenance-only output unless source content is explicitly requested;
 - hardened eval receipts requiring disjoint/holdout validation, explicit deltas, security review, regression evidence and rollback state;
 - portable Capability Mapping Record that binds admission/eval evidence to existing registry authorities without granting execution authority;
+- trust-aware Project Context Packet assembly from governed runtime sessions with Git-drift rejection and experimental-source exclusion;
 - deterministic reference artifact packaging and SHA-256 manifests;
 - CycloneDX SBOM generation and blocking vulnerability policy;
 - supply-chain evidence, provenance, keyless signing and identity-verification workflow;

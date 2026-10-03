@@ -3,7 +3,7 @@ id: EW-ARCH-AI-001
 title: AI Engineering Control Plane
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.2.0
+version: 0.3.0
 last-reviewed: 2026-10-03
 ---
 
@@ -61,7 +61,7 @@ Every promoted architecture version records:
 The first portable control-plane contracts are:
 
 1. Artifact Admission Record: identity, provenance, license, executable surface, allowed use, evaluation and rollback.
-2. Project Context Packet: project truth, authority, scoped context, constraints, Git baseline and provenance.
+2. Project Context Packet: project truth, authority, scoped context, constraints, Git baseline and provenance. A governed runtime session may be consumed by the trust-aware builder, which fails closed on Git drift and excludes experimental, historical, superseded and unknown architecture sources by default.
 3. Eval Receipt: baseline, candidate, corpus, metrics, thresholds, delta, verdict and evidence.
 4. Capability Mapping Record: evidence-backed mapping from an admitted capability to an existing registry authority and project-specific permission state. The mapping is a read model and never grants execution authority.
 

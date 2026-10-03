@@ -387,6 +387,7 @@ def validate_repository_contract() -> list[str]:
         "schemas/eval-receipt.schema.json",
         "schemas/capability-mapping-record.schema.json",
         "scripts/build_project_context_packet.py",
+        "scripts/build_project_context_packet_from_session.py",
         "scripts/validate_ai_control_plane.py",
     ]
     for rel in required:
@@ -414,6 +415,8 @@ def validate_repository_contract() -> list[str]:
     quality = control.get("quality", {}) if isinstance(control, dict) else {}
     if quality.get("ai_control_plane_validator") != "python3 scripts/validate_ai_control_plane.py":
         errors.append("project-control.json quality.ai_control_plane_validator is missing")
+    if quality.get("trusted_context_builder") != "python3 scripts/build_project_context_packet_from_session.py":
+        errors.append("project-control.json quality.trusted_context_builder is missing")
     return errors
 
 

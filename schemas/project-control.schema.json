@@ -89,7 +89,8 @@
         "supply_chain_validator",
         "tests",
         "release_requires_clean_validation",
-        "ai_control_plane_validator"
+        "ai_control_plane_validator",
+        "trusted_context_builder"
       ],
       "additionalProperties": true
     }
