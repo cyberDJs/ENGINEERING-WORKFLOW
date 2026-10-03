@@ -122,6 +122,10 @@ def main() -> int:
         "reversibility_classes",
         "manual_work_register",
         "lifecycle_evidence_graph",
+        "ai_engineering_control_plane",
+        "artifact_admission_schema",
+        "project_context_packet_schema",
+        "eval_receipt_schema",
     ):
         rel = control.get("control", {}).get(key)
         if not rel or not (ROOT / rel).is_file():
@@ -132,6 +136,7 @@ def main() -> int:
         "constitutional_validator": "python3 scripts/validate_constitutions.py",
         "primary_invariant_validator": "python3 scripts/validate_primary_invariant.py",
         "supply_chain_validator": "python3 scripts/validate_supply_chain.py",
+        "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py",
         "tests": "python3 -m unittest discover -s tests -v",
     }
     for key, expected in expected_quality.items():

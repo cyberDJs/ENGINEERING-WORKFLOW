@@ -3,20 +3,55 @@
   "$id": "https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/project-control.schema.json",
   "title": "ENGINEERING-WORKFLOW project control",
   "type": "object",
-  "required": ["schema_version", "project", "control", "quality"],
+  "required": [
+    "schema_version",
+    "project",
+    "control",
+    "quality"
+  ],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {
+      "const": 1
+    },
     "project": {
       "type": "object",
-      "required": ["id", "name", "status", "product_owner", "technical_owner"],
+      "required": [
+        "id",
+        "name",
+        "status",
+        "product_owner",
+        "technical_owner"
+      ],
       "properties": {
-        "id": {"type": "string", "minLength": 1},
-        "name": {"type": "string", "minLength": 1},
-        "status": {
-          "enum": ["concept", "discovery", "defined", "building", "validating", "operating", "maintenance", "retired", "archived"]
+        "id": {
+          "type": "string",
+          "minLength": 1
         },
-        "product_owner": {"type": "string", "minLength": 1},
-        "technical_owner": {"type": "string", "minLength": 1}
+        "name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "status": {
+          "enum": [
+            "concept",
+            "discovery",
+            "defined",
+            "building",
+            "validating",
+            "operating",
+            "maintenance",
+            "retired",
+            "archived"
+          ]
+        },
+        "product_owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "technical_owner": {
+          "type": "string",
+          "minLength": 1
+        }
       },
       "additionalProperties": true
     },
@@ -36,7 +71,11 @@
         "complexity_budget",
         "reversibility_classes",
         "manual_work_register",
-        "lifecycle_evidence_graph"
+        "lifecycle_evidence_graph",
+        "ai_engineering_control_plane",
+        "artifact_admission_schema",
+        "project_context_packet_schema",
+        "eval_receipt_schema"
       ],
       "additionalProperties": true
     },
@@ -48,7 +87,8 @@
         "primary_invariant_validator",
         "supply_chain_validator",
         "tests",
-        "release_requires_clean_validation"
+        "release_requires_clean_validation",
+        "ai_control_plane_validator"
       ],
       "additionalProperties": true
     }

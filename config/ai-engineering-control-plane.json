@@ -1,0 +1,63 @@
+{
+  "$schema": "../schemas/ai-engineering-control-plane.schema.json",
+  "schema_version": "1.0.0",
+  "status": "proposed",
+  "architecture_family": "ai-engineering-control-plane",
+  "canonical_principle": "Optimize the decision and evidence system; models and harnesses are replaceable capabilities under governance, evaluation and evidence.",
+  "stable_lane": {
+    "production_eligible": true,
+    "requires_governance": true,
+    "requires_regression": true,
+    "requires_evidence": true,
+    "requires_rollback": true
+  },
+  "lab_lane": {
+    "production_eligible": false,
+    "production_mutation_allowed": false,
+    "isolation_required": true,
+    "candidate_dimensions": [
+      "retrieval",
+      "decision-routing",
+      "memory",
+      "harness",
+      "skills",
+      "recovery",
+      "inference-runtime",
+      "worker"
+    ]
+  },
+  "promotion_pipeline": [
+    "IDEA",
+    "RESEARCH",
+    "ISOLATED_PROTOTYPE",
+    "BENCHMARK",
+    "SECURITY_REVIEW",
+    "CHAMPION_CHALLENGER",
+    "REGRESSION",
+    "ADOPT_OR_REJECT",
+    "VERSIONED_ARCHITECTURE_RELEASE"
+  ],
+  "promotion_policy": {
+    "champion_challenger": true,
+    "single_dimension_default": true,
+    "multi_dimension_change_requires_exception": true,
+    "holdout_or_disjoint_validation_required": true,
+    "security_review_required": true,
+    "regression_required": true,
+    "rollback_required": true,
+    "production_mutation_from_lab": false
+  },
+  "architecture_release_fields": [
+    "why",
+    "evidence",
+    "benchmark",
+    "risk",
+    "migration",
+    "rollback"
+  ],
+  "contracts": {
+    "artifact_admission": "../schemas/artifact-admission-record.schema.json",
+    "project_context_packet": "../schemas/project-context-packet.schema.json",
+    "eval_receipt": "../schemas/eval-receipt.schema.json"
+  }
+}

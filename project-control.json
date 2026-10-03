@@ -22,7 +22,11 @@
     "complexity_budget": "config/complexity-budget.json",
     "reversibility_classes": "config/reversibility-classes.json",
     "manual_work_register": "evidence/manual-work-register.json",
-    "lifecycle_evidence_graph": "evidence/lifecycle-evidence-graph.json"
+    "lifecycle_evidence_graph": "evidence/lifecycle-evidence-graph.json",
+    "ai_engineering_control_plane": "config/ai-engineering-control-plane.json",
+    "artifact_admission_schema": "schemas/artifact-admission-record.schema.json",
+    "project_context_packet_schema": "schemas/project-context-packet.schema.json",
+    "eval_receipt_schema": "schemas/eval-receipt.schema.json"
   },
   "quality": {
     "validator": "python3 scripts/validate_repository.py",
@@ -30,6 +34,7 @@
     "primary_invariant_validator": "python3 scripts/validate_primary_invariant.py",
     "supply_chain_validator": "python3 scripts/validate_supply_chain.py",
     "tests": "python3 -m unittest discover -s tests -v",
-    "release_requires_clean_validation": true
+    "release_requires_clean_validation": true,
+    "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py"
   }
 }

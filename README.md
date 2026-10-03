@@ -43,6 +43,7 @@ python3 scripts/validate_assurance_mapping.py
 python3 scripts/validate_readiness.py
 python3 scripts/validate_toolchain_lock.py
 python3 scripts/validate_supply_chain.py
+python3 scripts/validate_ai_control_plane.py
 python3 -m unittest discover -s tests -v
 ```
 

@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Engineering Control Plane policy",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "architecture_family",
+    "canonical_principle",
+    "stable_lane",
+    "lab_lane",
+    "promotion_pipeline",
+    "promotion_policy",
+    "architecture_release_fields",
+    "contracts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "current",
+        "deprecated",
+        "archived"
+      ]
+    },
+    "architecture_family": {
+      "const": "ai-engineering-control-plane"
+    },
+    "canonical_principle": {
+      "type": "string",
+      "minLength": 20
+    },
+    "stable_lane": {
+      "type": "object"
+    },
+    "lab_lane": {
+      "type": "object"
+    },
+    "promotion_pipeline": {
+      "type": "array",
+      "minItems": 8,
+      "uniqueItems": true
+    },
+    "promotion_policy": {
+      "type": "object"
+    },
+    "architecture_release_fields": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true
+    },
+    "contracts": {
+      "type": "object"
+    }
+  },
+  "additionalProperties": false
+}

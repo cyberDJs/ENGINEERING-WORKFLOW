@@ -1,0 +1,205 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Artifact Admission Record",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "record_id",
+    "artifact",
+    "ownership",
+    "security",
+    "runtime",
+    "governance",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "artifact": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "source",
+        "revision",
+        "digest",
+        "license",
+        "format"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "enum": [
+            "model",
+            "dataset",
+            "skill",
+            "tool",
+            "runtime",
+            "adapter",
+            "benchmark",
+            "library",
+            "other"
+          ]
+        },
+        "source": {
+          "type": "string",
+          "minLength": 1
+        },
+        "revision": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "object",
+          "required": [
+            "algorithm",
+            "value"
+          ],
+          "properties": {
+            "algorithm": {
+              "const": "sha256"
+            },
+            "value": {
+              "type": "string",
+              "pattern": "^[a-f0-9]{64}$"
+            }
+          },
+          "additionalProperties": false
+        },
+        "license": {
+          "type": "string",
+          "minLength": 1
+        },
+        "format": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "ownership": {
+      "type": "object",
+      "required": [
+        "owner",
+        "project_scope"
+      ],
+      "properties": {
+        "owner": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_scope": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "security": {
+      "type": "object",
+      "required": [
+        "risk_class",
+        "executable_surface",
+        "trust_remote_code"
+      ],
+      "properties": {
+        "risk_class": {
+          "enum": [
+            "LOW",
+            "MEDIUM",
+            "HIGH",
+            "CRITICAL",
+            "UNKNOWN"
+          ]
+        },
+        "executable_surface": {
+          "type": "array",
+          "uniqueItems": true
+        },
+        "trust_remote_code": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "runtime": {
+      "type": "object",
+      "required": [
+        "engine",
+        "hardware_fit"
+      ],
+      "properties": {
+        "engine": {
+          "type": "string",
+          "minLength": 1
+        },
+        "hardware_fit": {
+          "enum": [
+            "FIT",
+            "CONSTRAINED",
+            "RESEARCH_ONLY",
+            "UNSUPPORTED",
+            "UNKNOWN"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "status",
+        "allowed_use",
+        "prohibited_use",
+        "eval_baseline_ref",
+        "rollback_ref"
+      ],
+      "properties": {
+        "status": {
+          "enum": [
+            "CANDIDATE",
+            "QUARANTINED",
+            "PILOT",
+            "ADMITTED",
+            "WATCH",
+            "REJECTED",
+            "DEPRECATED"
+          ]
+        },
+        "allowed_use": {
+          "type": "array",
+          "uniqueItems": true
+        },
+        "prohibited_use": {
+          "type": "array",
+          "uniqueItems": true
+        },
+        "eval_baseline_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "rollback_ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "additionalProperties": true
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1
+    }
+  },
+  "additionalProperties": false
+}

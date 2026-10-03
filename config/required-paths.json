@@ -118,6 +118,15 @@
     ".github/workflows/policy.yml",
     ".github/workflows/scorecard.yml",
     ".github/workflows/supply-chain.yml",
-    ".github/pull_request_template.md"
+    ".github/pull_request_template.md",
+    "architecture/AI_ENGINEERING_CONTROL_PLANE.md",
+    "config/ai-engineering-control-plane.json",
+    "schemas/ai-engineering-control-plane.schema.json",
+    "schemas/artifact-admission-record.schema.json",
+    "schemas/project-context-packet.schema.json",
+    "schemas/eval-receipt.schema.json",
+    "scripts/build_project_context_packet.py",
+    "scripts/validate_ai_control_plane.py",
+    "tests/test_ai_control_plane.py"
   ]
 }

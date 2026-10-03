@@ -15,6 +15,9 @@ All notable changes are recorded here. Versions follow Semantic Versioning.
 
 ### Added
 
+- AI Engineering Control Plane architecture with stable champion and isolated Architecture Lab lanes;
+- portable Artifact Admission Record, Project Context Packet and Eval Receipt schemas;
+- dependency-free AI control-plane validator, deterministic context-packet builder and regression tests;
 - deterministic reference artifact packaging and SHA-256 manifests;
 - CycloneDX SBOM generation and blocking vulnerability policy;
 - supply-chain evidence, provenance, keyless signing and identity-verification workflow;

@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Project Context Packet",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "packet_id",
+    "project",
+    "task",
+    "authority_sources",
+    "context_sources",
+    "constraints",
+    "build"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "packet_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "project": {
+      "type": "object",
+      "required": [
+        "id",
+        "path",
+        "branch",
+        "head",
+        "dirty"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "head": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{40}$"
+        },
+        "dirty": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    },
+    "task": {
+      "type": "object",
+      "required": [
+        "objective",
+        "mode",
+        "scope_in",
+        "scope_out"
+      ],
+      "properties": {
+        "objective": {
+          "type": "string",
+          "minLength": 3
+        },
+        "mode": {
+          "enum": [
+            "AUDIT",
+            "DESIGN",
+            "IMPLEMENT",
+            "VERIFY",
+            "RELEASE",
+            "VALIDATE",
+            "INCIDENT"
+          ]
+        },
+        "scope_in": {
+          "type": "array",
+          "minItems": 1
+        },
+        "scope_out": {
+          "type": "array"
+        }
+      },
+      "additionalProperties": true
+    },
+    "authority_sources": {
+      "type": "array",
+      "minItems": 1
+    },
+    "context_sources": {
+      "type": "array"
+    },
+    "constraints": {
+      "type": "object",
+      "required": [
+        "allowed_effects",
+        "prohibited_effects",
+        "secret_policy"
+      ],
+      "properties": {
+        "allowed_effects": {
+          "type": "array",
+          "uniqueItems": true
+        },
+        "prohibited_effects": {
+          "type": "array",
+          "uniqueItems": true
+        },
+        "secret_policy": {
+          "const": "no-secret-values"
+        }
+      },
+      "additionalProperties": true
+    },
+    "build": {
+      "type": "object",
+      "required": [
+        "builder",
+        "built_at",
+        "content_included"
+      ],
+      "properties": {
+        "builder": {
+          "type": "string",
+          "minLength": 1
+        },
+        "built_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "content_included": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

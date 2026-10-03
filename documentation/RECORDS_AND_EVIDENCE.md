@@ -3,8 +3,8 @@ id: EW-DOC-004
 title: Records and Evidence Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.1.0
-last-reviewed: 2026-07-24
+version: 0.2.0
+last-reviewed: 2026-10-03
 ---
 
 # Records and Evidence Standard
@@ -20,11 +20,18 @@ last-reviewed: 2026-07-24
 - Release Record;
 - Incident and Postmortem Record;
 - Handoff Record;
-- Exception Record.
+- Exception Record;
+- Artifact Admission Record;
+- Project Context Packet;
+- Eval Receipt.
+
+The three AI Engineering Control Plane records are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`.
 
 ## Evidence properties
 
 Evidence is attributable, timestamped, integrity-verifiable, linked to its subject, exportable and retained according to risk and obligation.
+
+AI architecture experiments additionally preserve champion and challenger identity, the single primary changed dimension by default, corpus identity, metric thresholds, regression results, security review, migration and rollback evidence.
 
 ## Recommended evidence bundle
 
@@ -36,6 +43,10 @@ EVIDENCE_BUNDLE/
 ├── baseline.json
 ├── change-set.json
 ├── verification/
+├── ai/
+│   ├── artifact-admission.json
+│   ├── project-context-packet.json
+│   └── eval-receipt.json
 ├── review/
 ├── release/
 └── SHA256SUMS
