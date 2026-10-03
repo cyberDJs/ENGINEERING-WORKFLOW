@@ -4,7 +4,7 @@ title: Changelog
 status: current
 owner: Eimy Herrer and Johny
 version: 0.7.0-rc.2
-last-reviewed: 2026-07-26
+last-reviewed: 2026-10-04
 ---
 
 # Changelog
@@ -22,6 +22,7 @@ All notable changes are recorded here. Versions follow Semantic Versioning.
 - hardened eval receipts requiring disjoint/holdout validation, explicit deltas, security review, regression evidence and rollback state;
 - portable Capability Mapping Record that binds admission/eval evidence to existing registry authorities without granting execution authority;
 - trust-aware Project Context Packet assembly from governed runtime sessions with Git-drift rejection and experimental-source exclusion;
+- deterministic Eval Fabric manifest and paired-run comparator with frozen case-set identity, critical-failure override, regression detection and no promotion authority;
 - deterministic reference artifact packaging and SHA-256 manifests;
 - CycloneDX SBOM generation and blocking vulnerability policy;
 - supply-chain evidence, provenance, keyless signing and identity-verification workflow;

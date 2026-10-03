@@ -127,6 +127,7 @@ def main() -> int:
         "project_context_packet_schema",
         "eval_receipt_schema",
         "capability_mapping_schema",
+        "evaluation_suite_schema",
     ):
         rel = control.get("control", {}).get(key)
         if not rel or not (ROOT / rel).is_file():
@@ -139,6 +140,7 @@ def main() -> int:
         "supply_chain_validator": "python3 scripts/validate_supply_chain.py",
         "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py",
         "trusted_context_builder": "python3 scripts/build_project_context_packet_from_session.py",
+        "eval_comparator": "python3 scripts/compare_evaluation_runs.py",
         "tests": "python3 -m unittest discover -s tests -v",
     }
     for key, expected in expected_quality.items():

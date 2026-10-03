@@ -76,7 +76,8 @@
         "artifact_admission_schema",
         "project_context_packet_schema",
         "eval_receipt_schema",
-        "capability_mapping_schema"
+        "capability_mapping_schema",
+        "evaluation_suite_schema"
       ],
       "additionalProperties": true
     },
@@ -90,7 +91,8 @@
         "tests",
         "release_requires_clean_validation",
         "ai_control_plane_validator",
-        "trusted_context_builder"
+        "trusted_context_builder",
+        "eval_comparator"
       ],
       "additionalProperties": true
     }

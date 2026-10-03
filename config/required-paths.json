@@ -129,6 +129,9 @@
     "scripts/validate_ai_control_plane.py",
     "tests/test_ai_control_plane.py",
     "schemas/capability-mapping-record.schema.json",
-    "scripts/build_project_context_packet_from_session.py"
+    "scripts/build_project_context_packet_from_session.py",
+    "schemas/evaluation-suite.schema.json",
+    "scripts/compare_evaluation_runs.py",
+    "tests/test_eval_fabric.py"
   ]
 }

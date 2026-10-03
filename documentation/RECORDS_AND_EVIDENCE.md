@@ -3,8 +3,8 @@ id: EW-DOC-004
 title: Records and Evidence Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.3.0
-last-reviewed: 2026-10-03
+version: 0.4.0
+last-reviewed: 2026-10-04
 ---
 
 # Records and Evidence Standard
@@ -24,9 +24,10 @@ last-reviewed: 2026-10-03
 - Artifact Admission Record;
 - Project Context Packet;
 - Eval Receipt;
-- Capability Mapping Record.
+- Capability Mapping Record;
+- Evaluation Suite Manifest and functional comparison result.
 
-The four AI Engineering Control Plane records are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`.
+The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority.
 
 ## Evidence properties
 
@@ -48,7 +49,9 @@ EVIDENCE_BUNDLE/
 │   ├── artifact-admission.json
 │   ├── project-context-packet.json
 │   ├── eval-receipt.json
-│   └── capability-mapping.json
+│   ├── capability-mapping.json
+│   ├── evaluation-suite.json
+│   └── evaluation-comparison.json
 ├── review/
 ├── release/
 └── SHA256SUMS

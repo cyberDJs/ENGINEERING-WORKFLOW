@@ -3,8 +3,8 @@ id: EW-OPS-005
 title: AI-Assisted Engineering Standard
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.4.0
-last-reviewed: 2026-10-03
+version: 0.5.0
+last-reviewed: 2026-10-04
 ---
 
 # AI-Assisted Engineering Standard
@@ -42,6 +42,14 @@ The portable schema is `../schemas/artifact-admission-record.schema.json`.
 Every material AI change compares an identified baseline with an identified candidate and records corpus identity, metrics, thresholds, delta, verdict, environment and evidence. Architecture challengers change one primary dimension at a time by default so improvement remains attributable.
 
 The portable schema is `../schemas/eval-receipt.schema.json`.
+
+## Eval Fabric
+
+Functional evaluations use a frozen Evaluation Suite Manifest plus paired baseline/candidate JSONL results. The manifest binds the exact case-set digest, case IDs, evaluator authority, metrics, thresholds and regression policy. `../scripts/compare_evaluation_runs.py` rejects case-set drift, duplicate or missing cases, severity drift and malformed metrics before comparison. Critical candidate failures override averages, and new regressions remain explicit.
+
+Eval Fabric is not a model runner and does not replace project-native QA or SKILLS evaluators. Existing harnesses produce the per-case evidence; the comparator normalizes their paired comparison. Its output is functional-only, records `promotion_authority=false`, and leaves security as `NOT_EVALUATED` until a separate security gate runs.
+
+The portable manifest schema is `../schemas/evaluation-suite.schema.json`.
 
 ## Capability Mapping
 

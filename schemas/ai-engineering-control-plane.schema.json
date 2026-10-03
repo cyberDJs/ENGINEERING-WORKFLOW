@@ -144,7 +144,8 @@
         "artifact_admission",
         "project_context_packet",
         "eval_receipt",
-        "capability_mapping"
+        "capability_mapping",
+        "evaluation_suite"
       ],
       "properties": {
         "artifact_admission": {
@@ -160,6 +161,10 @@
           "minLength": 1
         },
         "capability_mapping": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evaluation_suite": {
           "type": "string",
           "minLength": 1
         }

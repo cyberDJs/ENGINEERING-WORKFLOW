@@ -3,8 +3,8 @@ id: EW-ARCH-AI-001
 title: AI Engineering Control Plane
 status: proposed
 owner: Eimy Herrer and Johny
-version: 0.3.0
-last-reviewed: 2026-10-03
+version: 0.4.0
+last-reviewed: 2026-10-04
 ---
 
 # AI Engineering Control Plane
@@ -64,6 +64,7 @@ The first portable control-plane contracts are:
 2. Project Context Packet: project truth, authority, scoped context, constraints, Git baseline and provenance. A governed runtime session may be consumed by the trust-aware builder, which fails closed on Git drift and excludes experimental, historical, superseded and unknown architecture sources by default.
 3. Eval Receipt: baseline, candidate, corpus, metrics, thresholds, delta, verdict and evidence.
 4. Capability Mapping Record: evidence-backed mapping from an admitted capability to an existing registry authority and project-specific permission state. The mapping is a read model and never grants execution authority.
+5. Evaluation Suite Manifest: frozen case-set identity, evaluator authority, paired baseline/candidate requirements, metric thresholds and regression policy. `scripts/compare_evaluation_runs.py` only produces a functional comparison; it has no promotion authority and never substitutes for a separate security evaluation or Eval Receipt.
 
 Registry ownership stays with the existing domain authority. Voodoo-One owns its executable capability definitions and activations; CyberSKILLS owns skill discovery/trust/distribution state; SKILLS runtime owns skill/tool routing state. The AI Engineering Control Plane references those authorities rather than creating a competing registry.
 

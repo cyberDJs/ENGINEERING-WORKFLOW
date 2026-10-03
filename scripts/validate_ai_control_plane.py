@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HEX40 = re.compile(r"^[a-f0-9]{40}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
-RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping"}
+RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite"}
 ARTIFACT_TYPES = {"model", "dataset", "skill", "tool", "runtime", "adapter", "benchmark", "library", "other"}
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -323,6 +323,75 @@ def validate_capability_mapping(data: object) -> list[str]:
         errors.append("capability mapping must fail closed on missing binding")
     return errors
 
+def validate_evaluation_suite(data: object) -> list[str]:
+    errors: list[str] = []
+    suite = require_mapping(data, "suite", errors)
+    require_fields(suite, ("schema_version", "suite_id", "capability_class", "executor", "case_set", "comparison", "metrics", "regression_policy", "governance"), "suite", errors)
+    if suite.get("schema_version") != "1.0.0":
+        errors.append("suite.schema_version must be 1.0.0")
+    for field in ("suite_id", "capability_class"):
+        if not isinstance(suite.get(field), str) or not suite.get(field, "").strip():
+            errors.append(f"suite.{field} must be non-empty")
+    executor = require_mapping(suite.get("executor"), "executor", errors)
+    if executor.get("authority_type") not in {"SKILLS_CAPABILITY_EVALUATOR", "SPECIALIZED_HARNESS", "PROJECT_NATIVE", "OTHER"}:
+        errors.append("executor.authority_type is invalid")
+    if not isinstance(executor.get("ref"), str) or not executor.get("ref", "").strip():
+        errors.append("executor.ref must be non-empty")
+    case_set = require_mapping(suite.get("case_set"), "case_set", errors)
+    validate_sha256(case_set.get("digest"), "case_set.digest", errors)
+    case_ids = case_set.get("case_ids")
+    if not isinstance(case_ids, list) or not case_ids or not all(isinstance(x, str) and x for x in case_ids) or len(case_ids) != len(set(case_ids)):
+        errors.append("case_set.case_ids must be unique non-empty strings")
+    if case_set.get("validation_strategy") not in {"REGRESSION", "HOLDOUT", "DISJOINT"}:
+        errors.append("case_set.validation_strategy is invalid")
+    comparison = require_mapping(suite.get("comparison"), "comparison", errors)
+    for key in ("paired_case_ids", "baseline_required", "fail_on_case_set_mismatch"):
+        if comparison.get(key) is not True:
+            errors.append(f"comparison.{key} must be true")
+    metrics = suite.get("metrics")
+    if not isinstance(metrics, list) or not metrics:
+        errors.append("metrics must be non-empty")
+    else:
+        names: list[str] = []
+        for index, metric in enumerate(metrics):
+            metric = require_mapping(metric, f"metrics[{index}]", errors)
+            require_fields(metric, ("name", "field", "aggregation", "direction", "threshold"), f"metrics[{index}]", errors)
+            name = metric.get("name")
+            field = metric.get("field")
+            if not isinstance(name, str) or not name or not isinstance(field, str) or not field:
+                errors.append(f"metrics[{index}] name/field are required")
+            elif isinstance(name, str):
+                names.append(name)
+            if metric.get("aggregation") not in {"mean", "sum"}:
+                errors.append(f"metrics[{index}].aggregation is invalid")
+            if metric.get("direction") not in {"higher_is_better", "lower_is_better"}:
+                errors.append(f"metrics[{index}].direction is invalid")
+            threshold = require_mapping(metric.get("threshold"), f"metrics[{index}].threshold", errors)
+            if threshold.get("operator") not in {">=", "<=", ">", "<", "=="}:
+                errors.append(f"metrics[{index}].threshold.operator is invalid")
+            if not isinstance(threshold.get("value"), (int, float)) or isinstance(threshold.get("value"), bool):
+                errors.append(f"metrics[{index}].threshold.value must be numeric")
+        if len(names) != len(set(names)):
+            errors.append("metric names must be unique")
+    policy = require_mapping(suite.get("regression_policy"), "regression_policy", errors)
+    if policy.get("fail_on_candidate_critical") is not True:
+        errors.append("regression_policy.fail_on_candidate_critical must be true")
+    severities = policy.get("critical_severities")
+    if not isinstance(severities, list) or not severities or any(x not in {"critical", "high", "medium", "low", "info"} for x in severities):
+        errors.append("regression_policy.critical_severities is invalid")
+    if not isinstance(policy.get("max_new_failures"), int) or isinstance(policy.get("max_new_failures"), bool) or policy.get("max_new_failures", -1) < 0:
+        errors.append("regression_policy.max_new_failures must be non-negative integer")
+    if not isinstance(policy.get("no_pass_rate_regression"), bool):
+        errors.append("regression_policy.no_pass_rate_regression must be boolean")
+    governance = require_mapping(suite.get("governance"), "governance", errors)
+    if governance.get("functional_only") is not True:
+        errors.append("governance.functional_only must be true")
+    if governance.get("security_evaluation_separate") is not True:
+        errors.append("governance.security_evaluation_separate must be true")
+    if governance.get("promotion_authority") is not False:
+        errors.append("evaluation suite must not have promotion authority")
+    return errors
+
 def validate_policy(data: object) -> list[str]:
     errors: list[str] = []
     policy = require_mapping(data, "policy", errors)
@@ -358,6 +427,7 @@ def validate_policy(data: object) -> list[str]:
         "project_context_packet": "../schemas/project-context-packet.schema.json",
         "eval_receipt": "../schemas/eval-receipt.schema.json",
         "capability_mapping": "../schemas/capability-mapping-record.schema.json",
+        "evaluation_suite": "../schemas/evaluation-suite.schema.json",
     }
     if policy.get("contracts") != expected_contracts:
         errors.append("policy.contracts must bind the canonical portable schemas")
@@ -373,6 +443,8 @@ def validate_record(kind: str, data: object) -> list[str]:
         return validate_eval_receipt(data)
     if kind == "capability-mapping":
         return validate_capability_mapping(data)
+    if kind == "evaluation-suite":
+        return validate_evaluation_suite(data)
     return [f"unknown record kind: {kind}"]
 
 
@@ -386,8 +458,10 @@ def validate_repository_contract() -> list[str]:
         "schemas/project-context-packet.schema.json",
         "schemas/eval-receipt.schema.json",
         "schemas/capability-mapping-record.schema.json",
+        "schemas/evaluation-suite.schema.json",
         "scripts/build_project_context_packet.py",
         "scripts/build_project_context_packet_from_session.py",
+        "scripts/compare_evaluation_runs.py",
         "scripts/validate_ai_control_plane.py",
     ]
     for rel in required:
@@ -395,7 +469,7 @@ def validate_repository_contract() -> list[str]:
             errors.append(f"missing required AI control-plane file: {rel}")
     if errors:
         return errors
-    for rel in required[2:7]:
+    for rel in required[2:8]:
         schema = load(ROOT / rel)
         if not isinstance(schema, dict) or schema.get("type") != "object" or "$schema" not in schema:
             errors.append(f"{rel}: invalid schema envelope")
@@ -407,6 +481,7 @@ def validate_repository_contract() -> list[str]:
         "project_context_packet_schema": "schemas/project-context-packet.schema.json",
         "eval_receipt_schema": "schemas/eval-receipt.schema.json",
         "capability_mapping_schema": "schemas/capability-mapping-record.schema.json",
+        "evaluation_suite_schema": "schemas/evaluation-suite.schema.json",
     }
     control_section = control.get("control", {}) if isinstance(control, dict) else {}
     for key, expected in expected_control.items():
@@ -417,6 +492,8 @@ def validate_repository_contract() -> list[str]:
         errors.append("project-control.json quality.ai_control_plane_validator is missing")
     if quality.get("trusted_context_builder") != "python3 scripts/build_project_context_packet_from_session.py":
         errors.append("project-control.json quality.trusted_context_builder is missing")
+    if quality.get("eval_comparator") != "python3 scripts/compare_evaluation_runs.py":
+        errors.append("project-control.json quality.eval_comparator is missing")
     return errors
 
 
