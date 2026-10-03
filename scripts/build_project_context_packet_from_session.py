@@ -9,6 +9,9 @@ import sys
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Trust verification must not dirty the repository by creating local __pycache__ files.
+sys.dont_write_bytecode = True
+
 from build_project_context_packet import read_source, run_git
 
 TRUSTED_CONTEXT_STATUSES = {"CURRENT_CANONICAL", "CURRENT_SUPPORTING"}
