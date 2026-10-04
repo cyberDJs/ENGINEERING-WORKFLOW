@@ -28,9 +28,10 @@ last-reviewed: 2026-10-04
 - Evaluation Suite Manifest and functional comparison result;
 - Architecture Promotion Record;
 - Adversarial Review Suite and security-gate result;
-- AI Dependency Inventory Snapshot.
+- AI Dependency Inventory Snapshot;
+- External Authority Binding Record.
 
-The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority. Architecture Promotion Records bind the final `ADOPT | REJECT | WATCH` state to existing Decision/Release authority without granting protected-operation permission. Adversarial Review evidence remains distinct from functional evaluation and requires independent review before it can support a passing security gate. AI Dependency Inventory snapshots bind model/provider identity and data-boundary evidence without becoming activation authority.
+The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority. Architecture Promotion Records bind the final `ADOPT | REJECT | WATCH` state to existing Decision/Release authority without granting protected-operation permission. Adversarial Review evidence remains distinct from functional evaluation and requires independent review before it can support a passing security gate. AI Dependency Inventory snapshots bind model/provider identity and data-boundary evidence without becoming activation authority. External Authority Binding Records preserve read-only projections and exact upstream contract digests; they never substitute for authoritative GOVERDOCS ingest or Voodoo project-registry registration.
 
 ## Evidence properties
 
@@ -58,7 +59,10 @@ EVIDENCE_BUNDLE/
 │   ├── architecture-promotion.json
 │   ├── adversarial-review-suite.json
 │   ├── adversarial-review-result.json
-│   └── ai-dependency-inventory.json
+│   ├── ai-dependency-inventory.json
+│   ├── goverdocs-evidence-item.json
+│   ├── voodoo-project-descriptor.json
+│   └── external-authority-binding.json
 ├── review/
 ├── release/
 └── SHA256SUMS

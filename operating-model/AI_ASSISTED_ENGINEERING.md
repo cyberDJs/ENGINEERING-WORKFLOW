@@ -83,6 +83,12 @@ Stable architecture is the current evidence-backed champion. It is not assumed g
 
 Lab candidates have no production authority. Promotion follows research, isolated prototype, benchmark, security review, champion/challenger comparison, regression and explicit adopt/reject decision. The machine policy is `../config/ai-engineering-control-plane.json`.
 
+## External authority integration
+
+AI control-plane records may be projected into external canonical systems only through explicit adapters. The reference projection binds the exact upstream GOVERDOCS evidence schema and Voodoo project-registry contract by SHA-256 and emits read-only candidate records. A compatible projection is not an ingest, registration, approval or authority event. External writes require their own attributable authorization and must be performed by the owning system.
+
+The portable schema is `../schemas/external-authority-binding.schema.json`. The reference projection builder is `../scripts/build_external_authority_projection.py`.
+
 ## Controls
 
 - generated output is untrusted until validated;

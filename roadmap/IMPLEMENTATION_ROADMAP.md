@@ -57,7 +57,7 @@ last-reviewed: 2026-07-24
 - constrained task orchestrator;
 - deterministic validator and adversarial reviewer;
 - human authority gates;
-- GOVERDOCS/VOODOO evidence and project registry integration.
+- GOVERDOCS/VOODOO evidence and project registry integration through read-only contract projections; authoritative ingest/registration remains a separately governed adoption gate.
 
 ## Completion rule
 

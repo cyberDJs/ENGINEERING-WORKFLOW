@@ -81,7 +81,8 @@
         "architecture_promotion_schema",
         "adversarial_review_suite_schema",
         "ai_dependency_inventory_schema",
-        "constrained_task_plan_schema"
+        "constrained_task_plan_schema",
+        "external_authority_binding_schema"
       ],
       "additionalProperties": true
     },
@@ -98,7 +99,8 @@
         "trusted_context_builder",
         "eval_comparator",
         "adversarial_review_gate",
-        "constrained_task_planner"
+        "constrained_task_planner",
+        "external_authority_projection"
       ],
       "additionalProperties": true
     }

@@ -141,6 +141,9 @@
     "schemas/ai-dependency-inventory.schema.json",
     "tests/test_ai_dependency_inventory.py",
     "schemas/constrained-task-plan.schema.json",
-    "scripts/build_constrained_task_plan.py"
+    "scripts/build_constrained_task_plan.py",
+    "schemas/external-authority-binding.schema.json",
+    "scripts/build_external_authority_projection.py",
+    "tests/test_external_authority_integration.py"
   ]
 }

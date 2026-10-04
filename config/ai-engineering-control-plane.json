@@ -64,6 +64,7 @@
     "architecture_promotion": "../schemas/architecture-promotion-record.schema.json",
     "adversarial_review_suite": "../schemas/adversarial-review-suite.schema.json",
     "ai_dependency_inventory": "../schemas/ai-dependency-inventory.schema.json",
-    "constrained_task_plan": "../schemas/constrained-task-plan.schema.json"
+    "constrained_task_plan": "../schemas/constrained-task-plan.schema.json",
+    "external_authority_binding": "../schemas/external-authority-binding.schema.json"
   }
 }

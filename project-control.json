@@ -32,7 +32,8 @@
     "architecture_promotion_schema": "schemas/architecture-promotion-record.schema.json",
     "adversarial_review_suite_schema": "schemas/adversarial-review-suite.schema.json",
     "ai_dependency_inventory_schema": "schemas/ai-dependency-inventory.schema.json",
-    "constrained_task_plan_schema": "schemas/constrained-task-plan.schema.json"
+    "constrained_task_plan_schema": "schemas/constrained-task-plan.schema.json",
+    "external_authority_binding_schema": "schemas/external-authority-binding.schema.json"
   },
   "quality": {
     "validator": "python3 scripts/validate_repository.py",
@@ -45,6 +46,7 @@
     "trusted_context_builder": "python3 scripts/build_project_context_packet_from_session.py",
     "eval_comparator": "python3 scripts/compare_evaluation_runs.py",
     "adversarial_review_gate": "python3 scripts/evaluate_adversarial_results.py",
-    "constrained_task_planner": "python3 scripts/build_constrained_task_plan.py"
+    "constrained_task_planner": "python3 scripts/build_constrained_task_plan.py",
+    "external_authority_projection": "python3 scripts/build_external_authority_projection.py"
   }
 }
