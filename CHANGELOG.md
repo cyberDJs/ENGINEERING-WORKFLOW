@@ -1,3 +1,4 @@
+- Add a deterministic offline release promotion/rollback rehearsal with immutable candidate identity and explicit no-production-authority boundaries.
 ---
 id: EW-CHANGELOG
 title: Changelog

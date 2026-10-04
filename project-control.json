@@ -50,6 +50,7 @@
     "constrained_task_planner": "python3 scripts/build_constrained_task_plan.py",
     "external_authority_projection": "python3 scripts/build_external_authority_projection.py",
     "external_authority_adoption_verifier": "python3 scripts/verify_external_authority_adoption.py",
-    "incident_exercise_runner": "python3 scripts/run_incident_exercise.py --output <receipt.json>"
+    "incident_exercise_runner": "python3 scripts/run_incident_exercise.py --output <receipt.json>",
+    "release_rehearsal_runner": "python3 scripts/run_release_rehearsal.py --output <receipt.json>"
   }
 }

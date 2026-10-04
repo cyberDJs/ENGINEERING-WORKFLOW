@@ -103,7 +103,8 @@
         "constrained_task_planner",
         "external_authority_projection",
         "external_authority_adoption_verifier",
-        "incident_exercise_runner"
+        "incident_exercise_runner",
+        "release_rehearsal_runner"
       ],
       "additionalProperties": true
     }
