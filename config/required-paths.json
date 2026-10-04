@@ -153,6 +153,8 @@
     "evidence/incident-exercise-evidence.json",
     "evidence/ai-control-plane-gap015-evidence.json",
     "scripts/run_release_rehearsal.py",
-    "tests/test_release_rehearsal.py"
+    "tests/test_release_rehearsal.py",
+    "evidence/release-rehearsal-evidence.json",
+    "tests/test_release_gap011_evidence.py"
   ]
 }

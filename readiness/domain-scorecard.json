@@ -159,13 +159,14 @@
       "critical": true,
       "evidence": [
         "operating-model/RELEASE_AND_DEPLOYMENT.md",
-        "templates/RELEASE_RECORD.md"
+        "templates/RELEASE_RECORD.md",
+        "evidence/release-rehearsal-evidence.json"
       ],
-      "evidence_maturity": "DESIGNED",
+      "evidence_maturity": "IMPLEMENTED",
       "id": "release",
       "name": "Release and deployment",
       "owner": "Release Authority",
-      "score": 3.0,
+      "score": 7.0,
       "target": 9.0
     },
     {

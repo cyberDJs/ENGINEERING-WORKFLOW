@@ -138,16 +138,24 @@
       "title": "Portable adapters and reproducible project bootstrap are missing"
     },
     {
+      "blockers": [
+        "REAL_RELEASE_AUTHORITY_NOT_EXERCISED",
+        "AUTHORIZED_DEPLOYMENT_VERIFICATION_MISSING",
+        "INDEPENDENT_RELEASE_REVIEW_PENDING"
+      ],
       "closure_evidence": [
         "release record",
         "deployment verification",
         "rollback rehearsal"
       ],
       "domain": "release",
+      "evidence_refs": [
+        "evidence/release-rehearsal-evidence.json"
+      ],
       "id": "GAP-011",
       "owner": "Release Authority",
       "priority": "P0",
-      "status": "OPEN",
+      "status": "BLOCKED",
       "title": "No production-grade release candidate, promotion or rollback pipeline"
     },
     {

@@ -1,3 +1,4 @@
+- Record GAP-011 as IMPLEMENTED/BLOCKED after a verified offline immutable promotion and rollback rehearsal; real release authority and deployment verification remain required.
 - Add a deterministic offline release promotion/rollback rehearsal with immutable candidate identity and explicit no-production-authority boundaries.
 ---
 id: EW-CHANGELOG
