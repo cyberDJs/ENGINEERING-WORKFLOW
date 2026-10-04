@@ -122,13 +122,14 @@
       "critical": true,
       "evidence": [
         "decisions/ADR-0002-SBOM-FORMAT.md",
-        "config/open-source-components.json"
+        "config/open-source-components.json",
+        "evidence/supply-chain-assurance-evidence.json"
       ],
-      "evidence_maturity": "DESIGNED",
+      "evidence_maturity": "IMPLEMENTED",
       "id": "supply-chain",
       "name": "Software supply chain",
       "owner": "Technical Steward",
-      "score": 4.0,
+      "score": 7.0,
       "target": 9.0
     },
     {

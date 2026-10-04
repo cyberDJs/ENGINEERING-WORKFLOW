@@ -104,16 +104,25 @@
       "title": "Independent threat-led security review is missing"
     },
     {
+      "blockers": [
+        "MAIN_OR_TAG_ATTESTATION_NOT_EXECUTED",
+        "KEYLESS_SIGNATURE_VERIFICATION_NOT_EXECUTED",
+        "SIGNED_EVIDENCE_BUNDLE_MISSING",
+        "INDEPENDENT_SECURITY_RELEASE_REVIEW_PENDING"
+      ],
       "closure_evidence": [
         "CycloneDX SBOM",
         "provenance",
         "signature verification"
       ],
       "domain": "supply-chain",
+      "evidence_refs": [
+        "evidence/supply-chain-assurance-evidence.json"
+      ],
       "id": "GAP-009",
       "owner": "Release Authority",
       "priority": "P0",
-      "status": "OPEN",
+      "status": "BLOCKED",
       "title": "SBOM, provenance, verification and signing pipeline is absent"
     },
     {

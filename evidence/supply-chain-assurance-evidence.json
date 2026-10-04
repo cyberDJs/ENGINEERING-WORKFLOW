@@ -1,30 +1,29 @@
 {
-  "schema_version": 1,
-  "id": "EW-EV-SUPPLY-CHAIN-V0.6",
-  "version": "0.6.0-rc.1",
-  "status": "PR_VERIFIED_AWAITING_MAIN_ATTESTATION_AND_REVIEW",
-  "scope": "reference artifact packaging, CycloneDX SBOM, vulnerability gate, provenance, keyless signing and verification workflows",
-  "verified_at": "2026-07-24T12:11:53Z",
-  "verified_head": "075c9a89e44a21963441b98c9b7f786c99b3e816",
-  "workflow_evidence": {
-    "quality": {"run_id": 30092152268, "conclusion": "success"},
-    "policy": {"run_id": 30092152284, "conclusion": "success"},
-    "supply_chain_pr": {"run_id": 30092152601, "conclusion": "success"},
-    "artifact_id": 8596111681,
-    "artifact_digest": "sha256:b8e9a600ab37d6649a7ef2dcc9536df0d998d8e05319615989f1506ea7db227a",
-    "artifact_retention_until": "2026-08-23T12:11:53Z"
+  "claim": "Supply-chain build/SBOM/vulnerability/evidence pipeline is implemented and PR-verified with no implementation drift, but GAP-009 remains blocked because main/tag attestation, keyless signing verification, retained signed evidence, and independent acceptance are still missing.",
+  "closure_claim": false,
+  "continuity_verification": {
+    "current_head": "451edc4d5ff2ff9616c0c9db6f0630f13c4ab3e8",
+    "current_native_validator": "PASS",
+    "current_supply_chain_unit_tests": "3/3 PASS",
+    "historical_run_live_reverified": {
+      "attest_sign_verify": "skipped",
+      "build_scan": "success",
+      "run_id": 30092152601,
+      "verified_steps": [
+        "Validate supply-chain policy",
+        "Build deterministic reference artifact",
+        "Generate CycloneDX SBOM",
+        "Scan SBOM with blocking vulnerability policy",
+        "Independently validate artifact, SBOM and vulnerability report",
+        "Build portable evidence record"
+      ]
+    },
+    "implementation_unchanged_since_verified_head": true,
+    "supply_chain_drift_paths": [],
+    "verified_at": "2026-10-04T23:05:57.543193Z",
+    "verified_head": "075c9a89e44a21963441b98c9b7f786c99b3e816"
   },
-  "verified": [
-    "deterministic archive builder and regression test",
-    "SHA-256 manifest",
-    "CycloneDX SBOM generation",
-    "Grype high and critical vulnerability blocking",
-    "native unknown-severity and report validation",
-    "portable evidence record",
-    "immutable action-reference policy",
-    "OPA policy gate",
-    "PR signing authority correctly skipped"
-  ],
+  "id": "EW-EV-SUPPLY-CHAIN-V0.6",
   "implemented_not_yet_executed": [
     "OIDC-gated build provenance attestation on main or tag",
     "OIDC-gated SBOM attestation on main or tag",
@@ -42,5 +41,39 @@
     "successful main or tag attestation and signature verification",
     "retained signed evidence bundle",
     "independent security and release review"
-  ]
+  ],
+  "schema_version": 1,
+  "scope": "reference artifact packaging, CycloneDX SBOM, vulnerability gate, provenance, keyless signing and verification workflows",
+  "status": "IMPLEMENTED_BLOCKED_MAIN_TAG_ATTESTATION_AND_REVIEW",
+  "verified": [
+    "deterministic archive builder and regression test",
+    "SHA-256 manifest",
+    "CycloneDX SBOM generation",
+    "Grype high and critical vulnerability blocking",
+    "native unknown-severity and report validation",
+    "portable evidence record",
+    "immutable action-reference policy",
+    "OPA policy gate",
+    "PR signing authority correctly skipped"
+  ],
+  "verified_at": "2026-07-24T12:11:53Z",
+  "verified_head": "075c9a89e44a21963441b98c9b7f786c99b3e816",
+  "version": "0.6.0-rc.1",
+  "workflow_evidence": {
+    "artifact_digest": "sha256:b8e9a600ab37d6649a7ef2dcc9536df0d998d8e05319615989f1506ea7db227a",
+    "artifact_id": 8596111681,
+    "artifact_retention_until": "2026-08-23T12:11:53Z",
+    "policy": {
+      "conclusion": "success",
+      "run_id": 30092152284
+    },
+    "quality": {
+      "conclusion": "success",
+      "run_id": 30092152268
+    },
+    "supply_chain_pr": {
+      "conclusion": "success",
+      "run_id": 30092152601
+    }
+  }
 }
