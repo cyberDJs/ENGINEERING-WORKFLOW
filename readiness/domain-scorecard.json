@@ -7,19 +7,262 @@
   "world_class_ready": false,
   "score_policy": "every-applicable-domain-at-least-9.0; no-average-masking",
   "domains": [
-    {"id":"governance","name":"Governance and authority","applicable":true,"critical":false,"score":8.5,"target":9.0,"evidence_maturity":"VERIFIED","owner":"Project Steward","acceptance_authority":"joint governance review","evidence":["controls/catalog.json","profiles/catalog.json","governance/WORLD_CLASS_ASSURANCE_POLICY.md"],"blocking_gaps":["GAP-001","GAP-002"]},
-    {"id":"product","name":"Product engineering","applicable":true,"critical":false,"score":5.0,"target":9.0,"evidence_maturity":"DESIGNED","owner":"Product Steward","acceptance_authority":"Product Steward plus independent reviewer","evidence":["operating-model/ENGINEERING_LIFECYCLE.md","templates/PROJECT_RECORD.md"],"blocking_gaps":["GAP-003"]},
-    {"id":"architecture","name":"Architecture","applicable":true,"critical":false,"score":8.5,"target":9.0,"evidence_maturity":"VERIFIED","owner":"Technical Steward","acceptance_authority":"independent architecture reviewer","evidence":["architecture/DOMAIN_MODEL.md","documentation/ARCHITECTURE_DOCUMENTATION.md"],"blocking_gaps":["GAP-004"]},
-    {"id":"delivery","name":"Delivery flow","applicable":true,"critical":false,"score":6.0,"target":9.0,"evidence_maturity":"IMPLEMENTED","owner":"Delivery Owner","acceptance_authority":"Project Steward","evidence":["operating-model/ENGINEERING_LIFECYCLE.md","operating-model/RISK_AND_CHANGE_LANES.md"],"blocking_gaps":["GAP-005","GAP-013"]},
-    {"id":"quality","name":"Quality engineering","applicable":true,"critical":false,"score":8.5,"target":9.0,"evidence_maturity":"VERIFIED","owner":"Quality Authority","acceptance_authority":"independent quality reviewer","evidence":["operating-model/QUALITY_GATES.md",".github/workflows/quality.yml"],"blocking_gaps":["GAP-006"]},
-    {"id":"security","name":"Security engineering","applicable":true,"critical":true,"score":5.5,"target":9.0,"evidence_maturity":"IMPLEMENTED","owner":"Security Authority","acceptance_authority":"independent security reviewer","evidence":["operating-model/SECURITY_AND_COMPLIANCE.md","assurance/control-framework-mapping.json"],"blocking_gaps":["GAP-007","GAP-008"]},
-    {"id":"supply-chain","name":"Software supply chain","applicable":true,"critical":true,"score":4.0,"target":9.0,"evidence_maturity":"DESIGNED","owner":"Technical Steward","acceptance_authority":"Security and Release Authorities","evidence":["decisions/ADR-0002-SBOM-FORMAT.md","config/open-source-components.json"],"blocking_gaps":["GAP-009"]},
-    {"id":"platform","name":"Platform engineering and golden paths","applicable":true,"critical":false,"score":4.0,"target":9.0,"evidence_maturity":"DESIGNED","owner":"Platform Owner","acceptance_authority":"Technical Steward","evidence":["roadmap/OPEN_SOURCE_INTEGRATION_ROADMAP.md","controls/catalog.json"],"blocking_gaps":["GAP-010"]},
-    {"id":"release","name":"Release and deployment","applicable":true,"critical":true,"score":3.0,"target":9.0,"evidence_maturity":"DESIGNED","owner":"Release Authority","acceptance_authority":"independent release reviewer","evidence":["operating-model/RELEASE_AND_DEPLOYMENT.md","templates/RELEASE_RECORD.md"],"blocking_gaps":["GAP-011"]},
-    {"id":"operations","name":"Operations and SRE","applicable":true,"critical":true,"score":2.0,"target":9.0,"evidence_maturity":"DESIGNED","owner":"Operator","acceptance_authority":"Operational Readiness Authority","evidence":["operating-model/OPERATIONS_AND_SRE.md","templates/RUNBOOK.md"],"blocking_gaps":["GAP-012"]},
-    {"id":"documentation","name":"Documentation and knowledge","applicable":true,"critical":false,"score":8.5,"target":9.0,"evidence_maturity":"VERIFIED","owner":"Document Owner","acceptance_authority":"independent documentation reviewer","evidence":["documentation/DOCUMENTATION_ARCHITECTURE.md","scripts/validate_repository.py"],"blocking_gaps":["GAP-014"]},
-    {"id":"ai-engineering","name":"AI-assisted engineering","applicable":true,"critical":true,"score":5.0,"target":9.0,"evidence_maturity":"DESIGNED","owner":"Acceptance Authority","acceptance_authority":"Security and Human Acceptance Authorities","evidence":["operating-model/AI_ASSISTED_ENGINEERING.md","assurance/framework-catalog.json"],"blocking_gaps":["GAP-015"]},
-    {"id":"compliance","name":"Compliance and evidence","applicable":true,"critical":true,"score":7.0,"target":9.0,"evidence_maturity":"IMPLEMENTED","owner":"Compliance Owner","acceptance_authority":"independent compliance reviewer","evidence":["assurance/ASSURANCE_MAPPING_STANDARD.md","evidence/evidence-catalog.json"],"blocking_gaps":["GAP-016"]},
-    {"id":"incident","name":"Incident management","applicable":true,"critical":true,"score":3.0,"target":9.0,"evidence_maturity":"DESIGNED","owner":"Incident Commander","acceptance_authority":"Operational Readiness Authority","evidence":["operating-model/INCIDENT_MANAGEMENT.md","templates/POSTMORTEM.md"],"blocking_gaps":["GAP-017"]}
+    {
+      "id": "governance",
+      "name": "Governance and authority",
+      "applicable": true,
+      "critical": false,
+      "score": 8.5,
+      "target": 9.0,
+      "evidence_maturity": "VERIFIED",
+      "owner": "Project Steward",
+      "acceptance_authority": "joint governance review",
+      "evidence": [
+        "controls/catalog.json",
+        "profiles/catalog.json",
+        "governance/WORLD_CLASS_ASSURANCE_POLICY.md"
+      ],
+      "blocking_gaps": [
+        "GAP-001",
+        "GAP-002"
+      ]
+    },
+    {
+      "id": "product",
+      "name": "Product engineering",
+      "applicable": true,
+      "critical": false,
+      "score": 5.0,
+      "target": 9.0,
+      "evidence_maturity": "DESIGNED",
+      "owner": "Product Steward",
+      "acceptance_authority": "Product Steward plus independent reviewer",
+      "evidence": [
+        "operating-model/ENGINEERING_LIFECYCLE.md",
+        "templates/PROJECT_RECORD.md"
+      ],
+      "blocking_gaps": [
+        "GAP-003"
+      ]
+    },
+    {
+      "id": "architecture",
+      "name": "Architecture",
+      "applicable": true,
+      "critical": false,
+      "score": 8.5,
+      "target": 9.0,
+      "evidence_maturity": "VERIFIED",
+      "owner": "Technical Steward",
+      "acceptance_authority": "independent architecture reviewer",
+      "evidence": [
+        "architecture/DOMAIN_MODEL.md",
+        "documentation/ARCHITECTURE_DOCUMENTATION.md"
+      ],
+      "blocking_gaps": [
+        "GAP-004"
+      ]
+    },
+    {
+      "id": "delivery",
+      "name": "Delivery flow",
+      "applicable": true,
+      "critical": false,
+      "score": 6.0,
+      "target": 9.0,
+      "evidence_maturity": "IMPLEMENTED",
+      "owner": "Delivery Owner",
+      "acceptance_authority": "Project Steward",
+      "evidence": [
+        "operating-model/ENGINEERING_LIFECYCLE.md",
+        "operating-model/RISK_AND_CHANGE_LANES.md"
+      ],
+      "blocking_gaps": [
+        "GAP-005",
+        "GAP-013"
+      ]
+    },
+    {
+      "id": "quality",
+      "name": "Quality engineering",
+      "applicable": true,
+      "critical": false,
+      "score": 8.5,
+      "target": 9.0,
+      "evidence_maturity": "VERIFIED",
+      "owner": "Quality Authority",
+      "acceptance_authority": "independent quality reviewer",
+      "evidence": [
+        "operating-model/QUALITY_GATES.md",
+        ".github/workflows/quality.yml"
+      ],
+      "blocking_gaps": [
+        "GAP-006"
+      ]
+    },
+    {
+      "id": "security",
+      "name": "Security engineering",
+      "applicable": true,
+      "critical": true,
+      "score": 5.5,
+      "target": 9.0,
+      "evidence_maturity": "IMPLEMENTED",
+      "owner": "Security Authority",
+      "acceptance_authority": "independent security reviewer",
+      "evidence": [
+        "operating-model/SECURITY_AND_COMPLIANCE.md",
+        "assurance/control-framework-mapping.json"
+      ],
+      "blocking_gaps": [
+        "GAP-007",
+        "GAP-008"
+      ]
+    },
+    {
+      "id": "supply-chain",
+      "name": "Software supply chain",
+      "applicable": true,
+      "critical": true,
+      "score": 4.0,
+      "target": 9.0,
+      "evidence_maturity": "DESIGNED",
+      "owner": "Technical Steward",
+      "acceptance_authority": "Security and Release Authorities",
+      "evidence": [
+        "decisions/ADR-0002-SBOM-FORMAT.md",
+        "config/open-source-components.json"
+      ],
+      "blocking_gaps": [
+        "GAP-009"
+      ]
+    },
+    {
+      "id": "platform",
+      "name": "Platform engineering and golden paths",
+      "applicable": true,
+      "critical": false,
+      "score": 4.0,
+      "target": 9.0,
+      "evidence_maturity": "DESIGNED",
+      "owner": "Platform Owner",
+      "acceptance_authority": "Technical Steward",
+      "evidence": [
+        "roadmap/OPEN_SOURCE_INTEGRATION_ROADMAP.md",
+        "controls/catalog.json"
+      ],
+      "blocking_gaps": [
+        "GAP-010"
+      ]
+    },
+    {
+      "id": "release",
+      "name": "Release and deployment",
+      "applicable": true,
+      "critical": true,
+      "score": 3.0,
+      "target": 9.0,
+      "evidence_maturity": "DESIGNED",
+      "owner": "Release Authority",
+      "acceptance_authority": "independent release reviewer",
+      "evidence": [
+        "operating-model/RELEASE_AND_DEPLOYMENT.md",
+        "templates/RELEASE_RECORD.md"
+      ],
+      "blocking_gaps": [
+        "GAP-011"
+      ]
+    },
+    {
+      "id": "operations",
+      "name": "Operations and SRE",
+      "applicable": true,
+      "critical": true,
+      "score": 2.0,
+      "target": 9.0,
+      "evidence_maturity": "DESIGNED",
+      "owner": "Operator",
+      "acceptance_authority": "Operational Readiness Authority",
+      "evidence": [
+        "operating-model/OPERATIONS_AND_SRE.md",
+        "templates/RUNBOOK.md"
+      ],
+      "blocking_gaps": [
+        "GAP-012"
+      ]
+    },
+    {
+      "id": "documentation",
+      "name": "Documentation and knowledge",
+      "applicable": true,
+      "critical": false,
+      "score": 8.5,
+      "target": 9.0,
+      "evidence_maturity": "VERIFIED",
+      "owner": "Document Owner",
+      "acceptance_authority": "independent documentation reviewer",
+      "evidence": [
+        "documentation/DOCUMENTATION_ARCHITECTURE.md",
+        "scripts/validate_repository.py"
+      ],
+      "blocking_gaps": [
+        "GAP-014"
+      ]
+    },
+    {
+      "id": "ai-engineering",
+      "name": "AI-assisted engineering",
+      "applicable": true,
+      "critical": true,
+      "score": 5.0,
+      "target": 9.0,
+      "evidence_maturity": "DESIGNED",
+      "owner": "Acceptance Authority",
+      "acceptance_authority": "Security and Human Acceptance Authorities",
+      "evidence": [
+        "operating-model/AI_ASSISTED_ENGINEERING.md",
+        "assurance/framework-catalog.json"
+      ],
+      "blocking_gaps": [
+        "GAP-015"
+      ]
+    },
+    {
+      "id": "compliance",
+      "name": "Compliance and evidence",
+      "applicable": true,
+      "critical": true,
+      "score": 7.0,
+      "target": 9.0,
+      "evidence_maturity": "IMPLEMENTED",
+      "owner": "Compliance Owner",
+      "acceptance_authority": "independent compliance reviewer",
+      "evidence": [
+        "assurance/ASSURANCE_MAPPING_STANDARD.md",
+        "evidence/evidence-catalog.json"
+      ],
+      "blocking_gaps": [
+        "GAP-016"
+      ]
+    },
+    {
+      "id": "incident",
+      "name": "Incident management",
+      "applicable": true,
+      "critical": true,
+      "score": 8.5,
+      "target": 9.0,
+      "evidence_maturity": "VERIFIED",
+      "owner": "Incident Commander",
+      "acceptance_authority": "Operational Readiness Authority",
+      "evidence": [
+        "operating-model/INCIDENT_MANAGEMENT.md",
+        "templates/POSTMORTEM.md",
+        "evidence/incident-exercise-evidence.json"
+      ],
+      "blocking_gaps": [
+        "GAP-017"
+      ]
+    }
   ]
 }

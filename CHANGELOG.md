@@ -12,6 +12,7 @@ last-reviewed: 2026-10-04
 All notable changes are recorded here. Versions follow Semantic Versioning.
 
 ## [Unreleased]
+- Add deterministic isolated incident rehearsal for toolchain-policy drift, recovery, timeline evidence, and corrective-action verification.
 
 ### Added
 

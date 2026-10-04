@@ -102,7 +102,8 @@
         "adversarial_review_gate",
         "constrained_task_planner",
         "external_authority_projection",
-        "external_authority_adoption_verifier"
+        "external_authority_adoption_verifier",
+        "incident_exercise_runner"
       ],
       "additionalProperties": true
     }

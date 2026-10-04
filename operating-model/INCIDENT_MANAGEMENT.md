@@ -34,6 +34,10 @@ Every incident records detection, declaration, containment, mitigation, recovery
 
 Blameless does not mean accountability-free. The postmortem identifies contributing system conditions, missing controls, decision quality and corrective actions with owners and due states.
 
+## Reference exercise
+
+`scripts/run_incident_exercise.py` performs a bounded local rehearsal of unsafe toolchain-policy drift. It mutates only a temporary lab copy, requires fail-closed detection, restores the exact baseline bytes, re-runs validation, and emits a machine-readable timeline receipt. The exercise grants no emergency, execution, deployment or release authority.
+
 ## Emergency change
 
 Emergency changes still require identity, baseline, limited scope, recovery plan and retrospective reconciliation.
