@@ -29,9 +29,10 @@ last-reviewed: 2026-10-04
 - Architecture Promotion Record;
 - Adversarial Review Suite and security-gate result;
 - AI Dependency Inventory Snapshot;
-- External Authority Binding Record.
+- External Authority Binding Record;
+- External Authority Adoption Record.
 
-The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority. Architecture Promotion Records bind the final `ADOPT | REJECT | WATCH` state to existing Decision/Release authority without granting protected-operation permission. Adversarial Review evidence remains distinct from functional evaluation and requires independent review before it can support a passing security gate. AI Dependency Inventory snapshots bind model/provider identity and data-boundary evidence without becoming activation authority. External Authority Binding Records preserve read-only projections and exact upstream contract digests; they never substitute for authoritative GOVERDOCS ingest or Voodoo project-registry registration.
+The AI Engineering Control Plane records and Evaluation Suite Manifest are defined by JSON Schema in `../schemas/` and validated by `../scripts/validate_ai_control_plane.py`. Functional baseline/candidate comparisons are produced by `../scripts/compare_evaluation_runs.py`; they do not carry security or promotion authority. Architecture Promotion Records bind the final `ADOPT | REJECT | WATCH` state to existing Decision/Release authority without granting protected-operation permission. Adversarial Review evidence remains distinct from functional evaluation and requires independent review before it can support a passing security gate. AI Dependency Inventory snapshots bind model/provider identity and data-boundary evidence without becoming activation authority. External Authority Binding Records preserve read-only projections and exact upstream contract digests; they never substitute for authoritative GOVERDOCS ingest or Voodoo project-registry registration. External Authority Adoption Records verify those external states read-only against the actual GOVERDOCS Git workspace and Voodoo registry database; `BOUND` is evidence of registration/ingest only and grants no execution or release authority.
 
 ## Evidence properties
 
@@ -62,7 +63,8 @@ EVIDENCE_BUNDLE/
 │   ├── ai-dependency-inventory.json
 │   ├── goverdocs-evidence-item.json
 │   ├── voodoo-project-descriptor.json
-│   └── external-authority-binding.json
+│   ├── external-authority-binding.json
+│   └── external-authority-adoption.json
 ├── review/
 ├── release/
 └── SHA256SUMS

@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HEX40 = re.compile(r"^[a-f0-9]{40}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
-RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite", "architecture-promotion", "adversarial-review-suite", "ai-dependency-inventory", "constrained-task-plan", "external-authority-binding"}
+RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite", "architecture-promotion", "adversarial-review-suite", "ai-dependency-inventory", "constrained-task-plan", "external-authority-binding", "external-authority-adoption"}
 ARTIFACT_TYPES = {"model", "dataset", "skill", "tool", "runtime", "adapter", "benchmark", "library", "other"}
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -648,6 +648,50 @@ def validate_external_authority_binding(data: object) -> list[str]:
     if not isinstance(evidence, list) or not evidence or not all(isinstance(x, str) and x.strip() for x in evidence) or len(evidence) != len(set(evidence)): errors.append("evidence must be unique non-empty strings")
     return errors
 
+def validate_external_authority_adoption(data: object) -> list[str]:
+    errors: list[str] = []
+    record = require_mapping(data, "external_authority_adoption", errors)
+    require_fields(record, ("schema_version", "record_id", "binding_ref", "binding_digest", "subject", "goverdocs", "voodoo_project_registry", "adoption_status", "blockers", "governance", "evidence"), "external_authority_adoption", errors)
+    if record.get("schema_version") != "1.0.0": errors.append("external_authority_adoption.schema_version must be 1.0.0")
+    if not isinstance(record.get("record_id"), str) or len(record.get("record_id", "").strip()) < 3: errors.append("external_authority_adoption.record_id must be meaningful")
+    if not isinstance(record.get("binding_ref"), str) or not record.get("binding_ref", "").strip(): errors.append("binding_ref must be non-empty")
+    validate_sha256(record.get("binding_digest"), "binding_digest", errors)
+    subject = require_mapping(record.get("subject"), "subject", errors)
+    require_fields(subject, ("project_id", "repository", "head"), "subject", errors)
+    if not isinstance(subject.get("project_id"), str) or not subject.get("project_id", "").strip(): errors.append("subject.project_id must be non-empty")
+    repository = subject.get("repository")
+    if not isinstance(repository, str) or repository.count("/") != 1 or any(c.isspace() for c in repository): errors.append("subject.repository must use owner/repository form")
+    if not isinstance(subject.get("head"), str) or not HEX40.match(subject.get("head", "")): errors.append("subject.head must be a 40-character git SHA")
+    gd = require_mapping(record.get("goverdocs"), "goverdocs", errors)
+    require_fields(gd, ("status", "authority_repository", "authority_head", "target", "write_grant_ref", "write_receipt_ref"), "goverdocs", errors)
+    if gd.get("status") not in {"BLOCKED", "INGESTED"}: errors.append("goverdocs.status is invalid")
+    if gd.get("status") == "INGESTED":
+        if not isinstance(gd.get("authority_repository"), str) or gd.get("authority_repository", "").count("/") != 1: errors.append("INGESTED GOVERDOCS requires authority_repository")
+        if not isinstance(gd.get("authority_head"), str) or not HEX40.match(gd.get("authority_head", "")): errors.append("INGESTED GOVERDOCS requires authority_head")
+        for key in ("target", "write_grant_ref", "write_receipt_ref"):
+            if not isinstance(gd.get(key), str) or not gd.get(key, "").strip(): errors.append(f"INGESTED GOVERDOCS requires {key}")
+    vr = require_mapping(record.get("voodoo_project_registry"), "voodoo_project_registry", errors)
+    require_fields(vr, ("status", "database_ref", "registry_key", "audit_action"), "voodoo_project_registry", errors)
+    if vr.get("status") not in {"BLOCKED", "REGISTERED"}: errors.append("voodoo_project_registry.status is invalid")
+    if vr.get("status") == "REGISTERED":
+        for key in ("database_ref", "registry_key", "audit_action"):
+            if not isinstance(vr.get(key), str) or not vr.get(key, "").strip(): errors.append(f"REGISTERED Voodoo project requires {key}")
+    status = record.get("adoption_status")
+    if status not in {"BLOCKED", "BOUND"}: errors.append("adoption_status is invalid")
+    blockers = record.get("blockers")
+    if not isinstance(blockers, list) or not all(isinstance(x, str) and x.strip() for x in blockers) or len(blockers) != len(set(blockers)): errors.append("blockers must be unique non-empty strings")
+    if status == "BOUND":
+        if blockers: errors.append("BOUND adoption must have no blockers")
+        if gd.get("status") != "INGESTED" or vr.get("status") != "REGISTERED": errors.append("BOUND requires GOVERDOCS INGESTED and Voodoo REGISTERED")
+    if status == "BLOCKED" and (not isinstance(blockers, list) or not blockers): errors.append("BLOCKED adoption requires blockers")
+    gov = require_mapping(record.get("governance"), "governance", errors)
+    expected = {"fail_closed": True, "record_grants_execution": False, "record_grants_release": False, "external_authorities_remain_canonical": True}
+    for key, value in expected.items():
+        if gov.get(key) is not value: errors.append(f"governance.{key} must be {value}")
+    evidence = record.get("evidence")
+    if not isinstance(evidence, list) or not evidence or not all(isinstance(x, str) and x.strip() for x in evidence) or len(evidence) != len(set(evidence)): errors.append("evidence must be unique non-empty strings")
+    return errors
+
 def validate_evaluation_suite(data: object) -> list[str]:
     errors: list[str] = []
     suite = require_mapping(data, "suite", errors)
@@ -758,6 +802,7 @@ def validate_policy(data: object) -> list[str]:
         "ai_dependency_inventory": "../schemas/ai-dependency-inventory.schema.json",
         "constrained_task_plan": "../schemas/constrained-task-plan.schema.json",
         "external_authority_binding": "../schemas/external-authority-binding.schema.json",
+        "external_authority_adoption": "../schemas/external-authority-adoption.schema.json",
     }
     if policy.get("contracts") != expected_contracts:
         errors.append("policy.contracts must bind the canonical portable schemas")
@@ -785,6 +830,8 @@ def validate_record(kind: str, data: object) -> list[str]:
         return validate_constrained_task_plan(data)
     if kind == "external-authority-binding":
         return validate_external_authority_binding(data)
+    if kind == "external-authority-adoption":
+        return validate_external_authority_adoption(data)
     return [f"unknown record kind: {kind}"]
 
 
@@ -804,11 +851,13 @@ def validate_repository_contract() -> list[str]:
         "schemas/ai-dependency-inventory.schema.json",
         "schemas/constrained-task-plan.schema.json",
         "schemas/external-authority-binding.schema.json",
+        "schemas/external-authority-adoption.schema.json",
         "scripts/build_project_context_packet.py",
         "scripts/build_project_context_packet_from_session.py",
         "scripts/compare_evaluation_runs.py",
         "scripts/build_constrained_task_plan.py",
         "scripts/build_external_authority_projection.py",
+        "scripts/verify_external_authority_adoption.py",
         "scripts/validate_ai_control_plane.py",
     ]
     for rel in required:
@@ -816,7 +865,7 @@ def validate_repository_contract() -> list[str]:
             errors.append(f"missing required AI control-plane file: {rel}")
     if errors:
         return errors
-    for rel in required[2:13]:
+    for rel in required[2:14]:
         schema = load(ROOT / rel)
         if not isinstance(schema, dict) or schema.get("type") != "object" or "$schema" not in schema:
             errors.append(f"{rel}: invalid schema envelope")
@@ -834,6 +883,7 @@ def validate_repository_contract() -> list[str]:
         "ai_dependency_inventory_schema": "schemas/ai-dependency-inventory.schema.json",
         "constrained_task_plan_schema": "schemas/constrained-task-plan.schema.json",
         "external_authority_binding_schema": "schemas/external-authority-binding.schema.json",
+        "external_authority_adoption_schema": "schemas/external-authority-adoption.schema.json",
     }
     control_section = control.get("control", {}) if isinstance(control, dict) else {}
     for key, expected in expected_control.items():
@@ -852,6 +902,8 @@ def validate_repository_contract() -> list[str]:
         errors.append("project-control.json quality.constrained_task_planner is missing")
     if quality.get("external_authority_projection") != "python3 scripts/build_external_authority_projection.py":
         errors.append("project-control.json quality.external_authority_projection is missing")
+    if quality.get("external_authority_adoption_verifier") != "python3 scripts/verify_external_authority_adoption.py":
+        errors.append("project-control.json quality.external_authority_adoption_verifier is missing")
     return errors
 
 

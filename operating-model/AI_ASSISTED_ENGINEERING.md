@@ -104,3 +104,4 @@ The portable schema is `../schemas/external-authority-binding.schema.json`. The 
 ## Metrics
 
 Measure accepted value, task success, regression retention, failure behavior, lead time, latency, cost, escaped defects, rework, review time and automation coverage. Do not use token count, generated lines or prompt count as primary performance metrics.
+External authority adoption must remain read-only from the control plane: GOVERDOCS acceptance is verified against its actual Git workspace and write receipt, while Voodoo project registration is verified against its actual durable registry and audit event. Observing `BOUND` never grants execution, merge, release or deployment authority.

@@ -71,6 +71,7 @@ The first portable control-plane contracts are:
 
 9. Constrained Task Plan: deterministic plan-only projection from a Project Context Packet, capability mapping and requested effects. Protected effects require attributable external authority; prohibited or out-of-context effects block. The plan never performs execution and never grants authority.
 10. External Authority Binding Record: read-only projection of control-plane evidence into the existing GOVERDOCS EvidenceItem contract and of project identity into the existing Voodoo project-descriptor contract. Schema/contract compatibility is not upstream acceptance: GOVERDOCS ingest and Voodoo registry registration remain separate governed operations. Until both exist, integration remains `PROJECTION_READY`, never `BOUND`.
+11. External Authority Adoption Record: fail-closed read-only verification that a GOVERDOCS write receipt is bound to the actual authority Git workspace and that the projected Voodoo project descriptor exists in the actual registry database with its audit event. `BOUND` means both external authority states were observed; it grants neither execution nor release authority.
 
 Registry ownership stays with the existing domain authority. Voodoo-One owns its executable capability definitions and activations; CyberSKILLS owns skill discovery/trust/distribution state; SKILLS runtime owns skill/tool routing state. The AI Engineering Control Plane references those authorities rather than creating a competing registry.
 

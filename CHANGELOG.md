@@ -15,6 +15,7 @@ All notable changes are recorded here. Versions follow Semantic Versioning.
 
 ### Added
 
+- Add fail-closed External Authority Adoption verification that binds GOVERDOCS receipts to the real Git authority workspace and Voodoo project registration to the durable registry plus audit event without granting execution or release authority.
 - AI Engineering Control Plane architecture with stable champion and isolated Architecture Lab lanes;
 - portable Artifact Admission Record, Project Context Packet and Eval Receipt schemas;
 - dependency-free AI control-plane validator, deterministic context-packet builder and regression tests;

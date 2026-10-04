@@ -144,6 +144,9 @@
     "scripts/build_constrained_task_plan.py",
     "schemas/external-authority-binding.schema.json",
     "scripts/build_external_authority_projection.py",
-    "tests/test_external_authority_integration.py"
+    "tests/test_external_authority_integration.py",
+    "schemas/external-authority-adoption.schema.json",
+    "scripts/verify_external_authority_adoption.py",
+    "tests/test_external_authority_adoption.py"
   ]
 }
