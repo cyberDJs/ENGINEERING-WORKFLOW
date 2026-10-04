@@ -159,6 +159,8 @@
     "assurance/engineering-workflow-threat-model.json",
     "assurance/ENGINEERING_WORKFLOW_THREAT_MODEL.md",
     "evidence/threat-model-evidence.json",
-    "tests/test_threat_model.py"
+    "tests/test_threat_model.py",
+    "scripts/run_reference_service_rehearsal.py",
+    "tests/test_operations_rehearsal.py"
   ]
 }

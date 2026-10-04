@@ -15,6 +15,7 @@ last-reviewed: 2026-10-04
 All notable changes are recorded here. Versions follow Semantic Versioning.
 
 ## [Unreleased]
+- Add localhost-only reference operated-service rehearsal with health/readiness probes, rehearsal SLI/SLO measurements, backup identity and deterministic restore verification.
 - Reclassify GAP-009 from design-only to implemented supply-chain controls while blocking closure on main/tag attestation, signing verification and independent acceptance.
 - Record current GAP-015 AI context, permission, evaluation and red-team evidence; advance AI engineering to IMPLEMENTED while blocking closure on independent security and human acceptance.
 - Record live GitHub verification for GAP-007 and mark policy enforcement BLOCKED until merge-level required checks or rulesets are active.

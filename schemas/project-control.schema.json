@@ -1,62 +1,10 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/project-control.schema.json",
-  "title": "ENGINEERING-WORKFLOW project control",
-  "type": "object",
-  "required": [
-    "schema_version",
-    "project",
-    "control",
-    "quality"
-  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
   "properties": {
-    "schema_version": {
-      "const": 1
-    },
-    "project": {
-      "type": "object",
-      "required": [
-        "id",
-        "name",
-        "status",
-        "product_owner",
-        "technical_owner"
-      ],
-      "properties": {
-        "id": {
-          "type": "string",
-          "minLength": 1
-        },
-        "name": {
-          "type": "string",
-          "minLength": 1
-        },
-        "status": {
-          "enum": [
-            "concept",
-            "discovery",
-            "defined",
-            "building",
-            "validating",
-            "operating",
-            "maintenance",
-            "retired",
-            "archived"
-          ]
-        },
-        "product_owner": {
-          "type": "string",
-          "minLength": 1
-        },
-        "technical_owner": {
-          "type": "string",
-          "minLength": 1
-        }
-      },
-      "additionalProperties": true
-    },
     "control": {
-      "type": "object",
+      "additionalProperties": true,
       "required": [
         "version",
         "canonical_repository",
@@ -85,10 +33,52 @@
         "external_authority_binding_schema",
         "external_authority_adoption_schema"
       ],
-      "additionalProperties": true
+      "type": "object"
+    },
+    "project": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "product_owner": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "concept",
+            "discovery",
+            "defined",
+            "building",
+            "validating",
+            "operating",
+            "maintenance",
+            "retired",
+            "archived"
+          ]
+        },
+        "technical_owner": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "status",
+        "product_owner",
+        "technical_owner"
+      ],
+      "type": "object"
     },
     "quality": {
-      "type": "object",
+      "additionalProperties": true,
       "required": [
         "validator",
         "constitutional_validator",
@@ -106,8 +96,19 @@
         "incident_exercise_runner",
         "release_rehearsal_runner"
       ],
-      "additionalProperties": true
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1
     }
   },
-  "additionalProperties": true
+  "required": [
+    "schema_version",
+    "project",
+    "control",
+    "quality",
+    "operations_rehearsal_runner"
+  ],
+  "title": "ENGINEERING-WORKFLOW project control",
+  "type": "object"
 }
