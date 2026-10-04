@@ -131,6 +131,7 @@ def main() -> int:
         "architecture_promotion_schema",
         "adversarial_review_suite_schema",
         "ai_dependency_inventory_schema",
+        "constrained_task_plan_schema",
     ):
         rel = control.get("control", {}).get(key)
         if not rel or not (ROOT / rel).is_file():
@@ -145,6 +146,7 @@ def main() -> int:
         "trusted_context_builder": "python3 scripts/build_project_context_packet_from_session.py",
         "eval_comparator": "python3 scripts/compare_evaluation_runs.py",
         "adversarial_review_gate": "python3 scripts/evaluate_adversarial_results.py",
+        "constrained_task_planner": "python3 scripts/build_constrained_task_plan.py",
         "tests": "python3 -m unittest discover -s tests -v",
     }
     for key, expected in expected_quality.items():

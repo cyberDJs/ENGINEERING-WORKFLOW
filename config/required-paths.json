@@ -139,6 +139,8 @@
     "scripts/evaluate_adversarial_results.py",
     "tests/test_adversarial_review.py",
     "schemas/ai-dependency-inventory.schema.json",
-    "tests/test_ai_dependency_inventory.py"
+    "tests/test_ai_dependency_inventory.py",
+    "schemas/constrained-task-plan.schema.json",
+    "scripts/build_constrained_task_plan.py"
   ]
 }

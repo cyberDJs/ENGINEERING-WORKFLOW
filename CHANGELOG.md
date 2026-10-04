@@ -26,6 +26,7 @@ All notable changes are recorded here. Versions follow Semantic Versioning.
 - fail-closed Architecture Promotion Record linking `ADOPT | REJECT | WATCH` to evaluation, security, regression, rollback and existing Decision/Release authority without granting protected operations;
 - deterministic adversarial-review suite and security gate with frozen threat/case identity, critical-effect hard stops, independent-review requirement and no promotion authority;
 - read-only AI model/provider dependency inventory with exact admission identity, data/network/retention boundaries and no activation authority;
+- constrained task-plan contract and plan-only builder that fail closed on prohibited effects and require attributable external authority for protected effects;
 - deterministic reference artifact packaging and SHA-256 manifests;
 - CycloneDX SBOM generation and blocking vulnerability policy;
 - supply-chain evidence, provenance, keyless signing and identity-verification workflow;

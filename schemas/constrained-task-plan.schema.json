@@ -1,0 +1,137 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/constrained-task-plan.schema.json",
+  "title": "Constrained Task Plan",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "plan_id",
+    "project_context_ref",
+    "capability_mapping_ref",
+    "task",
+    "requested_effects",
+    "effect_decisions",
+    "status",
+    "governance",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "plan_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "project_context_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "capability_mapping_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "task": {
+      "type": "object",
+      "required": [
+        "objective",
+        "mode"
+      ],
+      "properties": {
+        "objective": {
+          "type": "string",
+          "minLength": 3
+        },
+        "mode": {
+          "enum": [
+            "AUDIT",
+            "DESIGN",
+            "IMPLEMENT",
+            "VERIFY",
+            "RELEASE",
+            "VALIDATE",
+            "INCIDENT"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "requested_effects": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "effect_decisions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "effect",
+          "decision",
+          "authority_ref"
+        ],
+        "properties": {
+          "effect": {
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "ALLOW",
+              "APPROVAL_REQUIRED",
+              "DENY"
+            ]
+          },
+          "authority_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "status": {
+      "enum": [
+        "PLANNED",
+        "APPROVAL_REQUIRED",
+        "BLOCKED"
+      ]
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "plan_only",
+        "execution_performed",
+        "plan_grants_execution",
+        "fail_closed"
+      ],
+      "properties": {
+        "plan_only": {
+          "const": true
+        },
+        "execution_performed": {
+          "const": false
+        },
+        "plan_grants_execution": {
+          "const": false
+        },
+        "fail_closed": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    }
+  }
+}

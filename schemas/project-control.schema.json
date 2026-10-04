@@ -80,7 +80,8 @@
         "evaluation_suite_schema",
         "architecture_promotion_schema",
         "adversarial_review_suite_schema",
-        "ai_dependency_inventory_schema"
+        "ai_dependency_inventory_schema",
+        "constrained_task_plan_schema"
       ],
       "additionalProperties": true
     },
@@ -96,7 +97,8 @@
         "ai_control_plane_validator",
         "trusted_context_builder",
         "eval_comparator",
-        "adversarial_review_gate"
+        "adversarial_review_gate",
+        "constrained_task_planner"
       ],
       "additionalProperties": true
     }

@@ -69,6 +69,8 @@ The first portable control-plane contracts are:
 7. Adversarial Review Suite: frozen threat model and adversarial case-set identity plus a deterministic security gate over project-native or existing red-team harness output. Critical/high failures, unauthorized effects, secret exposure, privilege escalation or external effects block; a clean behavioral run remains `BLOCKED` until attributable independent review is complete. The gate has no promotion or production authority.
 8. AI Dependency Inventory Snapshot: read-only project inventory of model artifacts and provider/runtime boundaries, bound to exact admission references, revisions and digests plus data-transfer, retention, training-use and credential metadata. Unknown data boundaries block activation; the snapshot grants no activation, execution or release authority.
 
+9. Constrained Task Plan: deterministic plan-only projection from a Project Context Packet, capability mapping and requested effects. Protected effects require attributable external authority; prohibited or out-of-context effects block. The plan never performs execution and never grants authority.
+
 Registry ownership stays with the existing domain authority. Voodoo-One owns its executable capability definitions and activations; CyberSKILLS owns skill discovery/trust/distribution state; SKILLS runtime owns skill/tool routing state. The AI Engineering Control Plane references those authorities rather than creating a competing registry.
 
 The machine-readable operating policy is `../config/ai-engineering-control-plane.json`.

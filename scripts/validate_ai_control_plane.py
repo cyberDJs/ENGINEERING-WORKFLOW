@@ -11,7 +11,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 HEX40 = re.compile(r"^[a-f0-9]{40}$")
 HEX64 = re.compile(r"^[a-f0-9]{64}$")
-RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite", "architecture-promotion", "adversarial-review-suite", "ai-dependency-inventory"}
+RECORD_KINDS = {"artifact-admission", "project-context", "eval-receipt", "capability-mapping", "evaluation-suite", "architecture-promotion", "adversarial-review-suite", "ai-dependency-inventory", "constrained-task-plan"}
 ARTIFACT_TYPES = {"model", "dataset", "skill", "tool", "runtime", "adapter", "benchmark", "library", "other"}
 SECRET_PATTERNS = [
     re.compile(r"-----BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY-----"),
@@ -582,6 +582,39 @@ def validate_ai_dependency_inventory(data: object) -> list[str]:
     if not isinstance(evidence,list) or not evidence or not all(isinstance(x,str) and x.strip() for x in evidence) or len(evidence)!=len(set(evidence)): errors.append("evidence must be unique non-empty strings")
     return errors
 
+
+def validate_constrained_task_plan(data: object) -> list[str]:
+    errors: list[str] = []
+    plan = require_mapping(data, "plan", errors)
+    require_fields(plan, ("schema_version","plan_id","project_context_ref","capability_mapping_ref","task","requested_effects","effect_decisions","status","governance","evidence"), "plan", errors)
+    if plan.get("schema_version") != "1.0.0": errors.append("plan.schema_version must be 1.0.0")
+    if plan.get("status") not in {"PLANNED","APPROVAL_REQUIRED","BLOCKED"}: errors.append("plan.status is invalid")
+    requested = plan.get("requested_effects")
+    if not isinstance(requested, list) or not all(isinstance(x,str) and x for x in requested) or len(requested)!=len(set(requested)): errors.append("requested_effects must be unique strings")
+    decisions = plan.get("effect_decisions")
+    seen=set(); has_deny=False; has_approval=False
+    if not isinstance(decisions,list): errors.append("effect_decisions must be an array")
+    else:
+        for i,item in enumerate(decisions):
+            item=require_mapping(item,f"effect_decisions[{i}]",errors); require_fields(item,("effect","decision","authority_ref"),f"effect_decisions[{i}]",errors)
+            effect=item.get("effect"); decision=item.get("decision")
+            if not isinstance(effect,str) or not effect or effect in seen: errors.append(f"effect_decisions[{i}].effect must be unique non-empty")
+            else: seen.add(effect)
+            if decision not in {"ALLOW","APPROVAL_REQUIRED","DENY"}: errors.append(f"effect_decisions[{i}].decision is invalid")
+            if decision=="ALLOW" and effect in {"write","shell","git","network","deploy","release"} and (not isinstance(item.get("authority_ref"),str) or not item.get("authority_ref","").strip()): errors.append(f"effect_decisions[{i}] protected ALLOW requires authority_ref")
+            if decision=="DENY": has_deny=True
+            if decision=="APPROVAL_REQUIRED": has_approval=True
+    if isinstance(requested,list) and seen != set(requested): errors.append("effect_decisions must exactly cover requested_effects")
+    if has_deny and plan.get("status") != "BLOCKED": errors.append("DENY effect requires BLOCKED status")
+    if (not has_deny) and has_approval and plan.get("status") != "APPROVAL_REQUIRED": errors.append("approval-required effects require APPROVAL_REQUIRED status")
+    gov=require_mapping(plan.get("governance"),"governance",errors)
+    expected={"plan_only":True,"execution_performed":False,"plan_grants_execution":False,"fail_closed":True}
+    for k,v in expected.items():
+        if gov.get(k) is not v: errors.append(f"governance.{k} must be {v}")
+    ev=plan.get("evidence")
+    if not isinstance(ev,list) or not ev or not all(isinstance(x,str) and x.strip() for x in ev): errors.append("evidence must be non-empty strings")
+    return errors
+
 def validate_evaluation_suite(data: object) -> list[str]:
     errors: list[str] = []
     suite = require_mapping(data, "suite", errors)
@@ -690,6 +723,7 @@ def validate_policy(data: object) -> list[str]:
         "architecture_promotion": "../schemas/architecture-promotion-record.schema.json",
         "adversarial_review_suite": "../schemas/adversarial-review-suite.schema.json",
         "ai_dependency_inventory": "../schemas/ai-dependency-inventory.schema.json",
+        "constrained_task_plan": "../schemas/constrained-task-plan.schema.json",
     }
     if policy.get("contracts") != expected_contracts:
         errors.append("policy.contracts must bind the canonical portable schemas")
@@ -713,6 +747,8 @@ def validate_record(kind: str, data: object) -> list[str]:
         return validate_adversarial_review_suite(data)
     if kind == "ai-dependency-inventory":
         return validate_ai_dependency_inventory(data)
+    if kind == "constrained-task-plan":
+        return validate_constrained_task_plan(data)
     return [f"unknown record kind: {kind}"]
 
 
@@ -730,9 +766,11 @@ def validate_repository_contract() -> list[str]:
         "schemas/architecture-promotion-record.schema.json",
         "schemas/adversarial-review-suite.schema.json",
         "schemas/ai-dependency-inventory.schema.json",
+        "schemas/constrained-task-plan.schema.json",
         "scripts/build_project_context_packet.py",
         "scripts/build_project_context_packet_from_session.py",
         "scripts/compare_evaluation_runs.py",
+        "scripts/build_constrained_task_plan.py",
         "scripts/validate_ai_control_plane.py",
     ]
     for rel in required:
@@ -740,7 +778,7 @@ def validate_repository_contract() -> list[str]:
             errors.append(f"missing required AI control-plane file: {rel}")
     if errors:
         return errors
-    for rel in required[2:11]:
+    for rel in required[2:12]:
         schema = load(ROOT / rel)
         if not isinstance(schema, dict) or schema.get("type") != "object" or "$schema" not in schema:
             errors.append(f"{rel}: invalid schema envelope")
@@ -756,6 +794,7 @@ def validate_repository_contract() -> list[str]:
         "architecture_promotion_schema": "schemas/architecture-promotion-record.schema.json",
         "adversarial_review_suite_schema": "schemas/adversarial-review-suite.schema.json",
         "ai_dependency_inventory_schema": "schemas/ai-dependency-inventory.schema.json",
+        "constrained_task_plan_schema": "schemas/constrained-task-plan.schema.json",
     }
     control_section = control.get("control", {}) if isinstance(control, dict) else {}
     for key, expected in expected_control.items():
@@ -770,6 +809,8 @@ def validate_repository_contract() -> list[str]:
         errors.append("project-control.json quality.eval_comparator is missing")
     if quality.get("adversarial_review_gate") != "python3 scripts/evaluate_adversarial_results.py":
         errors.append("project-control.json quality.adversarial_review_gate is missing")
+    if quality.get("constrained_task_planner") != "python3 scripts/build_constrained_task_plan.py":
+        errors.append("project-control.json quality.constrained_task_planner is missing")
     return errors
 
 
