@@ -36,3 +36,6 @@ The system aligns its secure-development outcomes with NIST SSDF 1.1 and tracks 
 ## Compliance mapping
 
 A compliance requirement must map to: control objective, implementation, owner, evidence source, frequency, exception process and retention. Evidence should be generated from normal delivery wherever possible.
+## Current project threat model
+
+`assurance/engineering-workflow-threat-model.json` is the canonical current threat model for this repository, with `assurance/ENGINEERING_WORKFLOW_THREAT_MODEL.md` as its human-readable summary. A locally implemented model is not independent acceptance; unresolved high residual risks remain blocking until the named authority and closure evidence exist.

@@ -1,3 +1,4 @@
+- Add the current repository threat model and mark GAP-008 implemented but blocked on independent security review.
 - Record GAP-011 as IMPLEMENTED/BLOCKED after a verified offline immutable promotion and rollback rehearsal; real release authority and deployment verification remain required.
 - Add a deterministic offline release promotion/rollback rehearsal with immutable candidate identity and explicit no-production-authority boundaries.
 ---

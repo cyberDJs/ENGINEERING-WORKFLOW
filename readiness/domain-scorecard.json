@@ -104,13 +104,15 @@
       "critical": true,
       "evidence": [
         "operating-model/SECURITY_AND_COMPLIANCE.md",
-        "assurance/control-framework-mapping.json"
+        "assurance/control-framework-mapping.json",
+        "assurance/engineering-workflow-threat-model.json",
+        "evidence/threat-model-evidence.json"
       ],
       "evidence_maturity": "IMPLEMENTED",
       "id": "security",
       "name": "Security engineering",
       "owner": "Security Authority",
-      "score": 5.5,
+      "score": 7.0,
       "target": 9.0
     },
     {

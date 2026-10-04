@@ -155,6 +155,10 @@
     "scripts/run_release_rehearsal.py",
     "tests/test_release_rehearsal.py",
     "evidence/release-rehearsal-evidence.json",
-    "tests/test_release_gap011_evidence.py"
+    "tests/test_release_gap011_evidence.py",
+    "assurance/engineering-workflow-threat-model.json",
+    "assurance/ENGINEERING_WORKFLOW_THREAT_MODEL.md",
+    "evidence/threat-model-evidence.json",
+    "tests/test_threat_model.py"
   ]
 }

@@ -92,15 +92,22 @@
       "title": "OPA or equivalent policy enforcement is not active"
     },
     {
+      "blockers": [
+        "INDEPENDENT_SECURITY_REVIEW_PENDING"
+      ],
       "closure_evidence": [
         "threat model",
         "independent security review"
       ],
       "domain": "security",
+      "evidence_refs": [
+        "assurance/engineering-workflow-threat-model.json",
+        "evidence/threat-model-evidence.json"
+      ],
       "id": "GAP-008",
       "owner": "Security Authority",
       "priority": "P0",
-      "status": "OPEN",
+      "status": "BLOCKED",
       "title": "Independent threat-led security review is missing"
     },
     {

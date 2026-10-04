@@ -1,0 +1,395 @@
+{
+  "actors": [
+    "project steward",
+    "authorized maintainer",
+    "pull-request contributor",
+    "GitHub Actions workload identity",
+    "third-party action/tool publisher",
+    "AI agent or model worker",
+    "external attacker",
+    "independent reviewer"
+  ],
+  "assets": [
+    {
+      "classification": "critical",
+      "id": "A1",
+      "name": "constitutional authority and governance integrity"
+    },
+    {
+      "classification": "critical",
+      "id": "A2",
+      "name": "default-branch source and review history"
+    },
+    {
+      "classification": "critical",
+      "id": "A3",
+      "name": "CI policy, workflow permissions, and execution identity"
+    },
+    {
+      "classification": "critical",
+      "id": "A4",
+      "name": "toolchain lock and executable provenance"
+    },
+    {
+      "classification": "critical",
+      "id": "A5",
+      "name": "release artifacts, SBOM, provenance and signatures"
+    },
+    {
+      "classification": "high",
+      "id": "A6",
+      "name": "readiness, evidence and acceptance records"
+    },
+    {
+      "classification": "high",
+      "id": "A7",
+      "name": "AI context, permission, evaluation and promotion records"
+    }
+  ],
+  "baseline_revision": "fa61885bac99476bab3dfe7f54334bcd1755cb32",
+  "id": "EW-TM-001",
+  "method": "STRIDE_PLUS_ABUSE_CASES",
+  "review": {
+    "accepted_residual_risk": false,
+    "independent_review_status": "PENDING",
+    "independent_reviewer_ref": null,
+    "internal_model_complete": true
+  },
+  "review_triggers": [
+    "constitutional or authority change",
+    "new protected operation",
+    "new CI signing identity",
+    "new external execution boundary",
+    "production deployment adapter",
+    "security incident or major control failure"
+  ],
+  "schema_version": 1,
+  "scope": {
+    "in": [
+      "repository governance and constitutions",
+      "Git/GitHub control plane",
+      "CI workflows and third-party actions",
+      "verified toolchain bootstrap",
+      "supply-chain artifact path",
+      "AI engineering control plane",
+      "readiness and evidence records",
+      "release and recovery controls"
+    ],
+    "out": [
+      "production application runtime not defined by this repository",
+      "third-party infrastructure not explicitly authorized for testing",
+      "active exploitation, DAST, fuzzing, load testing, and secret access"
+    ]
+  },
+  "status": "IMPLEMENTED_AWAITING_INDEPENDENT_REVIEW",
+  "testing_authority": {
+    "external_target_testing": false,
+    "local_synthetic_tests": true,
+    "production_exploitation": false,
+    "read_only_source_review": true,
+    "secrets_access": false
+  },
+  "threats": [
+    {
+      "assets": [
+        "A2",
+        "A3"
+      ],
+      "blockers": [
+        "GAP-007"
+      ],
+      "category": "Tampering/Elevation",
+      "controls": [
+        "constitutional validation",
+        "policy tests",
+        "workflow pinning"
+      ],
+      "id": "TM-01",
+      "impact": "critical",
+      "likelihood": "high",
+      "owner": "Security Authority",
+      "residual_risk": "HIGH",
+      "scenario": "A contributor or maintainer weakens policy/workflow controls and bypasses review on main.",
+      "verification": [
+        "tests/test_policy_enforcement_remote.py"
+      ]
+    },
+    {
+      "assets": [
+        "A3",
+        "A4"
+      ],
+      "blockers": [],
+      "category": "Supply chain",
+      "controls": [
+        "full action SHA pinning",
+        "platform/toolchain.lock.json",
+        "verified tool bootstrap",
+        "unverified execution denied"
+      ],
+      "id": "TM-02",
+      "impact": "critical",
+      "likelihood": "medium",
+      "owner": "Technical Steward",
+      "residual_risk": "MEDIUM",
+      "scenario": "A compromised or floating external action/tool executes unreviewed code.",
+      "verification": [
+        "scripts/validate_toolchain_lock.py",
+        "scripts/validate_supply_chain.py"
+      ]
+    },
+    {
+      "assets": [
+        "A3",
+        "A6",
+        "A7"
+      ],
+      "blockers": [],
+      "category": "Information disclosure",
+      "controls": [
+        "SECURITY.md baseline",
+        "provenance-only context default",
+        "secret values prohibited in inventory",
+        "least-privilege workflow permissions"
+      ],
+      "id": "TM-03",
+      "impact": "critical",
+      "likelihood": "medium",
+      "owner": "Security Authority",
+      "residual_risk": "MEDIUM",
+      "scenario": "Secrets or sensitive data enter source, logs, evidence, or AI context.",
+      "verification": [
+        "tests/test_ai_dependency_inventory.py",
+        "tests/test_ai_control_plane.py"
+      ]
+    },
+    {
+      "assets": [
+        "A6"
+      ],
+      "blockers": [],
+      "category": "Tampering/Repudiation",
+      "controls": [
+        "maturity caps",
+        "readiness validator",
+        "evidence digests",
+        "fail-closed gap register"
+      ],
+      "id": "TM-04",
+      "impact": "high",
+      "likelihood": "medium",
+      "owner": "Quality Authority",
+      "residual_risk": "LOW",
+      "scenario": "Readiness or evidence is fabricated, stale, or promoted beyond evidence maturity.",
+      "verification": [
+        "tests/test_readiness.py",
+        "scripts/validate_readiness.py"
+      ]
+    },
+    {
+      "assets": [
+        "A7",
+        "A3"
+      ],
+      "blockers": [
+        "GAP-015"
+      ],
+      "category": "Elevation of privilege",
+      "controls": [
+        "mapping never grants execution",
+        "promotion requires external authority",
+        "adversarial review gate",
+        "protected effects require approval"
+      ],
+      "id": "TM-05",
+      "impact": "critical",
+      "likelihood": "medium",
+      "owner": "Acceptance Authority",
+      "residual_risk": "MEDIUM",
+      "scenario": "An AI worker self-grants execution, release, promotion, or security acceptance authority.",
+      "verification": [
+        "tests/test_architecture_promotion.py",
+        "tests/test_adversarial_review.py",
+        "tests/test_constrained_task_plan.py"
+      ]
+    },
+    {
+      "assets": [
+        "A1"
+      ],
+      "blockers": [
+        "GAP-001"
+      ],
+      "category": "Tampering",
+      "controls": [
+        "constitutional hash binding",
+        "compatibility validation",
+        "negative tamper tests"
+      ],
+      "id": "TM-06",
+      "impact": "critical",
+      "likelihood": "low",
+      "owner": "Project Steward",
+      "residual_risk": "LOW",
+      "scenario": "Constitutional text or authority hashes are changed without the required governance path.",
+      "verification": [
+        "tests/test_constitutions.py",
+        "scripts/validate_constitutions.py"
+      ]
+    },
+    {
+      "assets": [
+        "A5"
+      ],
+      "blockers": [
+        "GAP-009"
+      ],
+      "category": "Spoofing/Tampering",
+      "controls": [
+        "deterministic artifact",
+        "SHA-256 manifest",
+        "CycloneDX SBOM",
+        "planned OIDC attestations and Cosign verification"
+      ],
+      "id": "TM-07",
+      "impact": "critical",
+      "likelihood": "medium",
+      "owner": "Release Authority",
+      "residual_risk": "HIGH",
+      "scenario": "A release artifact is substituted or accepted without provenance/signature verification.",
+      "verification": [
+        "tests/test_supply_chain.py"
+      ]
+    },
+    {
+      "assets": [
+        "A6",
+        "A7"
+      ],
+      "blockers": [
+        "GAP-008",
+        "GAP-015"
+      ],
+      "category": "Governance failure",
+      "controls": [
+        "separation of creation and acceptance",
+        "independent review gates"
+      ],
+      "id": "TM-08",
+      "impact": "high",
+      "likelihood": "medium",
+      "owner": "Security Authority",
+      "residual_risk": "HIGH",
+      "scenario": "Security findings are accepted solely by their author or by the same AI/control producer.",
+      "verification": [
+        "tests/test_adversarial_review.py"
+      ]
+    },
+    {
+      "assets": [
+        "A5"
+      ],
+      "blockers": [
+        "GAP-011"
+      ],
+      "category": "Availability/Recovery",
+      "controls": [
+        "offline immutable promotion/rollback rehearsal"
+      ],
+      "id": "TM-09",
+      "impact": "critical",
+      "likelihood": "medium",
+      "owner": "Release Authority",
+      "residual_risk": "HIGH",
+      "scenario": "Promotion succeeds but rollback identity, target health, or recovery behavior fails under release conditions.",
+      "verification": [
+        "tests/test_release_rehearsal.py",
+        "evidence/release-rehearsal-evidence.json"
+      ]
+    },
+    {
+      "assets": [
+        "A6"
+      ],
+      "blockers": [
+        "GAP-012"
+      ],
+      "category": "Availability",
+      "controls": [
+        "operations/SRE standard",
+        "incident rehearsal"
+      ],
+      "id": "TM-10",
+      "impact": "critical",
+      "likelihood": "medium",
+      "owner": "Operator",
+      "residual_risk": "HIGH",
+      "scenario": "A future operated service lacks measurable SLO, restore evidence, or operational telemetry.",
+      "verification": [
+        "evidence/incident-exercise-evidence.json"
+      ]
+    }
+  ],
+  "title": "ENGINEERING-WORKFLOW Threat Model",
+  "trust_boundaries": [
+    {
+      "controls": [
+        "review workflow",
+        "quality/policy/security gates"
+      ],
+      "from": "untrusted contribution",
+      "id": "TB1",
+      "to": "repository/CI"
+    },
+    {
+      "controls": [
+        "event/ref conditions",
+        "least-privilege job permissions"
+      ],
+      "from": "GitHub Actions",
+      "id": "TB2",
+      "to": "OIDC signing authority"
+    },
+    {
+      "controls": [
+        "immutable action SHAs",
+        "toolchain version/hash verification"
+      ],
+      "from": "third-party tools/actions",
+      "id": "TB3",
+      "to": "repository evidence"
+    },
+    {
+      "controls": [
+        "context packet",
+        "constrained task plan",
+        "capability mapping",
+        "separate protected-effect authority"
+      ],
+      "from": "AI model output",
+      "id": "TB4",
+      "to": "governed execution"
+    },
+    {
+      "controls": [
+        "receipts",
+        "hashes",
+        "independent review requirements"
+      ],
+      "from": "evidence producer",
+      "id": "TB5",
+      "to": "acceptance authority"
+    },
+    {
+      "controls": [
+        "artifact digest",
+        "promotion contract",
+        "rollback identity",
+        "release authority"
+      ],
+      "from": "release candidate",
+      "id": "TB6",
+      "to": "deployment target"
+    }
+  ]
+}
