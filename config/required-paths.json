@@ -150,6 +150,7 @@
     "tests/test_external_authority_adoption.py",
     "scripts/run_incident_exercise.py",
     "tests/test_incident_exercise.py",
-    "evidence/incident-exercise-evidence.json"
+    "evidence/incident-exercise-evidence.json",
+    "evidence/ai-control-plane-gap015-evidence.json"
   ]
 }

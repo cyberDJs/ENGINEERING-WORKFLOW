@@ -1,0 +1,62 @@
+{
+  "acceptance": {
+    "gap_closed": false,
+    "human_acceptance_complete": false,
+    "independent_security_review_complete": false,
+    "technical_controls_implemented": true
+  },
+  "controls": {
+    "evaluation": {
+      "log_ref": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP015_AI_CONTROLS_20261005/ai-evaluation.log",
+      "result": "PASS",
+      "sha256": "7c2ee9022af619d6c1f89d6f03d8ed76137a556624693be64be3469c249b1c83",
+      "status": "VERIFIED",
+      "tests": 35
+    },
+    "permission": {
+      "deploy": "BLOCKED",
+      "deploy_ref": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP015_AI_CONTROLS_20261005/permission-deploy.json",
+      "status": "VERIFIED",
+      "write_ref": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP015_AI_CONTROLS_20261005/permission-write.json",
+      "write_without_authority": "APPROVAL_REQUIRED"
+    },
+    "red_team": {
+      "blockers": [
+        "independent-review-incomplete"
+      ],
+      "cases_passed": 7,
+      "cases_total": 7,
+      "gate_ref": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP015_AI_CONTROLS_20261005/red-team-gate.json",
+      "independent_review": {
+        "complete": false,
+        "review_ref": null,
+        "reviewer_ref": null,
+        "status": "PENDING"
+      },
+      "pass_rate": 1.0,
+      "sha256": "b1818559009007920c6ad093df5b1d799029d26cd6cae0aca40c5dac61a8366c",
+      "status": "BLOCKED"
+    },
+    "trusted_context": {
+      "authority_sources": 2,
+      "content_included": false,
+      "packet_ref": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP015_AI_CONTROLS_20261005/project-context-packet.json",
+      "sha256": "b38a50b462e914efd68adb0f2940515a8ce05f9c3d2ef3368b4657afde8e2fa4",
+      "status": "VERIFIED"
+    }
+  },
+  "governance": {
+    "grants_execution": false,
+    "grants_release": false,
+    "production_effects": false
+  },
+  "id": "EW-EV-AI-CONTROL-PLANE-GAP015-20261005",
+  "schema_version": 1,
+  "status": "PARTIALLY_VERIFIED_BLOCKED_ON_INDEPENDENT_REVIEW",
+  "subject": {
+    "gap_id": "GAP-015",
+    "head": "fbb38b8bf4da9b3eb6cf83dd52f9dfbb719ad957",
+    "repository": "ENGINEERING-WORKFLOW"
+  },
+  "verified_at": "2026-10-04T23:02:38.830836Z"
+}

@@ -179,16 +179,23 @@
       "title": "Independent usability and freshness assessment is missing"
     },
     {
+      "blockers": [
+        "INDEPENDENT_SECURITY_REVIEW_PENDING",
+        "HUMAN_ACCEPTANCE_PENDING"
+      ],
       "closure_evidence": [
         "AI evaluation",
         "permission test",
         "red-team report"
       ],
       "domain": "ai-engineering",
+      "evidence_refs": [
+        "evidence/ai-control-plane-gap015-evidence.json"
+      ],
       "id": "GAP-015",
       "owner": "Acceptance Authority",
       "priority": "P0",
-      "status": "OPEN",
+      "status": "BLOCKED",
       "title": "No executable AI context, permission, evaluation and red-team controls"
     },
     {
