@@ -15,6 +15,7 @@ last-reviewed: 2026-10-04
 All notable changes are recorded here. Versions follow Semantic Versioning.
 
 ## [Unreleased]
+- Record GAP-012 reference operated-service evidence and move operations from DESIGNED to IMPLEMENTED while keeping real operational readiness blocked.
 - Add localhost-only reference operated-service rehearsal with health/readiness probes, rehearsal SLI/SLO measurements, backup identity and deterministic restore verification.
 - Reclassify GAP-009 from design-only to implemented supply-chain controls while blocking closure on main/tag attestation, signing verification and independent acceptance.
 - Record current GAP-015 AI context, permission, evaluation and red-team evidence; advance AI engineering to IMPLEMENTED while blocking closure on independent security and human acceptance.

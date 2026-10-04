@@ -180,13 +180,15 @@
       "critical": true,
       "evidence": [
         "operating-model/OPERATIONS_AND_SRE.md",
-        "templates/RUNBOOK.md"
+        "templates/RUNBOOK.md",
+        "evidence/reference-service-operations-evidence.json",
+        "operating-model/REFERENCE_SERVICE_RUNBOOK.md"
       ],
-      "evidence_maturity": "DESIGNED",
+      "evidence_maturity": "IMPLEMENTED",
       "id": "operations",
       "name": "Operations and SRE",
       "owner": "Operator",
-      "score": 2.0,
+      "score": 7.0,
       "target": 9.0
     },
     {

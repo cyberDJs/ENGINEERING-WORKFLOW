@@ -161,6 +161,9 @@
     "evidence/threat-model-evidence.json",
     "tests/test_threat_model.py",
     "scripts/run_reference_service_rehearsal.py",
-    "tests/test_operations_rehearsal.py"
+    "tests/test_operations_rehearsal.py",
+    "evidence/reference-service-operations-evidence.json",
+    "operating-model/REFERENCE_SERVICE_RUNBOOK.md",
+    "tests/test_operations_gap012_evidence.py"
   ]
 }

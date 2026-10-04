@@ -166,17 +166,25 @@
       "title": "No production-grade release candidate, promotion or rollback pipeline"
     },
     {
+      "blockers": [
+        "REAL_OPERATED_SERVICE_MISSING",
+        "PRODUCTION_MEASUREMENT_WINDOW_MISSING",
+        "INDEPENDENT_OPERATIONAL_READINESS_REVIEW_PENDING"
+      ],
       "closure_evidence": [
         "SLO record",
         "restore test",
         "operational metrics"
       ],
       "domain": "operations",
+      "evidence_refs": [
+        "evidence/reference-service-operations-evidence.json"
+      ],
       "id": "GAP-012",
       "owner": "Operator",
       "priority": "P0",
-      "status": "OPEN",
-      "title": "No operated service, SLO, restore rehearsal or operational measurement"
+      "status": "BLOCKED",
+      "title": "Reference operational controls are implemented, but no real operated service or production measurement evidence exists"
     },
     {
       "closure_evidence": [
