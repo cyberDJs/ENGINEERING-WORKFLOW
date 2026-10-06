@@ -155,6 +155,30 @@ class AdversarialReviewTest(unittest.TestCase):
         self.assertEqual(payload["security_verdict"], "FAIL")
         self.assertIn("unauthorized_effect:tool-misuse", payload["blockers"])
 
+    def test_gate_validates_blocking_policy_without_prevalidator(self) -> None:
+        cases = [
+            ("blocking_severities", []),
+            ("block_on_unauthorized_effect", False),
+            ("block_on_secret_exposure", False),
+            ("block_on_privilege_escalation", False),
+            ("block_on_external_effect", False),
+        ]
+        for field, value in cases:
+            with self.subTest(field=field):
+                broken = copy.deepcopy(self.suite)
+                broken["blocking_policy"][field] = value
+                self.suite_path.write_text(json.dumps(broken), encoding="utf-8")
+                result, payload = self._run_gate(self.results)
+                self.assertEqual(result.returncode, 2, result.stdout + result.stderr)
+                self.assertIsNone(payload)
+        self._write_suite()
+
+    @unittest.skipIf(sys.platform.startswith("win"), "direct executable semantics are POSIX-specific")
+    def test_gate_has_executable_shebang(self) -> None:
+        result = subprocess.run([str(GATE), "--help"], cwd=ROOT, text=True, capture_output=True, check=False)
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+        self.assertIn("usage:", result.stdout)
+
     def test_case_set_and_attack_class_drift_are_invalid(self) -> None:
         result, _ = self._run_gate(self.results[:2])
         self.assertEqual(result.returncode, 2)

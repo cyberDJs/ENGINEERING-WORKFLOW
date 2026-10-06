@@ -103,7 +103,7 @@ def selection(profile: str, risk: str, reversibility: str, observed_risk: str = 
 
 def resolved_target(target: Path, *, must_exist: bool) -> Path:
     expanded = target.expanduser()
-    if expanded.exists() and expanded.is_symlink():
+    if expanded.is_symlink():
         raise Blocked("project directory may not be a symlink")
     resolved = expanded.resolve(strict=False)
     if must_exist and (not resolved.is_dir() or resolved.is_symlink()):

@@ -35,6 +35,19 @@ def make_symlink(target: Path, link: Path) -> None:
 
 
 class EWHardeningTest(unittest.TestCase):
+    def test_init_rejects_dangling_symlink_project_path(self) -> None:
+        with tempfile.TemporaryDirectory() as temp:
+            root = Path(temp)
+            target = root / "future-project"
+            project = root / "project-link"
+            try:
+                project.symlink_to(target, target_is_directory=True)
+            except (OSError, NotImplementedError) as exc:
+                raise unittest.SkipTest(f"symlink creation unavailable: {exc}")
+            result = run_ew("init", str(project), "--name", "Dangling", "--json")
+            self.assertNotEqual(result.returncode, 0, result.stdout + result.stderr)
+            self.assertFalse(target.exists())
+
     def test_doctor_stops_before_reading_linked_control_directory(self) -> None:
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)

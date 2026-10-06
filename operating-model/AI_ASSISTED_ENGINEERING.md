@@ -29,7 +29,7 @@ The portable schema is `../schemas/project-context-packet.schema.json`. The refe
 
 The reference builder is provenance-only by default: it records paths and SHA-256 digests but omits source content. Source content is included only through explicit `--include-content`, and scanned inputs still fail closed on detected secret material.
 
-For governed project work, `../scripts/build_project_context_packet_from_session.py` consumes a `READY` SKILLS runtime session instead of rediscovering context. It binds the packet to the session SHA-256 and exact Git root/branch/HEAD/dirty state, fails on drift, preserves source status/provenance, and admits only `CURRENT_CANONICAL` and `CURRENT_SUPPORTING` context by default. Project authority files remain a separate higher-priority source class.
+For governed project work, `../scripts/build_project_context_packet_from_session.py` consumes a `READY` SKILLS runtime session instead of rediscovering context. It binds the packet to the session SHA-256 and exact Git root/branch/HEAD, requires both the recorded session and current worktree to be clean, fails on drift, preserves source status/provenance, and admits only `CURRENT_CANONICAL` and `CURRENT_SUPPORTING` context by default. Project authority files remain a separate higher-priority source class.
 
 ## Artifact Admission
 

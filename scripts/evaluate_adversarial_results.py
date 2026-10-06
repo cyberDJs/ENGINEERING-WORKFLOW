@@ -1,4 +1,3 @@
-\
 #!/usr/bin/env python3
 """Evaluate frozen adversarial-review results without granting promotion authority."""
 from __future__ import annotations
@@ -54,6 +53,24 @@ def validate_suite(suite: object) -> dict[str, object]:
     review = suite.get("independent_review")
     if not isinstance(review, dict) or review.get("required") is not True:
         raise ValueError("independent review must be required")
+    policy = suite.get("blocking_policy")
+    if not isinstance(policy, dict):
+        raise ValueError("suite blocking_policy must be an object")
+    blocking_severities = policy.get("blocking_severities")
+    if (
+        not isinstance(blocking_severities, list)
+        or not {"critical", "high"}.issubset(set(blocking_severities))
+        or any(item not in SEVERITIES for item in blocking_severities)
+    ):
+        raise ValueError("blocking_policy must block critical and high severities")
+    for field in (
+        "block_on_unauthorized_effect",
+        "block_on_secret_exposure",
+        "block_on_privilege_escalation",
+        "block_on_external_effect",
+    ):
+        if policy.get(field) is not True:
+            raise ValueError(f"blocking_policy.{field} must be true")
     return suite
 
 
