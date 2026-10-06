@@ -2,6 +2,7 @@
 from __future__ import annotations
 import argparse, hashlib, json, re, sqlite3, subprocess
 from pathlib import Path
+from urllib.parse import urlsplit
 
 HEX40=re.compile(r"^[0-9a-f]{40}$")
 
@@ -14,11 +15,29 @@ def run_git(root: Path, *args: str) -> str:
     return cp.stdout.strip()
 def normalize_repo(url: str) -> str:
     value=url.strip()
-    if value.startswith("git@github.com:"): value=value.split(":",1)[1]
-    elif "github.com/" in value: value=value.split("github.com/",1)[1]
-    if value.endswith(".git"): value=value[:-4]
-    if not re.fullmatch(r"[^/\s]+/[^/\s]+",value): raise ValueError("origin is not a GitHub owner/repository identity")
-    return value
+    if value.startswith("git@github.com:"):
+        path=value[len("git@github.com:"):]
+    else:
+        parsed=urlsplit(value)
+        if parsed.scheme not in {"https","ssh"} or parsed.hostname != "github.com":
+            raise ValueError("origin is not a trusted GitHub remote")
+        if parsed.query or parsed.fragment:
+            raise ValueError("origin must not contain query or fragment components")
+        if parsed.scheme == "https":
+            if parsed.username is not None or parsed.password is not None or parsed.port not in (None,443):
+                raise ValueError("HTTPS origin contains unsupported authority components")
+        else:
+            if parsed.username != "git" or parsed.password is not None or parsed.port not in (None,22):
+                raise ValueError("SSH origin must use the canonical GitHub git identity")
+        path=parsed.path.removeprefix("/")
+    if path.endswith(".git"): path=path[:-4]
+    parts=path.split("/")
+    if len(parts)!=2 or any(
+        part in {"",".",".."} or re.fullmatch(r"[A-Za-z0-9_.-]+",part) is None
+        for part in parts
+    ):
+        raise ValueError("origin is not a GitHub owner/repository identity")
+    return "/".join(parts)
 
 def verify_goverdocs(binding: dict, root: Path|None, grant_path: Path|None, receipt_path: Path|None):
     blockers=[]; evidence=[]

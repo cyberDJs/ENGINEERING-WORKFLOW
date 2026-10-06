@@ -1,9 +1,51 @@
 from __future__ import annotations
-import hashlib, json, sqlite3, subprocess, sys, tempfile, unittest
+import hashlib, importlib.util, json, sqlite3, subprocess, sys, tempfile, unittest
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]; SCRIPT=ROOT/'scripts/verify_external_authority_adoption.py'; VALIDATOR=ROOT/'scripts/validate_ai_control_plane.py'
+SPEC=importlib.util.spec_from_file_location('verify_external_authority_adoption',SCRIPT); MODULE=importlib.util.module_from_spec(SPEC); SPEC.loader.exec_module(MODULE)
 def dump(path:Path,obj): path.write_text(json.dumps(obj,indent=2,sort_keys=True)+'\n')
 def sha(path:Path): return hashlib.sha256(path.read_bytes()).hexdigest()
+class NormalizeRepoSecurityTest(unittest.TestCase):
+    def test_accepts_canonical_github_remotes(self):
+        cases={
+            "https://github.com/eimyroot/OATHDO.git":"eimyroot/OATHDO",
+            "https://github.com:443/eimyroot/OATHDO.git":"eimyroot/OATHDO",
+            "git@github.com:eimyroot/OATHDO.git":"eimyroot/OATHDO",
+            "ssh://git@github.com/eimyroot/OATHDO.git":"eimyroot/OATHDO",
+            "ssh://git@github.com:22/eimyroot/OATHDO":"eimyroot/OATHDO",
+        }
+        for remote,expected in cases.items():
+            with self.subTest(remote=remote):
+                self.assertEqual(MODULE.normalize_repo(remote),expected)
+
+    def test_rejects_github_substring_and_authority_confusion(self):
+        cases=[
+            "https://evil.example/github.com/eimyroot/OATHDO.git",
+            "https://github.com.evil.example/eimyroot/OATHDO.git",
+            "https://github.com@evil.example/github.com/eimyroot/OATHDO.git",
+            "https://evil.example/?next=https://github.com/eimyroot/OATHDO.git",
+            "https://github.com/eimyroot/OATHDO.git?redirect=evil",
+            "https://user@github.com/eimyroot/OATHDO.git",
+            "http://github.com/eimyroot/OATHDO.git",
+            "git://github.com/eimyroot/OATHDO.git",
+            "eimyroot/OATHDO",
+        ]
+        for remote in cases:
+            with self.subTest(remote=remote):
+                with self.assertRaises(ValueError):
+                    MODULE.normalize_repo(remote)
+
+    def test_rejects_non_repository_github_paths(self):
+        for remote in [
+            "https://github.com/eimyroot",
+            "https://github.com/eimyroot/OATHDO/issues",
+            "https://github.com/../OATHDO",
+            "ssh://other@github.com/eimyroot/OATHDO.git",
+        ]:
+            with self.subTest(remote=remote):
+                with self.assertRaises(ValueError):
+                    MODULE.normalize_repo(remote)
+
 class ExternalAuthorityAdoptionTest(unittest.TestCase):
     def fixture(self,td:Path):
         projection=td/'projection.json'; dump(projection,{"evidence":"x"})
