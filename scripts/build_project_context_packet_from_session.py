@@ -75,8 +75,10 @@ def main() -> int:
         return fail("project HEAD drifted since runtime session")
     if current_branch != session_git.get("branch"):
         return fail("project branch drifted since runtime session")
-    if current_dirty is not bool(session_git.get("dirty")):
-        return fail("project dirty state drifted since runtime session")
+    if session_git.get("dirty") is not False:
+        return fail("trusted session context requires a clean runtime session worktree")
+    if current_dirty:
+        return fail("project worktree became dirty since runtime session")
 
     authority_paths = project.get("authority_files")
     if not isinstance(authority_paths, list) or not authority_paths:

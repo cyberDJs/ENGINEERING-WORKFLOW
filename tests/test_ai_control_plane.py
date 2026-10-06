@@ -102,20 +102,32 @@ class AIControlPlaneTest(unittest.TestCase):
     def test_session_context_builder_excludes_experimental_and_rejects_git_drift(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
-            head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
-            branch = subprocess.check_output(["git", "branch", "--show-current"], cwd=ROOT, text=True).strip()
-            dirty = bool(subprocess.check_output(["git", "status", "--porcelain"], cwd=ROOT, text=True).strip())
+            project = tmp_path / "project"
+            project.mkdir()
+            (project / "README.md").write_text("authority\n", encoding="utf-8")
+            (project / "SECURITY.md").write_text("security\n", encoding="utf-8")
+            supporting = project / "architecture.md"
+            supporting.write_text("supporting\n", encoding="utf-8")
+            experimental = project / "experimental.md"
+            experimental.write_text("experimental\n", encoding="utf-8")
+            subprocess.run(["git", "init", "-q", str(project)], check=True)
+            subprocess.run(["git", "-C", str(project), "config", "user.email", "test@example.com"], check=True)
+            subprocess.run(["git", "-C", str(project), "config", "user.name", "test"], check=True)
+            subprocess.run(["git", "-C", str(project), "add", "."], check=True)
+            subprocess.run(["git", "-C", str(project), "commit", "-qm", "seed"], check=True)
+            head = subprocess.check_output(["git", "-C", str(project), "rev-parse", "HEAD"], text=True).strip()
+            branch = subprocess.check_output(["git", "-C", str(project), "branch", "--show-current"], text=True).strip()
             session = {
                 "status": "READY",
                 "task": "assemble trusted context",
                 "project": {
-                    "path": str(ROOT),
-                    "authority_files": [str(ROOT / "README.md"), str(ROOT / "SECURITY.md")],
-                    "git": {"root": str(ROOT), "head": head, "branch": branch, "dirty": dirty},
+                    "path": str(project),
+                    "authority_files": [str(project / "README.md"), str(project / "SECURITY.md")],
+                    "git": {"root": str(project), "head": head, "branch": branch, "dirty": False},
                 },
                 "architecture_retrieval": {"load_set": [
-                    {"path": str(ROOT / "architecture/AI_ENGINEERING_CONTROL_PLANE_ARCHITECTURE.md"), "status": "CURRENT_SUPPORTING", "source": "project", "title": "AI control plane", "reasons": ["project-truth-priority"]},
-                    {"path": str(ROOT / "roadmap/IMPLEMENTATION_ROADMAP.md"), "status": "EXPERIMENTAL", "source": "workflow_graph", "title": "experimental", "reasons": ["test"]},
+                    {"path": str(supporting), "status": "CURRENT_SUPPORTING", "source": "project", "title": "AI control plane", "reasons": ["project-truth-priority"]},
+                    {"path": str(experimental), "status": "EXPERIMENTAL", "source": "workflow_graph", "title": "experimental", "reasons": ["test"]},
                 ]},
             }
             session_path = tmp_path / "session.json"
@@ -135,6 +147,38 @@ class AIControlPlaneTest(unittest.TestCase):
             drift = subprocess.run([sys.executable, str(SESSION_BUILDER), "--session", str(session_path), "--task-mode", "VERIFY", "--scope-in", "trusted context", "--output", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
             self.assertNotEqual(drift.returncode, 0)
             self.assertIn("HEAD drifted", drift.stderr)
+
+    def test_session_context_builder_rejects_dirty_runtime_session(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
+            branch = subprocess.check_output(["git", "branch", "--show-current"], cwd=ROOT, text=True).strip()
+            session = {
+                "status": "READY",
+                "task": "reject unbound dirty context",
+                "project": {
+                    "path": str(ROOT),
+                    "authority_files": [str(ROOT / "README.md"), str(ROOT / "SECURITY.md")],
+                    "git": {
+                        "root": str(ROOT),
+                        "head": head,
+                        "branch": branch,
+                        "dirty": True,
+                        "status": [f"## {branch}", " M README.md"],
+                    },
+                },
+                "architecture_retrieval": {"load_set": []},
+            }
+            session_path = tmp_path / "session.json"
+            output = tmp_path / "packet.json"
+            session_path.write_text(json.dumps(session), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(SESSION_BUILDER), "--session", str(session_path), "--task-mode", "VERIFY", "--scope-in", "trusted context", "--output", str(output)],
+                cwd=ROOT, text=True, capture_output=True, check=False,
+            )
+            self.assertNotEqual(result.returncode, 0)
+            self.assertIn("requires a clean runtime session worktree", result.stderr)
+            self.assertFalse(output.exists())
 
     def test_context_builder_binds_git_state_and_authority_digest(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:

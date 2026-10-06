@@ -22,4 +22,22 @@ class ConstrainedTaskPlanTest(unittest.TestCase):
     def test_attributable_authority_allows_plan_not_execution(self):
         td,out,r=self.run_plan(['write'],['write:AUTH-123']); self.addCleanup(td.cleanup); plan=json.loads(out.read_text()); self.assertEqual(plan['status'],'PLANNED'); self.assertFalse(plan['governance']['plan_grants_execution']); v=subprocess.run([sys.executable,str(VALIDATOR),'--kind','constrained-task-plan','--file',str(out)],cwd=ROOT,text=True,capture_output=True); self.assertEqual(v.returncode,0,v.stdout+v.stderr)
         plan['governance']['plan_grants_execution']=True; out.write_text(json.dumps(plan)); v=subprocess.run([sys.executable,str(VALIDATOR),'--kind','constrained-task-plan','--file',str(out)],cwd=ROOT,text=True,capture_output=True); self.assertNotEqual(v.returncode,0)
+
+    def test_invalid_mapping_is_rejected_before_planning(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp); cp,mp=self.fixture(root); mp.write_text('{}'); out=root/'plan.json'
+            r=subprocess.run([sys.executable,str(BUILDER),'--context',str(cp),'--mapping',str(mp),'--effect','write','--authority','write:AUTH-123','--output',str(out)],cwd=ROOT,text=True,capture_output=True,check=False)
+            self.assertNotEqual(r.returncode,0); self.assertFalse(out.exists()); self.assertIn('invalid capability mapping',r.stderr)
+
+    def test_mapping_for_another_project_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp); cp,mp=self.fixture(root); mapping=json.loads(mp.read_text()); mapping['project_mappings'][0]['project_id']='other'; mp.write_text(json.dumps(mapping)); out=root/'plan.json'
+            r=subprocess.run([sys.executable,str(BUILDER),'--context',str(cp),'--mapping',str(mp),'--effect','write','--authority','write:AUTH-123','--output',str(out)],cwd=ROOT,text=True,capture_output=True,check=False)
+            self.assertNotEqual(r.returncode,0); self.assertFalse(out.exists()); self.assertIn('exactly one mapping for project',r.stderr)
+
+    def test_terminal_mapping_lifecycle_is_rejected(self):
+        with tempfile.TemporaryDirectory() as temp:
+            root=Path(temp); cp,mp=self.fixture(root); mapping=json.loads(mp.read_text()); mapping['capability']['lifecycle_status']='REJECTED'; mp.write_text(json.dumps(mapping)); out=root/'plan.json'
+            r=subprocess.run([sys.executable,str(BUILDER),'--context',str(cp),'--mapping',str(mp),'--effect','read','--output',str(out)],cwd=ROOT,text=True,capture_output=True,check=False)
+            self.assertNotEqual(r.returncode,0); self.assertFalse(out.exists()); self.assertIn('lifecycle state',r.stderr)
 if __name__=='__main__': unittest.main()
