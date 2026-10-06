@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Engineering Control Plane policy",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "status",
+    "architecture_family",
+    "canonical_principle",
+    "stable_lane",
+    "lab_lane",
+    "promotion_pipeline",
+    "promotion_policy",
+    "architecture_release_fields",
+    "contracts"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "proposed",
+        "current",
+        "deprecated",
+        "archived"
+      ]
+    },
+    "architecture_family": {
+      "const": "ai-engineering-control-plane"
+    },
+    "canonical_principle": {
+      "type": "string",
+      "minLength": 20
+    },
+    "stable_lane": {
+      "type": "object",
+      "required": [
+        "production_eligible",
+        "requires_governance",
+        "requires_regression",
+        "requires_evidence",
+        "requires_rollback"
+      ],
+      "properties": {
+        "production_eligible": {
+          "const": true
+        },
+        "requires_governance": {
+          "const": true
+        },
+        "requires_regression": {
+          "const": true
+        },
+        "requires_evidence": {
+          "const": true
+        },
+        "requires_rollback": {
+          "const": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "lab_lane": {
+      "type": "object",
+      "required": [
+        "production_eligible",
+        "production_mutation_allowed",
+        "isolation_required",
+        "candidate_dimensions"
+      ],
+      "properties": {
+        "production_eligible": {
+          "const": false
+        },
+        "production_mutation_allowed": {
+          "const": false
+        },
+        "isolation_required": {
+          "const": true
+        },
+        "candidate_dimensions": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": true
+    },
+    "promotion_pipeline": {
+      "type": "array",
+      "minItems": 8,
+      "uniqueItems": true
+    },
+    "promotion_policy": {
+      "type": "object",
+      "required": [
+        "champion_challenger",
+        "single_dimension_default",
+        "multi_dimension_change_requires_exception",
+        "holdout_or_disjoint_validation_required",
+        "security_review_required",
+        "regression_required",
+        "rollback_required",
+        "production_mutation_from_lab"
+      ],
+      "properties": {
+        "champion_challenger": {
+          "const": true
+        },
+        "single_dimension_default": {
+          "const": true
+        },
+        "multi_dimension_change_requires_exception": {
+          "const": true
+        },
+        "holdout_or_disjoint_validation_required": {
+          "const": true
+        },
+        "security_review_required": {
+          "const": true
+        },
+        "regression_required": {
+          "const": true
+        },
+        "rollback_required": {
+          "const": true
+        },
+        "production_mutation_from_lab": {
+          "const": false
+        }
+      },
+      "additionalProperties": true
+    },
+    "architecture_release_fields": {
+      "type": "array",
+      "minItems": 6,
+      "uniqueItems": true
+    },
+    "contracts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_admission",
+        "project_context_packet",
+        "eval_receipt",
+        "capability_mapping",
+        "evaluation_suite",
+        "architecture_promotion",
+        "adversarial_review_suite",
+        "ai_dependency_inventory"
+      ],
+      "properties": {
+        "artifact_admission": {
+          "type": "string",
+          "minLength": 1
+        },
+        "project_context_packet": {
+          "type": "string",
+          "minLength": 1
+        },
+        "eval_receipt": {
+          "type": "string",
+          "minLength": 1
+        },
+        "capability_mapping": {
+          "type": "string",
+          "minLength": 1
+        },
+        "evaluation_suite": {
+          "type": "string",
+          "minLength": 1
+        },
+        "architecture_promotion": {
+          "type": "string",
+          "minLength": 1
+        },
+        "adversarial_review_suite": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ai_dependency_inventory": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  },
+  "additionalProperties": false
+}

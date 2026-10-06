@@ -1,31 +1,76 @@
 {
-  "schema_version": 1,
-  "version": "0.5.0-rc.1",
-  "state": "IMPLEMENTED_NOT_YET_CI_VERIFIED",
-  "baseline": "ffd24d1c2165c5848066ee44dd57668668b8f062",
-  "controls_addressed": ["EW-SEC-001", "EW-SUP-001", "EW-PLAT-001"],
-  "gaps_addressed": ["GAP-007", "GAP-009", "GAP-010"],
   "active_tools": [
     {
       "id": "opa",
-      "version": "1.17.0",
-      "verification": "platform-specific SHA-256 before execution"
+      "verification": "platform-specific SHA-256 before execution",
+      "version": "1.17.0"
     },
     {
       "id": "openssf-scorecard-action",
-      "version": "2.4.3",
-      "verification": "immutable 40-character action commit"
+      "verification": "immutable 40-character action commit",
+      "version": "2.4.3"
     }
   ],
-  "verified": [],
+  "baseline": "ffd24d1c2165c5848066ee44dd57668668b8f062",
+  "claim": "Policy logic and a historical GitHub Actions OPA run are verified, but GAP-007 remains blocked because GitHub currently has no branch protection, required status-check enforcement, or repository ruleset making the policy job a merge-blocking gate.",
+  "controls_addressed": [
+    "EW-SEC-001",
+    "EW-SUP-001",
+    "EW-PLAT-001"
+  ],
+  "gaps_addressed": [
+    "GAP-007",
+    "GAP-009",
+    "GAP-010"
+  ],
   "not_verified": [
     "GitHub Actions quality workflow",
-    "GitHub Actions policy workflow",
     "actual OpenSSF Scorecard scheduled run",
     "SBOM generation",
     "vulnerability scan",
     "provenance generation",
-    "artifact signing and verification"
+    "artifact signing and verification",
+    "merge-blocking required status check on main",
+    "repository ruleset enforcing policy status"
   ],
-  "claim": "No readiness score or gap is closed by this record until CI evidence is attached."
+  "remote_verification": {
+    "branch_protected": false,
+    "closure_claim": false,
+    "default_branch": "main",
+    "historical_policy_run": {
+      "conclusion": "success",
+      "final_policy_eval": "PASS",
+      "job_id": 89477634489,
+      "job_name": "opa-policy",
+      "opa_sha256_linux_amd64": "5485f9c32548af84bc0bfa06a7f40a98ecc742477a7f9f24ea3556d221dc295f",
+      "opa_version": "1.17.0",
+      "rego_tests": "5/5 PASS",
+      "run_id": 30092152284
+    },
+    "merge_enforcement": {
+      "active": false,
+      "blockers": [
+        "BRANCH_PROTECTION_DISABLED",
+        "NO_REPOSITORY_RULESET",
+        "NO_REQUIRED_STATUS_CHECK_ENFORCEMENT"
+      ]
+    },
+    "remote_main_head": "4178450f8c2f50bc6ef9a35f9e3961b6a28cd710",
+    "repository_effective": "cyberDJs/ENGINEERING-WORKFLOW",
+    "repository_redirect_observed": true,
+    "repository_requested": "nulleimy/ENGINEERING-WORKFLOW",
+    "required_status_checks_enforcement": "off",
+    "ruleset_count": 0,
+    "verdict": "BLOCKED",
+    "verified_at": "2026-10-04T22:56:10.422954Z"
+  },
+  "schema_version": 1,
+  "state": "REMOTE_POLICY_VERIFIED_NOT_MERGE_ENFORCED",
+  "verified": [
+    "Rego policy unit tests",
+    "checksum-verified OPA bootstrap and identity",
+    "final OPA deny evaluation",
+    "historical OPA policy job completed successfully"
+  ],
+  "version": "0.5.0-rc.1"
 }

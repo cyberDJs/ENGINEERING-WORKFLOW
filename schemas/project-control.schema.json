@@ -1,27 +1,10 @@
 {
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/project-control.schema.json",
-  "title": "ENGINEERING-WORKFLOW project control",
-  "type": "object",
-  "required": ["schema_version", "project", "control", "quality"],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": true,
   "properties": {
-    "schema_version": {"const": 1},
-    "project": {
-      "type": "object",
-      "required": ["id", "name", "status", "product_owner", "technical_owner"],
-      "properties": {
-        "id": {"type": "string", "minLength": 1},
-        "name": {"type": "string", "minLength": 1},
-        "status": {
-          "enum": ["concept", "discovery", "defined", "building", "validating", "operating", "maintenance", "retired", "archived"]
-        },
-        "product_owner": {"type": "string", "minLength": 1},
-        "technical_owner": {"type": "string", "minLength": 1}
-      },
-      "additionalProperties": true
-    },
     "control": {
-      "type": "object",
+      "additionalProperties": true,
       "required": [
         "version",
         "canonical_repository",
@@ -36,22 +19,96 @@
         "complexity_budget",
         "reversibility_classes",
         "manual_work_register",
-        "lifecycle_evidence_graph"
+        "lifecycle_evidence_graph",
+        "ai_engineering_control_plane",
+        "artifact_admission_schema",
+        "project_context_packet_schema",
+        "eval_receipt_schema",
+        "capability_mapping_schema",
+        "evaluation_suite_schema",
+        "architecture_promotion_schema",
+        "adversarial_review_suite_schema",
+        "ai_dependency_inventory_schema",
+        "constrained_task_plan_schema",
+        "external_authority_binding_schema",
+        "external_authority_adoption_schema"
       ],
-      "additionalProperties": true
+      "type": "object"
+    },
+    "project": {
+      "additionalProperties": true,
+      "properties": {
+        "id": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "name": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "product_owner": {
+          "minLength": 1,
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "concept",
+            "discovery",
+            "defined",
+            "building",
+            "validating",
+            "operating",
+            "maintenance",
+            "retired",
+            "archived"
+          ]
+        },
+        "technical_owner": {
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "status",
+        "product_owner",
+        "technical_owner"
+      ],
+      "type": "object"
     },
     "quality": {
-      "type": "object",
+      "additionalProperties": true,
       "required": [
         "validator",
         "constitutional_validator",
         "primary_invariant_validator",
         "supply_chain_validator",
         "tests",
-        "release_requires_clean_validation"
+        "release_requires_clean_validation",
+        "ai_control_plane_validator",
+        "trusted_context_builder",
+        "eval_comparator",
+        "adversarial_review_gate",
+        "constrained_task_planner",
+        "external_authority_projection",
+        "external_authority_adoption_verifier",
+        "incident_exercise_runner",
+        "release_rehearsal_runner"
       ],
-      "additionalProperties": true
+      "type": "object"
+    },
+    "schema_version": {
+      "const": 1
     }
   },
-  "additionalProperties": true
+  "required": [
+    "schema_version",
+    "project",
+    "control",
+    "quality",
+    "operations_rehearsal_runner"
+  ],
+  "title": "ENGINEERING-WORKFLOW project control",
+  "type": "object"
 }

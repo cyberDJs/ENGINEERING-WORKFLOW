@@ -1,0 +1,80 @@
+{
+  "blockers": [
+    "REAL_OPERATED_SERVICE_MISSING",
+    "PRODUCTION_MEASUREMENT_WINDOW_MISSING",
+    "INDEPENDENT_OPERATIONAL_READINESS_REVIEW_PENDING"
+  ],
+  "checks": {
+    "health": {
+      "status": "ok",
+      "version": "reference-service-rehearsal-v1"
+    },
+    "latency_target_met": true,
+    "readiness": {
+      "status": "ready",
+      "version": "reference-service-rehearsal-v1"
+    },
+    "restore_target_met": true,
+    "success_target_met": true
+  },
+  "claim": "A localhost-only reference operated-service rehearsal is implemented and verified for health/readiness, synthetic request success, rehearsal latency, backup identity and restore. GAP-012 remains blocked because no real operated service or production measurement window exists and independent operational readiness review is pending.",
+  "closure_claim": false,
+  "head": "5bb05450aacb5533270d850d8199374f12f92a1b",
+  "id": "EW-EV-REFERENCE-OPERATIONS-V1",
+  "measurements": {
+    "elapsed_ms": 568.241,
+    "errors_total": 0,
+    "p95_latency_ms": 0.223,
+    "probe_count": 30,
+    "requests_total": 33,
+    "restore_ms": 0.425,
+    "success_ratio": 1.0,
+    "successful_work_probes": 30
+  },
+  "not_claimed": [
+    "production availability",
+    "production SLO attainment",
+    "operational readiness",
+    "production deployment",
+    "production backup coverage"
+  ],
+  "recovery": {
+    "backup_sha256": "39354a94aeb058f81000f06277182875266f8ec9ee2d157215575af9747cb7d2",
+    "baseline_sha256": "39354a94aeb058f81000f06277182875266f8ec9ee2d157215575af9747cb7d2",
+    "corruption_sha256": "24d1f0caab536feea7fa1a7354b5216523c9ec108b8af7ef2943b2b8fb594a6f",
+    "restore_identity_verified": true,
+    "restored_sha256": "39354a94aeb058f81000f06277182875266f8ec9ee2d157215575af9747cb7d2"
+  },
+  "rehearsal_receipt": {
+    "path": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP012_REFERENCE_SERVICE_20261005/reference-service-rehearsal.json",
+    "sha256": "fb0600d35d973e6eb75e358553d841ff92bf691be3f631e6ca73f7397c9b78f2",
+    "status": "VERIFIED"
+  },
+  "schema_version": 1,
+  "service": {
+    "external_network": false,
+    "id": "engineering-workflow-reference-service",
+    "owner": "Operator",
+    "production_service": false,
+    "tier": "TIER-3"
+  },
+  "slo_spec": {
+    "availability_sli": "successful_work_probes / total_work_probes",
+    "claim_scope": "rehearsal-only",
+    "latency_sli": "local handler response p95 ms",
+    "p95_target_ms": 250.0,
+    "production_slo_claimed": false,
+    "restore_target_ms": 2000.0,
+    "success_target": 0.99
+  },
+  "status": "IMPLEMENTED_BLOCKED_REAL_OPERATIONS",
+  "verified": [
+    "localhost health endpoint",
+    "localhost readiness endpoint",
+    "synthetic work success ratio",
+    "rehearsal p95 latency",
+    "backup SHA-256 identity",
+    "restore SHA-256 identity"
+  ],
+  "verified_at": "2026-10-05T00:00:00+02:00"
+}

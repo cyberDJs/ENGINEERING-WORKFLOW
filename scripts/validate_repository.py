@@ -122,6 +122,17 @@ def main() -> int:
         "reversibility_classes",
         "manual_work_register",
         "lifecycle_evidence_graph",
+        "ai_engineering_control_plane",
+        "artifact_admission_schema",
+        "project_context_packet_schema",
+        "eval_receipt_schema",
+        "capability_mapping_schema",
+        "evaluation_suite_schema",
+        "architecture_promotion_schema",
+        "adversarial_review_suite_schema",
+        "ai_dependency_inventory_schema",
+        "constrained_task_plan_schema",
+        "external_authority_binding_schema",
     ):
         rel = control.get("control", {}).get(key)
         if not rel or not (ROOT / rel).is_file():
@@ -132,6 +143,12 @@ def main() -> int:
         "constitutional_validator": "python3 scripts/validate_constitutions.py",
         "primary_invariant_validator": "python3 scripts/validate_primary_invariant.py",
         "supply_chain_validator": "python3 scripts/validate_supply_chain.py",
+        "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py",
+        "trusted_context_builder": "python3 scripts/build_project_context_packet_from_session.py",
+        "eval_comparator": "python3 scripts/compare_evaluation_runs.py",
+        "adversarial_review_gate": "python3 scripts/evaluate_adversarial_results.py",
+        "constrained_task_planner": "python3 scripts/build_constrained_task_plan.py",
+        "external_authority_projection": "python3 scripts/build_external_authority_projection.py",
         "tests": "python3 -m unittest discover -s tests -v",
     }
     for key, expected in expected_quality.items():

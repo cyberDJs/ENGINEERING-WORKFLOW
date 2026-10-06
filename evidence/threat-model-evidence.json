@@ -1,0 +1,29 @@
+{
+  "baseline_revision": "fa61885bac99476bab3dfe7f54334bcd1755cb32",
+  "closure_claim": false,
+  "external_targets_tested": false,
+  "high_residual_threats": [
+    "TM-01",
+    "TM-07",
+    "TM-08",
+    "TM-09",
+    "TM-10"
+  ],
+  "id": "EW-EV-THREAT-MODEL-001",
+  "independent_review_status": "PENDING",
+  "narrative_ref": "assurance/ENGINEERING_WORKFLOW_THREAT_MODEL.md",
+  "narrative_sha256": "04e2ad95dd3820e67f4c35409b43206b9338657b9fd34eddfdc63e97886d15c5",
+  "production_security_testing_performed": false,
+  "remaining_closure_evidence": [
+    "independent threat-led security review",
+    "reviewer identity and findings disposition",
+    "accepted residual risks or verified remediation"
+  ],
+  "schema_version": 1,
+  "secrets_accessed": false,
+  "status": "IMPLEMENTED_BLOCKED_INDEPENDENT_REVIEW",
+  "threat_count": 10,
+  "threat_model_ref": "assurance/engineering-workflow-threat-model.json",
+  "threat_model_sha256": "080b0aefe76936510865d3c75573329f56c4c653b5d09e82c898269ae86dbb84",
+  "verified_at": "2026-10-04T23:18:53.955862Z"
+}

@@ -1,0 +1,82 @@
+---
+id: EW-ARCH-AI-001
+title: AI Engineering Control Plane
+status: proposed
+owner: Eimy Herrer and Johny
+version: 0.7.0
+last-reviewed: 2026-10-04
+---
+
+# AI Engineering Control Plane
+
+## Canonical principle
+
+> Optimize the decision and evidence system, not a particular model. Models, harnesses, retrieval systems, skills and runtimes are replaceable capabilities under governance, evaluation and evidence.
+
+Hugging Face and other external ecosystems are artifact and benchmark sources. They do not own architecture, governance or project truth.
+
+## Two-lane operating model
+
+### Stable architecture lane
+
+The stable lane contains the currently accepted architecture baseline. It is the only lane eligible for production use and must preserve governance, security, regression coverage, evidence and rollback.
+
+A stable architecture version is not claimed to be globally optimal. It is only the current champion with enough evidence to operate safely inside its approved scope.
+
+### Architecture Lab lane
+
+The lab is an isolated challenger lane for retrieval, decision models, memory, harnesses, skills, recovery strategies, inference runtimes and other architecture components.
+
+Lab candidates have no production authority. They may not mutate production state or weaken stable-lane controls.
+
+## Promotion path
+
+```text
+IDEA
+-> RESEARCH
+-> ISOLATED PROTOTYPE
+-> BENCHMARK
+-> SECURITY REVIEW
+-> CHAMPION/CHALLENGER COMPARISON
+-> REGRESSION SUITE
+-> ADOPT | REJECT | WATCH
+-> VERSIONED ARCHITECTURE RELEASE
+```
+
+Promotion requires an Eval Receipt bound to exact baseline and candidate identities. Architecture experiments change one primary dimension at a time by default. Multi-dimension changes require an explicit exception reference and stronger attribution evidence.
+
+## Architecture version record
+
+Every promoted architecture version records:
+
+- WHY: problem or hypothesis that justified the change;
+- EVIDENCE: attributable evidence and exact artifact identities;
+- BENCHMARK: representative comparison against the current champion;
+- RISK: security, reliability, operational and lock-in risk;
+- MIGRATION: bounded transition plan and compatibility notes;
+- ROLLBACK: tested rollback, disable or safe-forward path.
+
+## Control-plane backbone
+
+The first portable control-plane contracts are:
+
+1. Artifact Admission Record: identity, provenance, license, executable surface, allowed use, evaluation and rollback.
+2. Project Context Packet: project truth, authority, scoped context, constraints, Git baseline and provenance. A governed runtime session may be consumed by the trust-aware builder, which fails closed on Git drift and excludes experimental, historical, superseded and unknown architecture sources by default.
+3. Eval Receipt: baseline, candidate, corpus, metrics, thresholds, delta, verdict and evidence.
+4. Capability Mapping Record: evidence-backed mapping from an admitted capability to an existing registry authority and project-specific permission state. The mapping is a read model and never grants execution authority.
+5. Evaluation Suite Manifest: frozen case-set identity, evaluator authority, paired baseline/candidate requirements, metric thresholds and regression policy. `scripts/compare_evaluation_runs.py` only produces a functional comparison; it has no promotion authority and never substitutes for a separate security evaluation or Eval Receipt.
+6. Architecture Promotion Record: fail-closed closure of `ADOPT | REJECT | WATCH` against exact evaluation, security, regression, rollback and decision-authority evidence. `ADOPT` additionally requires a versioned architecture, existing Release Record and Release Authority reference. The record itself grants neither execution nor release authority.
+7. Adversarial Review Suite: frozen threat model and adversarial case-set identity plus a deterministic security gate over project-native or existing red-team harness output. Critical/high failures, unauthorized effects, secret exposure, privilege escalation or external effects block; a clean behavioral run remains `BLOCKED` until attributable independent review is complete. The gate has no promotion or production authority.
+8. AI Dependency Inventory Snapshot: read-only project inventory of model artifacts and provider/runtime boundaries, bound to exact admission references, revisions and digests plus data-transfer, retention, training-use and credential metadata. Unknown data boundaries block activation; the snapshot grants no activation, execution or release authority.
+
+9. Constrained Task Plan: deterministic plan-only projection from a Project Context Packet, capability mapping and requested effects. Protected effects require attributable external authority; prohibited or out-of-context effects block. The plan never performs execution and never grants authority.
+10. External Authority Binding Record: read-only projection of control-plane evidence into the existing GOVERDOCS EvidenceItem contract and of project identity into the existing Voodoo project-descriptor contract. Schema/contract compatibility is not upstream acceptance: GOVERDOCS ingest and Voodoo registry registration remain separate governed operations. Until both exist, integration remains `PROJECTION_READY`, never `BOUND`.
+11. External Authority Adoption Record: fail-closed read-only verification that a GOVERDOCS write receipt is bound to the actual authority Git workspace and that the projected Voodoo project descriptor exists in the actual registry database with its audit event. `BOUND` means both external authority states were observed; it grants neither execution nor release authority.
+
+Registry ownership stays with the existing domain authority. Voodoo-One owns its executable capability definitions and activations; CyberSKILLS owns skill discovery/trust/distribution state; SKILLS runtime owns skill/tool routing state. The AI Engineering Control Plane references those authorities rather than creating a competing registry.
+
+The machine-readable operating policy is `../config/ai-engineering-control-plane.json`.
+
+## Non-goals
+
+This control plane does not create a new model runtime, memory database, agent framework, policy authority or deployment system. It standardizes the contracts that let existing and future components be compared and replaced without redefining governance.

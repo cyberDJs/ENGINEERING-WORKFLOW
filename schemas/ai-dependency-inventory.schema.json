@@ -1,0 +1,295 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Dependency Inventory Snapshot",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "snapshot_id",
+    "project",
+    "providers",
+    "models",
+    "inventory_status",
+    "governance",
+    "evidence",
+    "known_unknowns"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "snapshot_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "project": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "path",
+        "branch",
+        "head",
+        "dirty"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "type": "string",
+          "minLength": 1
+        },
+        "branch": {
+          "type": "string",
+          "minLength": 1
+        },
+        "head": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "dirty": {
+          "type": "boolean"
+        }
+      }
+    },
+    "providers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "provider_id",
+          "provider_type",
+          "identity_ref",
+          "digest",
+          "endpoint_scope",
+          "external_data_transfer",
+          "retention_mode",
+          "training_use",
+          "credentials_required",
+          "data_policy_ref",
+          "evidence_refs"
+        ],
+        "properties": {
+          "provider_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provider_type": {
+            "enum": [
+              "LOCAL_RUNTIME",
+              "EXTERNAL_API",
+              "REMOTE_MANAGED"
+            ]
+          },
+          "identity_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "endpoint_scope": {
+            "enum": [
+              "NONE",
+              "LOCALHOST_ONLY",
+              "EXTERNAL"
+            ]
+          },
+          "external_data_transfer": {
+            "type": "boolean"
+          },
+          "retention_mode": {
+            "enum": [
+              "NONE",
+              "PROCESS_EPHEMERAL",
+              "LOCAL_EVIDENCE_ONLY",
+              "PROVIDER_POLICY",
+              "UNKNOWN"
+            ]
+          },
+          "training_use": {
+            "enum": [
+              "NOT_APPLICABLE",
+              "DISABLED",
+              "ENABLED",
+              "UNKNOWN"
+            ]
+          },
+          "credentials_required": {
+            "type": "boolean"
+          },
+          "data_policy_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "models": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "model_id",
+          "artifact_admission_ref",
+          "revision",
+          "digest",
+          "license",
+          "provider_id",
+          "role",
+          "lifecycle_status",
+          "use_scope",
+          "authority_mode",
+          "secret_values_allowed",
+          "personal_data_allowed",
+          "personal_data_policy_ref",
+          "evidence_refs"
+        ],
+        "properties": {
+          "model_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "artifact_admission_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "revision": {
+            "type": "string",
+            "minLength": 1
+          },
+          "digest": {
+            "type": "string",
+            "pattern": "^[0-9a-f]{64}$"
+          },
+          "license": {
+            "type": "string",
+            "minLength": 1
+          },
+          "provider_id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "role": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lifecycle_status": {
+            "enum": [
+              "BASELINE",
+              "PILOT",
+              "WATCH",
+              "ADMITTED",
+              "REJECTED",
+              "DEPRECATED"
+            ]
+          },
+          "use_scope": {
+            "enum": [
+              "RESEARCH_ONLY",
+              "LOCAL_PILOT",
+              "APPROVED_INTERNAL",
+              "PRODUCTION_ELIGIBLE"
+            ]
+          },
+          "authority_mode": {
+            "enum": [
+              "ADVISORY",
+              "NON_AUTHORITATIVE"
+            ]
+          },
+          "secret_values_allowed": {
+            "const": false
+          },
+          "personal_data_allowed": {
+            "type": "boolean"
+          },
+          "personal_data_policy_ref": {
+            "type": [
+              "string",
+              "null"
+            ]
+          },
+          "evidence_refs": {
+            "type": "array",
+            "minItems": 1,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          }
+        }
+      }
+    },
+    "inventory_status": {
+      "enum": [
+        "COMPLETE",
+        "BLOCKED"
+      ]
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "read_only_snapshot",
+        "grants_activation",
+        "grants_execution",
+        "grants_release",
+        "unknown_data_boundary_blocks_activation"
+      ],
+      "properties": {
+        "read_only_snapshot": {
+          "const": true
+        },
+        "grants_activation": {
+          "const": false
+        },
+        "grants_execution": {
+          "const": false
+        },
+        "grants_release": {
+          "const": false
+        },
+        "unknown_data_boundary_blocks_activation": {
+          "const": true
+        }
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "known_unknowns": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  }
+}

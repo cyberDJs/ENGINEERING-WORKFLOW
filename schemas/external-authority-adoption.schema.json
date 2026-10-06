@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/external-authority-adoption.schema.json",
+  "title": "External Authority Adoption Record",
+  "type": "object",
+  "required": ["schema_version","record_id","binding_ref","binding_digest","subject","goverdocs","voodoo_project_registry","adoption_status","blockers","governance","evidence"],
+  "properties": {
+    "schema_version": {"const": "1.0.0"},
+    "record_id": {"type":"string","minLength":3},
+    "binding_ref": {"type":"string","minLength":1},
+    "binding_digest": {"type":"string","pattern":"^[0-9a-f]{64}$"},
+    "subject": {
+      "type":"object",
+      "required":["project_id","repository","head"],
+      "properties": {
+        "project_id":{"type":"string","minLength":1},
+        "repository":{"type":"string","pattern":"^[^/\\s]+/[^/\\s]+$"},
+        "head":{"type":"string","pattern":"^[0-9a-f]{40}$"}
+      },
+      "additionalProperties":false
+    },
+    "goverdocs": {
+      "type":"object",
+      "required":["status","authority_repository","authority_head","target","write_grant_ref","write_receipt_ref"],
+      "properties": {
+        "status":{"enum":["BLOCKED","INGESTED"]},
+        "authority_repository":{"type":["string","null"]},
+        "authority_head":{"type":["string","null"],"pattern":"^[0-9a-f]{40}$"},
+        "target":{"type":["string","null"]},
+        "write_grant_ref":{"type":["string","null"]},
+        "write_receipt_ref":{"type":["string","null"]}
+      },
+      "additionalProperties":false
+    },
+    "voodoo_project_registry": {
+      "type":"object",
+      "required":["status","database_ref","registry_key","audit_action"],
+      "properties": {
+        "status":{"enum":["BLOCKED","REGISTERED"]},
+        "database_ref":{"type":["string","null"]},
+        "registry_key":{"type":["string","null"]},
+        "audit_action":{"type":["string","null"]}
+      },
+      "additionalProperties":false
+    },
+    "adoption_status":{"enum":["BLOCKED","BOUND"]},
+    "blockers":{"type":"array","uniqueItems":true,"items":{"type":"string","minLength":1}},
+    "governance": {
+      "type":"object",
+      "required":["fail_closed","record_grants_execution","record_grants_release","external_authorities_remain_canonical"],
+      "properties": {
+        "fail_closed":{"const":true},
+        "record_grants_execution":{"const":false},
+        "record_grants_release":{"const":false},
+        "external_authorities_remain_canonical":{"const":true}
+      },
+      "additionalProperties":false
+    },
+    "evidence":{"type":"array","minItems":1,"uniqueItems":true,"items":{"type":"string","minLength":1}}
+  },
+  "allOf": [
+    {"if":{"properties":{"adoption_status":{"const":"BOUND"}}},"then":{"properties":{"blockers":{"maxItems":0},"goverdocs":{"properties":{"status":{"const":"INGESTED"}}},"voodoo_project_registry":{"properties":{"status":{"const":"REGISTERED"}}}}}},
+    {"if":{"properties":{"adoption_status":{"const":"BLOCKED"}}},"then":{"properties":{"blockers":{"minItems":1}}}}
+  ],
+  "additionalProperties":false
+}

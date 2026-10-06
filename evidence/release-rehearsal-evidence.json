@@ -1,0 +1,36 @@
+{
+  "baseline_artifact_sha256": "b9d329e2824c794dacc3bcae894443c4fae05deb2d66fb8597a05a4ac3140e4a",
+  "baseline_head": "deb0a6fa114f7ce936ba6a3d84b7d7021bffcdfd",
+  "candidate_artifact_sha256": "b59a12d2d82a53a9e4f04363c3b03c9c16cde02e38e6d0837c7163c518ae80eb",
+  "claim": "An offline immutable release-candidate promotion and rollback rehearsal is implemented and verified on the current repository, but GAP-011 remains blocked pending real Release Authority acceptance, deployment verification, and independent release review.",
+  "closure_claim": false,
+  "current_head": "72d4da3b43cb59b9c466c7b54ab2519eb2280d24",
+  "external_receipt": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP011_RELEASE_REHEARSAL_20261005/release-rehearsal.json",
+  "external_receipt_sha256": "48ffcc3a11ca1ce9d6fd9842ee2a3fcc541084feba3cddf13b04cb12d59f13ce",
+  "governance": {
+    "deploy_performed": false,
+    "network_used": false,
+    "production_effects": false,
+    "push_performed": false,
+    "release_authority_exercised": false,
+    "release_performed": false,
+    "tag_created": false
+  },
+  "id": "EW-EV-RELEASE-REHEARSAL-V1",
+  "remaining_closure_evidence": [
+    "real release record accepted by Release Authority",
+    "deployment verification against an authorized target environment",
+    "independent release review",
+    "production-grade rollback or safe-forward verification where applicable"
+  ],
+  "schema_version": 1,
+  "status": "IMPLEMENTED_BLOCKED_REAL_RELEASE_AND_REVIEW",
+  "verified": [
+    "deterministic baseline and candidate artifact build",
+    "candidate repository validation",
+    "immutable candidate identity preserved through isolated promotion",
+    "rollback restored exact baseline release identity",
+    "no production, release, push, tag, network, or deploy effect during rehearsal"
+  ],
+  "verified_at": "2026-10-04T23:14:55.122356Z"
+}
