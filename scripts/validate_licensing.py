@@ -16,6 +16,8 @@ REQUIRED_FILES = (
     "governance/OWNERSHIP_IP_AND_PROVENANCE.md",
     "governance/IP_PROVENANCE_REGISTER.json",
     "schemas/ip-provenance-register.schema.json",
+    "evidence/IP_PROVENANCE_AUDIT_20260726.json",
+    "evidence/IP_PROVENANCE_AUDIT_20260726.md",
 )
 
 REQUIRED_RELEASE_GATES = {
@@ -102,10 +104,41 @@ def main() -> int:
     status = register.get("exclusive_control_status")
     allowed_statuses = {
         "BLOCKED_PENDING_CONTRIBUTOR_AND_AI_PROVENANCE_AUDIT",
+        "AUDIT_COMPLETE_BLOCKED_PENDING_RIGHTS_RESOLUTION",
         "VERIFIED_EXCLUSIVE_CONTROL",
     }
     if status not in allowed_statuses:
         errors.append(f"unsupported exclusive control status: {status!r}")
+
+
+    audit = register.get("provenance_audit", {})
+    if status == "AUDIT_COMPLETE_BLOCKED_PENDING_RIGHTS_RESOLUTION":
+        expected_audit = {
+            "status": "COMPLETE",
+            "audit_id": "EW-IP-AUDIT-20260726-001",
+            "audited_head": "8beb2f1157cc95c51827842a5630cfc7f9d6e81d",
+            "machine_readable_report": "evidence/IP_PROVENANCE_AUDIT_20260726.json",
+            "human_readable_report": "evidence/IP_PROVENANCE_AUDIT_20260726.md",
+            "total_files": 151,
+            "shared_owner_marker_files": 63,
+            "direct_johny_github_contributions_found": False,
+            "verified_exclusive_control": False,
+        }
+        for key, expected in expected_audit.items():
+            if audit.get(key) != expected:
+                errors.append(f"provenance_audit.{key} must equal {expected!r}")
+        try:
+            report = json.loads((ROOT / audit["machine_readable_report"]).read_text(encoding="utf-8"))
+            if report.get("audit_id") != audit["audit_id"]:
+                errors.append("machine-readable audit id mismatch")
+            if report.get("audited_head") != audit["audited_head"]:
+                errors.append("machine-readable audited head mismatch")
+            if report.get("file_level_summary", {}).get("total_files") != audit["total_files"]:
+                errors.append("machine-readable file count mismatch")
+            if report.get("exclusive_control_decision", {}).get("verified_exclusive_control") is not False:
+                errors.append("audit must not claim verified exclusive control")
+        except Exception as exc:
+            errors.append(f"IP provenance audit invalid: {exc}")
 
     distribution = register.get("distribution", {})
     if status != "VERIFIED_EXCLUSIVE_CONTROL":

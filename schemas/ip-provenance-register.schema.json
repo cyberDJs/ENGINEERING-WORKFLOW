@@ -15,27 +15,55 @@
     "distribution",
     "contribution_policy",
     "provenance_scopes",
-    "release_gates"
+    "release_gates",
+    "provenance_audit"
   ],
   "properties": {
-    "schema_version": {"const": 1},
-    "project": {"const": "ENGINEERING-WORKFLOW"},
-    "licensing_model": {"const": "proprietary-all-rights-reserved"},
+    "schema_version": {
+      "const": 1
+    },
+    "project": {
+      "const": "ENGINEERING-WORKFLOW"
+    },
+    "licensing_model": {
+      "const": "proprietary-all-rights-reserved"
+    },
     "intended_exclusive_rights_holder": {
       "type": "object",
-      "required": ["display_name", "legal_identity_status"],
+      "required": [
+        "display_name",
+        "legal_identity_status"
+      ],
       "properties": {
-        "display_name": {"const": "Eimy Herrer"},
-        "legal_identity_status": {"enum": ["PENDING_VERIFICATION", "VERIFIED"]}
+        "display_name": {
+          "const": "Eimy Herrer"
+        },
+        "legal_identity_status": {
+          "enum": [
+            "PENDING_VERIFICATION",
+            "VERIFIED"
+          ]
+        }
       },
       "additionalProperties": false
     },
-    "release_authority": {"const": "Eimy Herrer"},
-    "repository_visibility_at_record_creation": {"enum": ["public", "private", "internal"]},
-    "open_source_project_license_granted": {"const": false},
+    "release_authority": {
+      "const": "Eimy Herrer"
+    },
+    "repository_visibility_at_record_creation": {
+      "enum": [
+        "public",
+        "private",
+        "internal"
+      ]
+    },
+    "open_source_project_license_granted": {
+      "const": false
+    },
     "exclusive_control_status": {
       "enum": [
         "BLOCKED_PENDING_CONTRIBUTOR_AND_AI_PROVENANCE_AUDIT",
+        "AUDIT_COMPLETE_BLOCKED_PENDING_RIGHTS_RESOLUTION",
         "VERIFIED_EXCLUSIVE_CONTROL"
       ]
     },
@@ -52,11 +80,21 @@
     },
     "contribution_policy": {
       "type": "object",
-      "required": ["external_contributions", "required_instrument", "dco_alone_is_sufficient"],
+      "required": [
+        "external_contributions",
+        "required_instrument",
+        "dco_alone_is_sufficient"
+      ],
       "properties": {
-        "external_contributions": {"const": "CLOSED_BY_DEFAULT"},
-        "required_instrument": {"const": "PROJECT_SPECIFIC_WRITTEN_EXCLUSIVE_RIGHTS_AGREEMENT"},
-        "dco_alone_is_sufficient": {"const": false}
+        "external_contributions": {
+          "const": "CLOSED_BY_DEFAULT"
+        },
+        "required_instrument": {
+          "const": "PROJECT_SPECIFIC_WRITTEN_EXCLUSIVE_RIGHTS_AGREEMENT"
+        },
+        "dco_alone_is_sufficient": {
+          "const": false
+        }
       },
       "additionalProperties": false
     },
@@ -65,7 +103,12 @@
       "minItems": 4,
       "items": {
         "type": "object",
-        "required": ["scope", "category", "status", "required_resolution"],
+        "required": [
+          "scope",
+          "category",
+          "status",
+          "required_resolution"
+        ],
         "additionalProperties": false
       }
     },
@@ -73,7 +116,56 @@
       "type": "array",
       "minItems": 7,
       "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1}
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "provenance_audit": {
+      "type": "object",
+      "required": [
+        "status",
+        "audit_id",
+        "audited_head",
+        "machine_readable_report",
+        "human_readable_report",
+        "total_files",
+        "shared_owner_marker_files",
+        "direct_johny_github_contributions_found",
+        "verified_exclusive_control"
+      ],
+      "properties": {
+        "status": {
+          "const": "COMPLETE"
+        },
+        "audit_id": {
+          "const": "EW-IP-AUDIT-20260726-001"
+        },
+        "audited_head": {
+          "pattern": "^[0-9a-f]{40}$"
+        },
+        "machine_readable_report": {
+          "const": "evidence/IP_PROVENANCE_AUDIT_20260726.json"
+        },
+        "human_readable_report": {
+          "const": "evidence/IP_PROVENANCE_AUDIT_20260726.md"
+        },
+        "total_files": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "shared_owner_marker_files": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "direct_johny_github_contributions_found": {
+          "type": "boolean"
+        },
+        "verified_exclusive_control": {
+          "type": "boolean"
+        }
+      },
+      "additionalProperties": false
     }
   },
   "additionalProperties": false

@@ -9,7 +9,7 @@
   "release_authority": "Eimy Herrer",
   "repository_visibility_at_record_creation": "public",
   "open_source_project_license_granted": false,
-  "exclusive_control_status": "BLOCKED_PENDING_CONTRIBUTOR_AND_AI_PROVENANCE_AUDIT",
+  "exclusive_control_status": "AUDIT_COMPLETE_BLOCKED_PENDING_RIGHTS_RESOLUTION",
   "distribution": {
     "public_source_release": "BLOCKED",
     "binary_release": "BLOCKED",
@@ -26,25 +26,25 @@
     {
       "scope": "material-authored-by-eimy-herrer",
       "category": "human-authored",
-      "status": "PENDING_FILE_LEVEL_CLASSIFICATION",
+      "status": "AUDIT_COMPLETE_HUMAN_AUTHORSHIP_DECLARATION_REQUIRED",
       "required_resolution": "CLASSIFY_FILES_AND_RETAIN_AUTHORSHIP_EVIDENCE"
     },
     {
       "scope": "material-potentially-contributed-by-johny-or-other-humans",
       "category": "human-collaborator",
-      "status": "BLOCKED_PENDING_WRITTEN_EXCLUSIVE_LICENSE_OR_REIMPLEMENTATION",
+      "status": "AUDIT_COMPLETE_NO_DIRECT_GITHUB_CONTRIBUTION_FOUND_RIGHTS_CLARIFICATION_REQUIRED",
       "required_resolution": "SIGNED_EXCLUSIVE_RIGHTS_INSTRUMENT_OR_CLEAN_ROOM_REPLACEMENT"
     },
     {
       "scope": "ai-assisted-material",
       "category": "ai-assisted",
-      "status": "BLOCKED_PENDING_HUMAN_AUTHORSHIP_REVIEW",
+      "status": "AUDIT_COMPLETE_HUMAN_AUTHORSHIP_EVIDENCE_REQUIRED",
       "required_resolution": "DOCUMENT_HUMAN_SELECTION_ARRANGEMENT_MODIFICATION_AND_APPROVAL"
     },
     {
       "scope": "third-party-components",
       "category": "third-party",
-      "status": "CONTROLLED_BY_ORIGINAL_LICENSES",
+      "status": "AUDIT_COMPLETE_THIRD_PARTY_NOTICE_REVIEW_REQUIRED",
       "required_resolution": "KEEP_CURRENT_CONFIG_OPEN_SOURCE_COMPONENTS_REGISTRY"
     }
   ],
@@ -56,5 +56,16 @@
     "THIRD_PARTY_LICENSES_CLASSIFIED",
     "LICENSING_VALIDATOR_PASSED",
     "EXPLICIT_RELEASE_AUTHORIZATION"
-  ]
+  ],
+  "provenance_audit": {
+    "status": "COMPLETE",
+    "audit_id": "EW-IP-AUDIT-20260726-001",
+    "audited_head": "8beb2f1157cc95c51827842a5630cfc7f9d6e81d",
+    "machine_readable_report": "evidence/IP_PROVENANCE_AUDIT_20260726.json",
+    "human_readable_report": "evidence/IP_PROVENANCE_AUDIT_20260726.md",
+    "total_files": 151,
+    "shared_owner_marker_files": 63,
+    "direct_johny_github_contributions_found": false,
+    "verified_exclusive_control": false
+  }
 }

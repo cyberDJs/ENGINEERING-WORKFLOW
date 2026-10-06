@@ -9,7 +9,7 @@
     "technical_owner": "Eimy Herrer and Johny"
   },
   "control": {
-    "version": "0.9.3-rc.1",
+    "version": "0.9.4-rc.1",
     "canonical_repository": "https://github.com/nulleimy/ENGINEERING-WORKFLOW",
     "default_branch": "main",
     "normative_language": "en-with-canonical-czech-constitutions",
@@ -33,8 +33,9 @@
     "copyright_notice": "COPYRIGHT",
     "provenance_register": "governance/IP_PROVENANCE_REGISTER.json",
     "policy": "governance/EXCLUSIVE_RIGHTS_AND_LICENSING_POLICY.md",
-    "exclusive_control_status": "BLOCKED_PENDING_CONTRIBUTOR_AND_AI_PROVENANCE_AUDIT",
-    "distribution_requires_verified_exclusive_control": true
+    "exclusive_control_status": "AUDIT_COMPLETE_BLOCKED_PENDING_RIGHTS_RESOLUTION",
+    "distribution_requires_verified_exclusive_control": true,
+    "provenance_audit": "evidence/IP_PROVENANCE_AUDIT_20260726.json"
   },
   "cli": {
     "version": "0.3.0",
