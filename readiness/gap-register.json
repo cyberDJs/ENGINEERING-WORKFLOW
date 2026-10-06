@@ -1,23 +1,259 @@
 {
-  "schema_version": 1,
-  "version": "0.4.0-rc.1",
   "gaps": [
-    {"id":"GAP-001","domain":"governance","priority":"P0","title":"Joint governance acceptance is missing","status":"OPEN","owner":"Eimy Herrer and Johny","closure_evidence":["approved governance review"]},
-    {"id":"GAP-002","domain":"governance","priority":"P0","title":"License, ownership and branch-protection decisions are incomplete","status":"OPEN","owner":"Project Steward","closure_evidence":["license decision","ownership record","protected-branch evidence"]},
-    {"id":"GAP-003","domain":"product","priority":"P1","title":"No real product-discovery and outcome pilot has been measured","status":"OPEN","owner":"Product Steward","closure_evidence":["pilot product record","outcome metrics"]},
-    {"id":"GAP-004","domain":"architecture","priority":"P1","title":"Independent architecture review and reference implementation are missing","status":"OPEN","owner":"Technical Steward","closure_evidence":["architecture review","reference implementation"]},
-    {"id":"GAP-005","domain":"delivery","priority":"P1","title":"Golden-path execution is not implemented","status":"OPEN","owner":"Platform Owner","closure_evidence":["ej CLI evidence","adoption run"]},
-    {"id":"GAP-006","domain":"quality","priority":"P1","title":"No mutation, resilience, performance or negative policy tests","status":"OPEN","owner":"Quality Authority","closure_evidence":["advanced test evidence"]},
-    {"id":"GAP-007","domain":"security","priority":"P0","title":"OPA or equivalent policy enforcement is not active","status":"OPEN","owner":"Security Authority","closure_evidence":["policy test results","blocking CI gate"]},
-    {"id":"GAP-008","domain":"security","priority":"P0","title":"Independent threat-led security review is missing","status":"OPEN","owner":"Security Authority","closure_evidence":["threat model","independent security review"]},
-    {"id":"GAP-009","domain":"supply-chain","priority":"P0","title":"SBOM, provenance, verification and signing pipeline is absent","status":"OPEN","owner":"Release Authority","closure_evidence":["CycloneDX SBOM","provenance","signature verification"]},
-    {"id":"GAP-010","domain":"platform","priority":"P1","title":"Portable adapters and reproducible project bootstrap are missing","status":"OPEN","owner":"Platform Owner","closure_evidence":["bootstrap test","adapter contract tests"]},
-    {"id":"GAP-011","domain":"release","priority":"P0","title":"No production-grade release candidate, promotion or rollback pipeline","status":"OPEN","owner":"Release Authority","closure_evidence":["release record","deployment verification","rollback rehearsal"]},
-    {"id":"GAP-012","domain":"operations","priority":"P0","title":"No operated service, SLO, restore rehearsal or operational measurement","status":"OPEN","owner":"Operator","closure_evidence":["SLO record","restore test","operational metrics"]},
-    {"id":"GAP-013","domain":"delivery","priority":"P1","title":"DORA outcome metrics are not measured","status":"OPEN","owner":"Delivery Owner","closure_evidence":["delivery metrics baseline","three measured cycles"]},
-    {"id":"GAP-014","domain":"documentation","priority":"P1","title":"Independent usability and freshness assessment is missing","status":"OPEN","owner":"Document Owner","closure_evidence":["documentation review","user task completion evidence"]},
-    {"id":"GAP-015","domain":"ai-engineering","priority":"P0","title":"No executable AI context, permission, evaluation and red-team controls","status":"OPEN","owner":"Acceptance Authority","closure_evidence":["AI evaluation","permission test","red-team report"]},
-    {"id":"GAP-016","domain":"compliance","priority":"P1","title":"No scoped external control assessment or evidence sampling","status":"OPEN","owner":"Compliance Owner","closure_evidence":["independent assessment","evidence sampling report"]},
-    {"id":"GAP-017","domain":"incident","priority":"P0","title":"No incident exercise, timeline drill or corrective-action verification","status":"OPEN","owner":"Incident Commander","closure_evidence":["incident exercise","postmortem","verified corrective actions"]}
-  ]
+    {
+      "closure_evidence": [
+        "approved governance review"
+      ],
+      "domain": "governance",
+      "id": "GAP-001",
+      "owner": "Eimy Herrer and Johny",
+      "priority": "P0",
+      "status": "OPEN",
+      "title": "Joint governance acceptance is missing"
+    },
+    {
+      "closure_evidence": [
+        "license decision",
+        "ownership record",
+        "protected-branch evidence"
+      ],
+      "domain": "governance",
+      "id": "GAP-002",
+      "owner": "Project Steward",
+      "priority": "P0",
+      "status": "OPEN",
+      "title": "License, ownership and branch-protection decisions are incomplete"
+    },
+    {
+      "closure_evidence": [
+        "pilot product record",
+        "outcome metrics"
+      ],
+      "domain": "product",
+      "id": "GAP-003",
+      "owner": "Product Steward",
+      "priority": "P1",
+      "status": "OPEN",
+      "title": "No real product-discovery and outcome pilot has been measured"
+    },
+    {
+      "closure_evidence": [
+        "architecture review",
+        "reference implementation"
+      ],
+      "domain": "architecture",
+      "id": "GAP-004",
+      "owner": "Technical Steward",
+      "priority": "P1",
+      "status": "OPEN",
+      "title": "Independent architecture review and reference implementation are missing"
+    },
+    {
+      "closure_evidence": [
+        "ej CLI evidence",
+        "adoption run"
+      ],
+      "domain": "delivery",
+      "id": "GAP-005",
+      "owner": "Platform Owner",
+      "priority": "P1",
+      "status": "OPEN",
+      "title": "Golden-path execution is not implemented"
+    },
+    {
+      "closure_evidence": [
+        "advanced test evidence"
+      ],
+      "domain": "quality",
+      "id": "GAP-006",
+      "owner": "Quality Authority",
+      "priority": "P1",
+      "status": "OPEN",
+      "title": "No mutation, resilience, performance or negative policy tests"
+    },
+    {
+      "blockers": [
+        "BRANCH_PROTECTION_DISABLED",
+        "NO_REPOSITORY_RULESET",
+        "NO_REQUIRED_STATUS_CHECK_ENFORCEMENT"
+      ],
+      "closure_evidence": [
+        "policy test results",
+        "blocking CI gate"
+      ],
+      "domain": "security",
+      "evidence_refs": [
+        "evidence/open-source-enforcement-evidence.json"
+      ],
+      "id": "GAP-007",
+      "owner": "Security Authority",
+      "priority": "P0",
+      "status": "BLOCKED",
+      "title": "OPA or equivalent policy enforcement is not active"
+    },
+    {
+      "blockers": [
+        "INDEPENDENT_SECURITY_REVIEW_PENDING"
+      ],
+      "closure_evidence": [
+        "threat model",
+        "independent security review"
+      ],
+      "domain": "security",
+      "evidence_refs": [
+        "assurance/engineering-workflow-threat-model.json",
+        "evidence/threat-model-evidence.json"
+      ],
+      "id": "GAP-008",
+      "owner": "Security Authority",
+      "priority": "P0",
+      "status": "BLOCKED",
+      "title": "Independent threat-led security review is missing"
+    },
+    {
+      "blockers": [
+        "MAIN_OR_TAG_ATTESTATION_NOT_EXECUTED",
+        "KEYLESS_SIGNATURE_VERIFICATION_NOT_EXECUTED",
+        "SIGNED_EVIDENCE_BUNDLE_MISSING",
+        "INDEPENDENT_SECURITY_RELEASE_REVIEW_PENDING"
+      ],
+      "closure_evidence": [
+        "CycloneDX SBOM",
+        "provenance",
+        "signature verification"
+      ],
+      "domain": "supply-chain",
+      "evidence_refs": [
+        "evidence/supply-chain-assurance-evidence.json"
+      ],
+      "id": "GAP-009",
+      "owner": "Release Authority",
+      "priority": "P0",
+      "status": "BLOCKED",
+      "title": "SBOM, provenance, verification and signing pipeline is absent"
+    },
+    {
+      "closure_evidence": [
+        "bootstrap test",
+        "adapter contract tests"
+      ],
+      "domain": "platform",
+      "id": "GAP-010",
+      "owner": "Platform Owner",
+      "priority": "P1",
+      "status": "OPEN",
+      "title": "Portable adapters and reproducible project bootstrap are missing"
+    },
+    {
+      "blockers": [
+        "REAL_RELEASE_AUTHORITY_NOT_EXERCISED",
+        "AUTHORIZED_DEPLOYMENT_VERIFICATION_MISSING",
+        "INDEPENDENT_RELEASE_REVIEW_PENDING"
+      ],
+      "closure_evidence": [
+        "release record",
+        "deployment verification",
+        "rollback rehearsal"
+      ],
+      "domain": "release",
+      "evidence_refs": [
+        "evidence/release-rehearsal-evidence.json"
+      ],
+      "id": "GAP-011",
+      "owner": "Release Authority",
+      "priority": "P0",
+      "status": "BLOCKED",
+      "title": "No production-grade release candidate, promotion or rollback pipeline"
+    },
+    {
+      "blockers": [
+        "REAL_OPERATED_SERVICE_MISSING",
+        "PRODUCTION_MEASUREMENT_WINDOW_MISSING",
+        "INDEPENDENT_OPERATIONAL_READINESS_REVIEW_PENDING"
+      ],
+      "closure_evidence": [
+        "SLO record",
+        "restore test",
+        "operational metrics"
+      ],
+      "domain": "operations",
+      "evidence_refs": [
+        "evidence/reference-service-operations-evidence.json"
+      ],
+      "id": "GAP-012",
+      "owner": "Operator",
+      "priority": "P0",
+      "status": "BLOCKED",
+      "title": "Reference operational controls are implemented, but no real operated service or production measurement evidence exists"
+    },
+    {
+      "closure_evidence": [
+        "delivery metrics baseline",
+        "three measured cycles"
+      ],
+      "domain": "delivery",
+      "id": "GAP-013",
+      "owner": "Delivery Owner",
+      "priority": "P1",
+      "status": "OPEN",
+      "title": "DORA outcome metrics are not measured"
+    },
+    {
+      "closure_evidence": [
+        "documentation review",
+        "user task completion evidence"
+      ],
+      "domain": "documentation",
+      "id": "GAP-014",
+      "owner": "Document Owner",
+      "priority": "P1",
+      "status": "OPEN",
+      "title": "Independent usability and freshness assessment is missing"
+    },
+    {
+      "blockers": [
+        "INDEPENDENT_SECURITY_REVIEW_PENDING",
+        "HUMAN_ACCEPTANCE_PENDING"
+      ],
+      "closure_evidence": [
+        "AI evaluation",
+        "permission test",
+        "red-team report"
+      ],
+      "domain": "ai-engineering",
+      "evidence_refs": [
+        "evidence/ai-control-plane-gap015-evidence.json"
+      ],
+      "id": "GAP-015",
+      "owner": "Acceptance Authority",
+      "priority": "P0",
+      "status": "BLOCKED",
+      "title": "No executable AI context, permission, evaluation and red-team controls"
+    },
+    {
+      "closure_evidence": [
+        "independent assessment",
+        "evidence sampling report"
+      ],
+      "domain": "compliance",
+      "id": "GAP-016",
+      "owner": "Compliance Owner",
+      "priority": "P1",
+      "status": "OPEN",
+      "title": "No scoped external control assessment or evidence sampling"
+    },
+    {
+      "closure_evidence": [
+        "evidence/incident-exercise-evidence.json"
+      ],
+      "domain": "incident",
+      "id": "GAP-017",
+      "owner": "Incident Commander",
+      "priority": "P0",
+      "status": "CLOSED",
+      "title": "No incident exercise, timeline drill or corrective-action verification"
+    }
+  ],
+  "schema_version": 1,
+  "version": "0.4.0-rc.1"
 }

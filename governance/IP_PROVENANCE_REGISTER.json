@@ -1,0 +1,71 @@
+{
+  "schema_version": 1,
+  "project": "ENGINEERING-WORKFLOW",
+  "licensing_model": "proprietary-all-rights-reserved",
+  "intended_exclusive_rights_holder": {
+    "display_name": "Eimy Herrer",
+    "legal_identity_status": "PENDING_VERIFICATION"
+  },
+  "release_authority": "Eimy Herrer",
+  "repository_visibility_at_record_creation": "public",
+  "open_source_project_license_granted": false,
+  "exclusive_control_status": "AUDIT_COMPLETE_BLOCKED_PENDING_RIGHTS_RESOLUTION",
+  "distribution": {
+    "public_source_release": "BLOCKED",
+    "binary_release": "BLOCKED",
+    "package_publication": "BLOCKED",
+    "commercial_licensing": "BLOCKED",
+    "private_internal_use": "PROPOSED"
+  },
+  "contribution_policy": {
+    "external_contributions": "CLOSED_BY_DEFAULT",
+    "required_instrument": "PROJECT_SPECIFIC_WRITTEN_EXCLUSIVE_RIGHTS_AGREEMENT",
+    "dco_alone_is_sufficient": false
+  },
+  "provenance_scopes": [
+    {
+      "scope": "material-authored-by-eimy-herrer",
+      "category": "human-authored",
+      "status": "AUDIT_COMPLETE_HUMAN_AUTHORSHIP_DECLARATION_REQUIRED",
+      "required_resolution": "CLASSIFY_FILES_AND_RETAIN_AUTHORSHIP_EVIDENCE"
+    },
+    {
+      "scope": "material-potentially-contributed-by-johny-or-other-humans",
+      "category": "human-collaborator",
+      "status": "AUDIT_COMPLETE_NO_DIRECT_GITHUB_CONTRIBUTION_FOUND_RIGHTS_CLARIFICATION_REQUIRED",
+      "required_resolution": "SIGNED_EXCLUSIVE_RIGHTS_INSTRUMENT_OR_CLEAN_ROOM_REPLACEMENT"
+    },
+    {
+      "scope": "ai-assisted-material",
+      "category": "ai-assisted",
+      "status": "AUDIT_COMPLETE_HUMAN_AUTHORSHIP_EVIDENCE_REQUIRED",
+      "required_resolution": "DOCUMENT_HUMAN_SELECTION_ARRANGEMENT_MODIFICATION_AND_APPROVAL"
+    },
+    {
+      "scope": "third-party-components",
+      "category": "third-party",
+      "status": "AUDIT_COMPLETE_THIRD_PARTY_NOTICE_REVIEW_REQUIRED",
+      "required_resolution": "KEEP_CURRENT_CONFIG_OPEN_SOURCE_COMPONENTS_REGISTRY"
+    }
+  ],
+  "release_gates": [
+    "LEGAL_IDENTITY_VERIFIED",
+    "FILE_LEVEL_PROVENANCE_COMPLETE",
+    "HUMAN_CONTRIBUTOR_RIGHTS_RESOLVED",
+    "AI_AUTHORSHIP_EVIDENCE_COMPLETE",
+    "THIRD_PARTY_LICENSES_CLASSIFIED",
+    "LICENSING_VALIDATOR_PASSED",
+    "EXPLICIT_RELEASE_AUTHORIZATION"
+  ],
+  "provenance_audit": {
+    "status": "COMPLETE",
+    "audit_id": "EW-IP-AUDIT-20260726-001",
+    "audited_head": "8beb2f1157cc95c51827842a5630cfc7f9d6e81d",
+    "machine_readable_report": "evidence/IP_PROVENANCE_AUDIT_20260726.json",
+    "human_readable_report": "evidence/IP_PROVENANCE_AUDIT_20260726.md",
+    "total_files": 151,
+    "shared_owner_marker_files": 63,
+    "direct_johny_github_contributions_found": false,
+    "verified_exclusive_control": false
+  }
+}

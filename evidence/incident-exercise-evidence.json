@@ -1,0 +1,46 @@
+{
+  "claim": "GAP-017 closure evidence is satisfied for an incident exercise, timeline drill, postmortem, and verified corrective action; operational/service recovery maturity is not claimed.",
+  "controls_verified": [
+    "detection",
+    "timeline",
+    "containment",
+    "diagnosis",
+    "recovery",
+    "post-recovery-validation",
+    "corrective-action-verification"
+  ],
+  "corrective_actions": [
+    {
+      "action": "keep this isolated regression exercise executable",
+      "evidence": "tests/test_incident_exercise.py",
+      "id": "CA-001",
+      "owner": "Incident Commander",
+      "status": "VERIFIED"
+    }
+  ],
+  "exercise_id": "EW-IR-TOOLCHAIN-DRIFT-001",
+  "exercise_receipt_ref": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP017_INCIDENT_EXERCISE_20261005/incident-exercise-receipt.json",
+  "gap_id": "GAP-017",
+  "governance": {
+    "deploy_performed": false,
+    "isolated_environment": true,
+    "network_used": false,
+    "production_effects": false,
+    "release_performed": false,
+    "secrets_accessed": false,
+    "source_repository_mutated": false
+  },
+  "id": "EW-EV-GAP017-20261005",
+  "limits": [
+    "local isolated rehearsal only",
+    "no production service exercised",
+    "no backup restore claim",
+    "no release or deployment claim"
+  ],
+  "postmortem_ref": "/Users/eimyna/0_EVIDENCE/ENGINEERING-WORKFLOW/GAP017_INCIDENT_EXERCISE_20261005/postmortem.md",
+  "scenario": "unsafe toolchain policy drift permits unverified binary execution",
+  "schema": "engineering-workflow-gap-closure-evidence/v1",
+  "source_head": "cf87375f471afac32ed353b487ffe0ab7ada0dd3",
+  "status": "VERIFIED",
+  "toolchain_lock_sha256": "fc403ff27579b75a9e3fdbbfab7573c8ab9fbf5376446ad74ca22f9154140ead"
+}

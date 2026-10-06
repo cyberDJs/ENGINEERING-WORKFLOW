@@ -35,3 +35,7 @@ Critical systems define RTO, RPO, backup ownership, restore procedure and rehear
 ## Operational change freeze
 
 When reliability or security risk exceeds the defined budget, feature delivery may be limited until the system is stabilized.
+
+## Reference operated-service rehearsal
+
+The repository includes a localhost-only synthetic reference-service rehearsal. It verifies health/readiness, bounded operational metrics, a rehearsal-only SLI/SLO contract, backup identity and restore recovery without claiming production operation or achieved production SLOs. The authoritative runner is `scripts/run_reference_service_rehearsal.py`.

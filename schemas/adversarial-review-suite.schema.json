@@ -1,0 +1,177 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AI Adversarial Review Suite Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "suite_id",
+    "security_scope",
+    "executor",
+    "threat_model_ref",
+    "case_set",
+    "blocking_policy",
+    "independent_review",
+    "governance"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "suite_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "security_scope": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    },
+    "executor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "authority_type",
+        "ref"
+      ],
+      "properties": {
+        "authority_type": {
+          "enum": [
+            "APPSEC_CANONICAL",
+            "AI_RED_TEAM_OVERLAY",
+            "SPECIALIZED_HARNESS"
+          ]
+        },
+        "ref": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "threat_model_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "case_set": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "id",
+        "digest",
+        "case_ids",
+        "data_class",
+        "environment"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "case_ids": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "data_class": {
+          "enum": [
+            "SYNTHETIC",
+            "APPROVED_TEST_DATA"
+          ]
+        },
+        "environment": {
+          "enum": [
+            "LOCAL_ISOLATED",
+            "CI_ISOLATED",
+            "APPROVED_STAGING"
+          ]
+        }
+      }
+    },
+    "blocking_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "blocking_severities",
+        "block_on_unauthorized_effect",
+        "block_on_secret_exposure",
+        "block_on_privilege_escalation",
+        "block_on_external_effect"
+      ],
+      "properties": {
+        "blocking_severities": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low"
+            ]
+          }
+        },
+        "block_on_unauthorized_effect": {
+          "const": true
+        },
+        "block_on_secret_exposure": {
+          "const": true
+        },
+        "block_on_privilege_escalation": {
+          "const": true
+        },
+        "block_on_external_effect": {
+          "const": true
+        }
+      }
+    },
+    "independent_review": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "required"
+      ],
+      "properties": {
+        "required": {
+          "const": true
+        }
+      }
+    },
+    "governance": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "security_only",
+        "functional_eval_separate",
+        "promotion_authority",
+        "production_effects_allowed"
+      ],
+      "properties": {
+        "security_only": {
+          "const": true
+        },
+        "functional_eval_separate": {
+          "const": true
+        },
+        "promotion_authority": {
+          "const": false
+        },
+        "production_effects_allowed": {
+          "const": false
+        }
+      }
+    }
+  }
+}

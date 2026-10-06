@@ -11,7 +11,7 @@ from urllib.parse import urlparse
 ROOT = Path(__file__).resolve().parents[1]
 SEMVER = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-[0-9A-Za-z.-]+)?(?:\+[0-9A-Za-z.-]+)?$")
 LINK = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
-FRONT_MATTER_REQUIRED = ("governance", "operating-model", "documentation", "roadmap", "references", "templates")
+FRONT_MATTER_REQUIRED = ("governance", "operating-model", "documentation", "roadmap", "references", "templates", "platform")
 FRONT_FIELDS = {"id", "title", "status", "owner", "version", "last-reviewed"}
 ALLOWED_STATUS = {"draft", "proposed", "current", "deprecated", "archived", "superseded"}
 SECRET_PATTERNS = [
@@ -122,6 +122,17 @@ def main() -> int:
         "reversibility_classes",
         "manual_work_register",
         "lifecycle_evidence_graph",
+        "ai_engineering_control_plane",
+        "artifact_admission_schema",
+        "project_context_packet_schema",
+        "eval_receipt_schema",
+        "capability_mapping_schema",
+        "evaluation_suite_schema",
+        "architecture_promotion_schema",
+        "adversarial_review_suite_schema",
+        "ai_dependency_inventory_schema",
+        "constrained_task_plan_schema",
+        "external_authority_binding_schema",
     ):
         rel = control.get("control", {}).get(key)
         if not rel or not (ROOT / rel).is_file():
@@ -132,11 +143,63 @@ def main() -> int:
         "constitutional_validator": "python3 scripts/validate_constitutions.py",
         "primary_invariant_validator": "python3 scripts/validate_primary_invariant.py",
         "supply_chain_validator": "python3 scripts/validate_supply_chain.py",
+        "licensing_validator": "python3 scripts/validate_licensing.py",
+        "cli_self_test": "./bin/ew self-test --json",
+        "portability": "python bin/ew self-test --json + CLI test matrix",
+        "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py",
+        "trusted_context_builder": "python3 scripts/build_project_context_packet_from_session.py",
+        "eval_comparator": "python3 scripts/compare_evaluation_runs.py",
+        "adversarial_review_gate": "python3 scripts/evaluate_adversarial_results.py",
+        "constrained_task_planner": "python3 scripts/build_constrained_task_plan.py",
+        "external_authority_projection": "python3 scripts/build_external_authority_projection.py",
         "tests": "python3 -m unittest discover -s tests -v",
     }
     for key, expected in expected_quality.items():
         if quality.get(key) != expected:
             error(errors, f"project-control.json quality.{key} must equal {expected!r}")
+
+    cli = control.get("cli", {})
+    expected_cli = {
+        "version": "0.3.0",
+        "entrypoint": "bin/ew",
+        "foundation_document": "platform/EW_CLI_FOUNDATION.md",
+        "adoption_document": "platform/EW_ADOPT_FOUNDATION.md",
+        "commands": ["init", "adopt", "doctor", "rollback", "self-test"],
+        "git_required": False,
+        "external_runtime_dependencies": [],
+    }
+    for key, expected in expected_cli.items():
+        if cli.get(key) != expected:
+            error(errors, f"project-control.json cli.{key} must equal {expected!r}")
+    for key in ("entrypoint", "foundation_document", "adoption_document"):
+        relative = cli.get(key)
+        if not relative or not (ROOT / relative).is_file():
+            error(errors, f"project-control.json references missing cli.{key}: {relative!r}")
+
+    portability_workflow = ROOT / ".github/workflows/portability.yml"
+    if not portability_workflow.is_file():
+        error(errors, "missing portability workflow")
+    else:
+        workflow_text = portability_workflow.read_text(encoding="utf-8")
+        for marker in ("ubuntu-24.04", "macos-14", "windows-2022", 'python-version: ["3.11", "3.12"]'):
+            if marker not in workflow_text:
+                error(errors, f"portability workflow missing matrix marker: {marker}")
+
+    entrypoint = ROOT / str(cli.get("entrypoint", ""))
+    cli_parser = ROOT / "bin/ew_cli.py"
+    if entrypoint.is_file():
+        text = entrypoint.read_text(encoding="utf-8")
+        if 'CLI_VERSION = "0.3.0"' not in text:
+            error(errors, "bin/ew CLI_VERSION does not match project-control.json")
+        if entrypoint.stat().st_mode & 0o111 == 0:
+            error(errors, "bin/ew must be executable")
+    if not cli_parser.is_file():
+        error(errors, "missing modular CLI parser: bin/ew_cli.py")
+    else:
+        parser_text = cli_parser.read_text(encoding="utf-8")
+        for command in expected_cli["commands"]:
+            if f"add_parser('{command}')" not in parser_text and f'add_parser("{command}")' not in parser_text:
+                error(errors, f"bin/ew_cli.py does not register required command: {command}")
 
     if errors:
         print("VALIDATION=FAILED")
@@ -147,6 +210,7 @@ def main() -> int:
     print(f"VERSION={version}")
     print(f"REQUIRED_FILES={len(required)}")
     print(f"CONTROLLED_DOCUMENT_IDS={len(ids)}")
+    print(f"CLI_COMMANDS={len(expected_cli['commands'])}")
     return 0
 
 

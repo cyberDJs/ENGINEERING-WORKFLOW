@@ -1,0 +1,175 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/external-authority-binding.schema.json",
+  "title": "External Authority Binding Record",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "record_id",
+    "subject",
+    "goverdocs",
+    "voodoo_project_registry",
+    "integration_status",
+    "governance",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "record_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "subject": {
+      "type": "object",
+      "required": [
+        "project_id",
+        "repository",
+        "head"
+      ],
+      "properties": {
+        "project_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "repository": {
+          "type": "string",
+          "pattern": "^[^/\\s]+/[^/\\s]+$"
+        },
+        "head": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{40}$"
+        }
+      },
+      "additionalProperties": true
+    },
+    "goverdocs": {
+      "type": "object",
+      "required": [
+        "schema_ref",
+        "schema_digest",
+        "projection_ref",
+        "projection_digest",
+        "verification_status",
+        "ingest_ref"
+      ],
+      "properties": {
+        "schema_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "schema_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "projection_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "projection_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "verification_status": {
+          "enum": [
+            "UNVERIFIED",
+            "VERIFIED",
+            "REJECTED"
+          ]
+        },
+        "ingest_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "voodoo_project_registry": {
+      "type": "object",
+      "required": [
+        "contract_ref",
+        "contract_digest",
+        "descriptor_ref",
+        "descriptor_digest",
+        "binding_status",
+        "registry_ref"
+      ],
+      "properties": {
+        "contract_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "contract_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "descriptor_ref": {
+          "type": "string",
+          "minLength": 1
+        },
+        "descriptor_digest": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "binding_status": {
+          "enum": [
+            "UNBOUND",
+            "REGISTERED",
+            "REVOKED"
+          ]
+        },
+        "registry_ref": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "additionalProperties": true
+    },
+    "integration_status": {
+      "enum": [
+        "PROJECTION_READY",
+        "BOUND",
+        "BLOCKED"
+      ]
+    },
+    "governance": {
+      "type": "object",
+      "required": [
+        "record_grants_authority",
+        "external_write_performed",
+        "external_write_requires_separate_authorization",
+        "canonical_truth_remains_external"
+      ],
+      "properties": {
+        "record_grants_authority": {
+          "const": false
+        },
+        "external_write_performed": {
+          "const": false
+        },
+        "external_write_requires_separate_authorization": {
+          "const": true
+        },
+        "canonical_truth_remains_external": {
+          "const": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "evidence": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
+    }
+  },
+  "additionalProperties": true
+}

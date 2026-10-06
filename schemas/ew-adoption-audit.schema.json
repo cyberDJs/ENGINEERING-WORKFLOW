@@ -1,0 +1,94 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/ew-adoption-audit.schema.json",
+  "title": "EW read-only adoption audit",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "type",
+    "status",
+    "project_dir",
+    "fingerprint",
+    "files_scanned",
+    "bytes_scanned",
+    "limits",
+    "ignored_directories",
+    "inventory",
+    "symlinks_not_followed",
+    "symlink_records",
+    "symlink_acknowledgement",
+    "sensitive_paths_content_not_read",
+    "detected_technologies",
+    "observed_minimum_risk",
+    "recommended_profile",
+    "findings",
+    "git_history_is_authoritative"
+  ],
+  "properties": {
+    "schema_version": {"const": "0.3.0"},
+    "type": {"const": "ew-adoption-audit"},
+    "status": {"const": "VERIFIED"},
+    "project_dir": {"type": "string", "minLength": 1},
+    "fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "files_scanned": {"type": "integer", "minimum": 1, "maximum": 10000},
+    "bytes_scanned": {"type": "integer", "minimum": 0, "maximum": 268435456},
+    "limits": {
+      "type": "object",
+      "required": ["max_files", "max_bytes"],
+      "properties": {
+        "max_files": {"const": 10000},
+        "max_bytes": {"const": 268435456}
+      },
+      "additionalProperties": false
+    },
+    "inventory": {
+      "type": "array",
+      "minItems": 0,
+      "items": {
+        "type": "object",
+        "required": ["path", "size", "mode", "mtime_ns", "sha256", "content_read"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "size": {"type": "integer", "minimum": 0},
+          "mode": {"type": "integer", "minimum": 0},
+          "mtime_ns": {"type": "integer", "minimum": 0},
+          "sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"},
+          "content_read": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "symlinks_not_followed": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "sensitive_paths_content_not_read": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "detected_technologies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "observed_minimum_risk": {"enum": ["R2", "R3"]},
+    "recommended_profile": {"enum": ["standard-product", "production-service"]},
+    "findings": {"type": "array", "items": {"type": "object"}},
+    "git_history_is_authoritative": {"const": false},
+    "ignored_directories": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "symlink_records": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "object",
+        "required": ["path", "target_sha256"],
+        "properties": {
+          "path": {"type": "string", "minLength": 1},
+          "target_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "symlink_acknowledgement": {
+      "type": "object",
+      "required": ["acknowledged", "rationale", "rationale_sha256"],
+      "properties": {
+        "acknowledged": {"type": "boolean"},
+        "rationale": {"type": ["string", "null"]},
+        "rationale_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}
