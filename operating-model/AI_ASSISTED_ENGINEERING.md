@@ -73,6 +73,8 @@ The promotion record is evidence of closure, not permission to execute, merge, r
 
 An admitted capability may be mapped to projects only through an evidence-backed Capability Mapping Record. The mapping points to the existing registry authority for that capability class and records project-specific allowed use, prohibited use, environments, lifecycle status and any external execution-authority reference.
 
+The Constrained Task Plan consumes those restrictions fail-closed. A revoked registry binding is terminal. Protected effects require `BOUNDED_EXECUTION`, an `ACTIVATED` registry binding, an `ENABLED` project mapping, a context-bound task environment present in the mapping, and the exact mapped external authority reference; `deploy` and `release` additionally require production eligibility. Explicit effect names in `allowed_use` form an allowlist, while matching `prohibited_use` entries always deny. Read-only and advisory modes cannot authorize protected effects.
+
 A Capability Mapping Record is observational. It never creates or activates an executable capability and `mapping_grants_execution` is always false. Voodoo-One, CyberSKILLS, SKILLS runtime or a project-native registry remain authoritative for their own entity classes.
 
 The portable schema is `../schemas/capability-mapping-record.schema.json`.

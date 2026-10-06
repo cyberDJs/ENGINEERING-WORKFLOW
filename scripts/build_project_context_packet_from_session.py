@@ -33,6 +33,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--session", type=Path, required=True)
     parser.add_argument("--task-mode", choices=["AUDIT", "DESIGN", "IMPLEMENT", "VERIFY", "RELEASE", "VALIDATE", "INCIDENT"], default="IMPLEMENT")
+    parser.add_argument("--environment")
     parser.add_argument("--scope-in", action="append", required=True)
     parser.add_argument("--scope-out", action="append", default=[])
     parser.add_argument("--allowed-effect", action="append", default=[])
@@ -42,6 +43,9 @@ def main() -> int:
     parser.add_argument("--max-total-content-bytes", type=int, default=131072)
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
+    environment = args.environment.strip() if args.environment is not None else None
+    if args.environment is not None and not environment:
+        return fail("--environment must be a non-empty string")
 
     if args.max_context_sources < 1 or args.max_total_content_bytes < 1:
         return fail("context bounds must be positive")
@@ -140,12 +144,15 @@ def main() -> int:
     if not task:
         return fail("runtime session task is missing")
     session_sha = hashlib.sha256(session_raw).hexdigest()
-    seed = "|".join([project_id, current_head, session_sha, task, *args.scope_in])
+    seed = "|".join([project_id, current_head, session_sha, task, environment or "", *args.scope_in])
+    task_record = {"objective": task, "mode": args.task_mode, "scope_in": args.scope_in, "scope_out": args.scope_out}
+    if environment is not None:
+        task_record["environment"] = environment
     packet = {
         "schema_version": "1.0.0",
         "packet_id": "PCP-" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16],
         "project": {"id": project_id, "path": str(git_root), "branch": current_branch, "head": current_head, "dirty": current_dirty},
-        "task": {"objective": task, "mode": args.task_mode, "scope_in": args.scope_in, "scope_out": args.scope_out},
+        "task": task_record,
         "authority_sources": authorities,
         "context_sources": contexts,
         "constraints": {

@@ -50,6 +50,7 @@ def main() -> int:
     parser.add_argument("--project", type=Path, default=Path.cwd())
     parser.add_argument("--objective", required=True)
     parser.add_argument("--mode", choices=["AUDIT", "DESIGN", "IMPLEMENT", "VERIFY", "RELEASE", "VALIDATE", "INCIDENT"], default="IMPLEMENT")
+    parser.add_argument("--environment")
     parser.add_argument("--scope-in", action="append", required=True)
     parser.add_argument("--scope-out", action="append", default=[])
     parser.add_argument("--authority", action="append", type=Path, required=True)
@@ -59,6 +60,9 @@ def main() -> int:
     parser.add_argument("--include-content", action="store_true", help="Explicitly include scanned source contents; default is provenance-only")
     parser.add_argument("--output", type=Path)
     args = parser.parse_args()
+    environment = args.environment.strip() if args.environment is not None else None
+    if args.environment is not None and not environment:
+        raise SystemExit("--environment must be a non-empty string")
 
     project = Path(run_git(args.project, "rev-parse", "--show-toplevel")).resolve()
     branch = run_git(project, "branch", "--show-current")
@@ -73,13 +77,16 @@ def main() -> int:
     include_content = args.include_content
     authorities = [read_source(path, include_content) for path in args.authority]
     contexts = [read_source(path, include_content) for path in args.context]
-    seed = "|".join([project_id, head, args.objective, *args.scope_in])
+    seed = "|".join([project_id, head, args.objective, environment or "", *args.scope_in])
     packet_id = "PCP-" + hashlib.sha256(seed.encode("utf-8")).hexdigest()[:16]
+    task = {"objective": args.objective, "mode": args.mode, "scope_in": args.scope_in, "scope_out": args.scope_out}
+    if environment is not None:
+        task["environment"] = environment
     packet = {
         "schema_version": "1.0.0",
         "packet_id": packet_id,
         "project": {"id": project_id, "path": str(project), "branch": branch, "head": head, "dirty": dirty},
-        "task": {"objective": args.objective, "mode": args.mode, "scope_in": args.scope_in, "scope_out": args.scope_out},
+        "task": task,
         "authority_sources": authorities,
         "context_sources": contexts,
         "constraints": {
