@@ -113,6 +113,8 @@ def validate_context_packet(data: object) -> list[str]:
         errors.append("task.objective must be a meaningful string")
     if task.get("mode") not in {"AUDIT", "DESIGN", "IMPLEMENT", "VERIFY", "RELEASE", "VALIDATE", "INCIDENT"}:
         errors.append("task.mode is invalid")
+    if "environment" in task and (not isinstance(task.get("environment"), str) or not task.get("environment", "").strip()):
+        errors.append("task.environment must be a non-empty string when present")
     if not isinstance(task.get("scope_in"), list) or not task.get("scope_in"):
         errors.append("task.scope_in must be non-empty")
     if not isinstance(task.get("scope_out"), list):

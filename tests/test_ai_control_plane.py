@@ -133,9 +133,10 @@ class AIControlPlaneTest(unittest.TestCase):
             session_path = tmp_path / "session.json"
             output = tmp_path / "packet.json"
             session_path.write_text(json.dumps(session), encoding="utf-8")
-            result = subprocess.run([sys.executable, str(SESSION_BUILDER), "--session", str(session_path), "--task-mode", "VERIFY", "--scope-in", "trusted context", "--output", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
+            result = subprocess.run([sys.executable, str(SESSION_BUILDER), "--session", str(session_path), "--task-mode", "VERIFY", "--environment", "local-eval", "--scope-in", "trusted context", "--output", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
             self.assertEqual(result.returncode, 0, msg=result.stdout + result.stderr)
             packet = json.loads(output.read_text(encoding="utf-8"))
+            self.assertEqual(packet["task"]["environment"], "local-eval")
             self.assertFalse(packet["build"]["content_included"])
             self.assertEqual(packet["build"]["excluded_status_counts"], {"EXPERIMENTAL": 1})
             self.assertEqual(len(packet["context_sources"]), 1)
@@ -144,7 +145,7 @@ class AIControlPlaneTest(unittest.TestCase):
             self.assertEqual(valid.returncode, 0, msg=valid.stdout + valid.stderr)
             session["project"]["git"]["head"] = "0" * 40
             session_path.write_text(json.dumps(session), encoding="utf-8")
-            drift = subprocess.run([sys.executable, str(SESSION_BUILDER), "--session", str(session_path), "--task-mode", "VERIFY", "--scope-in", "trusted context", "--output", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
+            drift = subprocess.run([sys.executable, str(SESSION_BUILDER), "--session", str(session_path), "--task-mode", "VERIFY", "--environment", "local-eval", "--scope-in", "trusted context", "--output", str(output)], cwd=ROOT, text=True, capture_output=True, check=False)
             self.assertNotEqual(drift.returncode, 0)
             self.assertIn("HEAD drifted", drift.stderr)
 
@@ -184,7 +185,7 @@ class AIControlPlaneTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             output = Path(tmp) / "context.json"
             result = subprocess.run([
-                sys.executable, str(BUILDER), "--project", str(ROOT), "--objective", "test context packet", "--mode", "VERIFY",
+                sys.executable, str(BUILDER), "--project", str(ROOT), "--objective", "test context packet", "--mode", "VERIFY", "--environment", "local-eval",
                 "--scope-in", "AI control-plane contracts", "--authority", str(ROOT / "README.md"), "--authority", str(ROOT / "SECURITY.md"),
                 "--output", str(output)
             ], cwd=ROOT, text=True, capture_output=True, check=False)
@@ -192,6 +193,7 @@ class AIControlPlaneTest(unittest.TestCase):
             packet = json.loads(output.read_text(encoding="utf-8"))
             head = subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
             self.assertEqual(packet["project"]["head"], head)
+            self.assertEqual(packet["task"]["environment"], "local-eval")
             self.assertFalse(packet["build"]["content_included"])
             self.assertEqual(packet["authority_sources"][0]["content"], "")
             self.assertEqual(packet["authority_sources"][0]["sha256"], hashlib.sha256((ROOT / "README.md").read_bytes()).hexdigest())
