@@ -2,36 +2,59 @@
 id: EW-CONTRIBUTING
 title: Contributing
 status: current
-owner: Eimy Herrer and Johny
-version: 0.1.0
-last-reviewed: 2026-07-24
+owner: Eimy Herrer
+version: 0.9.3-rc.1
+last-reviewed: 2026-07-26
 ---
 
 # Contributing
 
-## Contribution contract
+## Contribution status
 
-Every contribution must be tied to a defined work package or clearly classified as an R0 editorial correction.
+External contributions are **closed by default**.
 
-### Required behavior
+A pull request may be opened for discussion or technical review, but it must
+not be merged unless Eimy Herrer has approved the contribution in writing and
+the contributor has completed the project-specific exclusive rights agreement.
 
-1. Establish the current baseline.
-2. Declare the intended outcome and allowed scope.
-3. Select a risk lane.
-4. Keep the change small and logically coherent.
-5. Run the applicable quality gates.
-6. Update documentation in the same change set.
-7. Record verification limitations honestly.
-8. Provide rollback or recovery instructions where applicable.
+## Mandatory rights gate
 
-### Change records
+Before merge, every non-Eimy contribution requires:
 
-Use [`templates/WORK_PACKAGE.md`](templates/WORK_PACKAGE.md) for R1-R3 work and [`templates/ADR.md`](templates/ADR.md) for significant or difficult-to-reverse decisions.
+1. verified contributor identity;
+2. authorship and provenance declaration;
+3. disclosure of AI assistance and third-party material;
+4. a written exclusive licence or other legally sufficient rights instrument
+   accepted by Eimy Herrer;
+5. file-level registration in `governance/IP_PROVENANCE_REGISTER.json`;
+6. successful licensing and repository validation.
 
-### Review
+A DCO `Signed-off-by` line, GitHub pull request, verbal agreement or technical
+approval alone is not sufficient.
 
-R2 and R3 changes require independent review. The author must not be the only accepting authority for critical security, production, data, identity, compliance or irreversible changes.
+## Engineering contract
 
-### Commit and source-control adapters
+After the rights gate is satisfied, every contribution must:
 
-Git is the default adapter for this repository, not the process definition. When Git is used, prefer short-lived branches, small commits with one logical responsibility, and conventional commit messages.
+1. establish the current baseline;
+2. declare the intended outcome and allowed scope;
+3. select a risk lane;
+4. remain small and logically coherent;
+5. run the applicable quality gates;
+6. update documentation in the same change set;
+7. record limitations honestly;
+8. provide rollback or recovery instructions where applicable.
+
+Use [`templates/WORK_PACKAGE.md`](templates/WORK_PACKAGE.md) for R1-R3 work and
+[`templates/ADR.md`](templates/ADR.md) for significant or difficult-to-reverse
+decisions.
+
+R2 and R3 changes require independent technical review. Independent review
+does not replace the exclusive rights gate.
+
+## No implied licence
+
+Submitting content does not grant the submitter any licence to the existing
+project. The project does not accept a contribution until the required written
+rights agreement has been executed and the contribution is explicitly merged
+by an authorized maintainer.

@@ -47,8 +47,8 @@
           "type": "string"
         },
         "product_owner": {
-          "minLength": 1,
-          "type": "string"
+          "type": "string",
+          "minLength": 1
         },
         "status": {
           "enum": [
@@ -94,12 +94,119 @@
         "external_authority_projection",
         "external_authority_adoption_verifier",
         "incident_exercise_runner",
-        "release_rehearsal_runner"
+        "release_rehearsal_runner",
+        "licensing_validator",
+        "cli_self_test",
+        "portability"
       ],
-      "type": "object"
+      "type": "object",
+      "properties": {
+        "licensing_validator": {
+          "const": "python3 scripts/validate_licensing.py"
+        }
+      }
     },
     "schema_version": {
       "const": 1
+    },
+    "licensing": {
+      "type": "object",
+      "required": [
+        "model",
+        "intended_exclusive_rights_holder",
+        "release_authority",
+        "open_source_project_license_granted",
+        "license_notice",
+        "copyright_notice",
+        "provenance_register",
+        "policy",
+        "exclusive_control_status",
+        "distribution_requires_verified_exclusive_control",
+        "provenance_audit"
+      ],
+      "properties": {
+        "model": {
+          "const": "proprietary-all-rights-reserved"
+        },
+        "intended_exclusive_rights_holder": {
+          "const": "Eimy Herrer"
+        },
+        "release_authority": {
+          "const": "Eimy Herrer"
+        },
+        "open_source_project_license_granted": {
+          "const": false
+        },
+        "license_notice": {
+          "const": "LICENSE"
+        },
+        "copyright_notice": {
+          "const": "COPYRIGHT"
+        },
+        "provenance_register": {
+          "const": "governance/IP_PROVENANCE_REGISTER.json"
+        },
+        "policy": {
+          "const": "governance/EXCLUSIVE_RIGHTS_AND_LICENSING_POLICY.md"
+        },
+        "exclusive_control_status": {
+          "enum": [
+            "BLOCKED_PENDING_CONTRIBUTOR_AND_AI_PROVENANCE_AUDIT",
+            "VERIFIED_EXCLUSIVE_CONTROL",
+            "AUDIT_COMPLETE_BLOCKED_PENDING_RIGHTS_RESOLUTION"
+          ]
+        },
+        "distribution_requires_verified_exclusive_control": {
+          "const": true
+        },
+        "provenance_audit": {
+          "const": "evidence/IP_PROVENANCE_AUDIT_20260726.json"
+        }
+      },
+      "additionalProperties": false
+    },
+    "cli": {
+      "type": "object",
+      "required": [
+        "version",
+        "entrypoint",
+        "foundation_document",
+        "adoption_document",
+        "commands",
+        "git_required",
+        "external_runtime_dependencies"
+      ],
+      "properties": {
+        "version": {
+          "const": "0.3.0"
+        },
+        "entrypoint": {
+          "const": "bin/ew"
+        },
+        "foundation_document": {
+          "const": "platform/EW_CLI_FOUNDATION.md"
+        },
+        "adoption_document": {
+          "const": "platform/EW_ADOPT_FOUNDATION.md"
+        },
+        "commands": {
+          "const": [
+            "init",
+            "adopt",
+            "doctor",
+            "rollback",
+            "self-test"
+          ]
+        },
+        "git_required": {
+          "const": false
+        },
+        "external_runtime_dependencies": {
+          "type": "array",
+          "maxItems": 0
+        }
+      },
+      "additionalProperties": false
     }
   },
   "required": [
@@ -107,7 +214,9 @@
     "project",
     "control",
     "quality",
-    "operations_rehearsal_runner"
+    "operations_rehearsal_runner",
+    "licensing",
+    "cli"
   ],
   "title": "ENGINEERING-WORKFLOW project control",
   "type": "object"

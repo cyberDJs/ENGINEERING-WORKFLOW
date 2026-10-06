@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/ew-project.schema.json",
+  "title": "EW controlled project record",
+  "type": "object",
+  "required": ["schema_version", "project", "governance"],
+  "properties": {
+    "schema_version": {"enum": ["0.1.0", "0.2.0", "0.3.0"]},
+    "project": {
+      "type": "object",
+      "required": ["id", "name", "status", "profile", "assurance_level", "requested_risk", "effective_risk", "reversibility", "created_at"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "name": {"type": "string", "minLength": 1},
+        "status": {"const": "discovery"},
+        "bootstrap_mode": {"enum": ["init", "adopt"]},
+        "profile": {"enum": ["experiment", "internal-tool", "standard-product", "production-service", "security-critical"]},
+        "requested_risk": {"enum": ["R0", "R1", "R2", "R3"]},
+        "effective_risk": {"enum": ["R0", "R1", "R2", "R3"]},
+        "observed_minimum_risk": {"enum": ["R0", "R1", "R2", "R3"]},
+        "reversibility": {"enum": ["REV-0", "REV-1", "REV-2", "REV-3", "REV-4"]},
+        "source_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+        "detected_technologies": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "created_at": {"type": "string", "format": "date-time"},
+        "symlink_policy_digest": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+      },
+      "additionalProperties": true
+    },
+    "governance": {
+      "type": "object",
+      "required": ["primary_invariant", "protected_operation_authority", "git_required"],
+      "properties": {
+        "git_required": {"const": false},
+        "owned_scope": {"const": ".engineering-workflow"}
+      },
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": false
+}

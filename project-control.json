@@ -1,5 +1,13 @@
 {
   "$schema": "./schemas/project-control.schema.json",
+  "schema_version": 1,
+  "project": {
+    "id": "engineering-workflow",
+    "name": "ENGINEERING-WORKFLOW",
+    "product_owner": "Eimy Herrer and Johny",
+    "status": "validating",
+    "technical_owner": "Eimy Herrer and Johny"
+  },
   "control": {
     "adversarial_review_suite_schema": "schemas/adversarial-review-suite.schema.json",
     "ai_dependency_inventory_schema": "schemas/ai-dependency-inventory.schema.json",
@@ -26,16 +34,37 @@
     "project_context_packet_schema": "schemas/project-context-packet.schema.json",
     "reversibility_classes": "config/reversibility-classes.json",
     "technical_operating_mode": "governance/WORLD_CLASS_SOFTWARE_DEVOPS_OPERATING_MODE.md",
-    "version": "0.1.0"
+    "version": "0.9.4-rc.1"
+  },
+  "licensing": {
+    "model": "proprietary-all-rights-reserved",
+    "intended_exclusive_rights_holder": "Eimy Herrer",
+    "release_authority": "Eimy Herrer",
+    "open_source_project_license_granted": false,
+    "license_notice": "LICENSE",
+    "copyright_notice": "COPYRIGHT",
+    "provenance_register": "governance/IP_PROVENANCE_REGISTER.json",
+    "policy": "governance/EXCLUSIVE_RIGHTS_AND_LICENSING_POLICY.md",
+    "exclusive_control_status": "AUDIT_COMPLETE_BLOCKED_PENDING_RIGHTS_RESOLUTION",
+    "distribution_requires_verified_exclusive_control": true,
+    "provenance_audit": "evidence/IP_PROVENANCE_AUDIT_20260726.json"
+  },
+  "cli": {
+    "version": "0.3.0",
+    "entrypoint": "bin/ew",
+    "foundation_document": "platform/EW_CLI_FOUNDATION.md",
+    "adoption_document": "platform/EW_ADOPT_FOUNDATION.md",
+    "commands": [
+      "init",
+      "adopt",
+      "doctor",
+      "rollback",
+      "self-test"
+    ],
+    "git_required": false,
+    "external_runtime_dependencies": []
   },
   "operations_rehearsal_runner": "python3 scripts/run_reference_service_rehearsal.py --output <receipt.json>",
-  "project": {
-    "id": "engineering-workflow",
-    "name": "ENGINEERING-WORKFLOW",
-    "product_owner": "Eimy Herrer and Johny",
-    "status": "validating",
-    "technical_owner": "Eimy Herrer and Johny"
-  },
   "quality": {
     "adversarial_review_gate": "python3 scripts/evaluate_adversarial_results.py",
     "ai_control_plane_validator": "python3 scripts/validate_ai_control_plane.py",
@@ -51,7 +80,9 @@
     "supply_chain_validator": "python3 scripts/validate_supply_chain.py",
     "tests": "python3 -m unittest discover -s tests -v",
     "trusted_context_builder": "python3 scripts/build_project_context_packet_from_session.py",
-    "validator": "python3 scripts/validate_repository.py"
-  },
-  "schema_version": 1
+    "validator": "python3 scripts/validate_repository.py",
+    "licensing_validator": "python3 scripts/validate_licensing.py",
+    "cli_self_test": "./bin/ew self-test --json",
+    "portability": "python bin/ew self-test --json + CLI test matrix"
+  }
 }

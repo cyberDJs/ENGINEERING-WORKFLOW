@@ -1,0 +1,31 @@
+"""Controlled record rendering for EW bootstrap and adoption."""
+from __future__ import annotations
+
+from ew_runtime import *
+
+def project_record(name: str, profile: str, risk: str, effective: str, reversibility: str, created: str, *, mode: str, audit: dict[str, object] | None=None) -> dict[str, object]:
+    assurance, _ = PROFILES[profile]
+    project: dict[str, object] = {'id': slug(name), 'name': name, 'status': 'discovery', 'bootstrap_mode': mode, 'profile': profile, 'assurance_level': assurance, 'requested_risk': risk, 'effective_risk': effective, 'reversibility': reversibility, 'created_at': created}
+    if audit is not None:
+        project.update({'source_fingerprint': audit['fingerprint'], 'observed_minimum_risk': audit['observed_minimum_risk'], 'detected_technologies': audit['detected_technologies'], 'symlink_policy_digest': sha(canon(audit['symlink_acknowledgement']))})
+    return {'$schema': 'https://github.com/nulleimy/ENGINEERING-WORKFLOW/schemas/ew-project.schema.json', 'schema_version': CONTROL_SCHEMA_VERSION, 'project': project, 'governance': {'primary_invariant': ['simple', 'purposeful', 'automated', 'secure', 'measurable', 'reversible', 'evidence-verifiable'], 'protected_operation_authority': 'explicit-operator-authorization-required', 'git_required': False, 'owned_scope': CONTROL}}
+
+def render_records(record: dict[str, object], created: str, *, mode: str, audit: dict[str, object] | None=None) -> dict[str, bytes]:
+    project = record['project']
+    assert isinstance(project, dict)
+    project_id = str(project['id'])
+    files: dict[str, bytes] = {'project.json': canon(record), 'PRODUCT_DEFINITION.md': f"# Product Definition\n- Record ID: `PD-{project_id}-001`\n- Status: `PROPOSED`\n- Product Authority: `UNASSIGNED`\n- Engineering Authority: `UNASSIGNED`\n- Target user: `TO_BE_DEFINED`\n- Problem: `TO_BE_DEFINED`\n- Primary value: `TO_BE_DEFINED`\n- Success metrics: `TO_BE_DEFINED`\n- Boundaries and non-goals: `TO_BE_DEFINED`\n- Security/data classification: `TO_BE_CLASSIFIED`\n- Operational profile: `{project['profile']}`\n".encode(), 'WORK_PACKAGE.md': f"# Work Package\n- ID: `WP-{project_id}-{mode}-001`\n- Mode: `DISCOVER`\n- Risk: `{project['effective_risk']}`\n- Reversibility: `{project['reversibility']}`\n- Owner/Authority: `UNASSIGNED`\n- Target: accept product definition, authorities and first vertical slice.\n- Allowed scope: `.engineering-workflow/`\n- Prohibited scope: product code, secrets, Git history and production.\n- Verify: `ew doctor .`\n- Recovery: `ew rollback .` before acceptance when bootstrap mode is adopt.\n- Status: `PROPOSED`\n".encode(), 'DECISION_REGISTER.md': f"# Decision Register\n| ID | Class | Status | Decision |\n|---|---|---|---|\n| `DR-{project_id}-001` | D2 | PROPOSED | Use `{project['profile']}`, `{project['effective_risk']}`, `{project['reversibility']}` through `{mode}`. |\n".encode(), 'lifecycle.json': canon({'schema_version': CONTROL_SCHEMA_VERSION, 'project_id': project_id, 'created_at': created, 'nodes': [{'id': f'problem:{project_id}:001', 'type': 'product-problem', 'status': 'PROPOSED'}, {'id': f'decision:{project_id}:001', 'type': 'decision', 'status': 'PROPOSED'}, {'id': f'work:{project_id}:001', 'type': 'work-package', 'status': 'IMPLEMENTED'}, {'id': f'evidence:{project_id}:001', 'type': 'evidence', 'status': 'VERIFIED'}], 'edges': [{'from': f'problem:{project_id}:001', 'to': f'decision:{project_id}:001', 'relation': 'informs'}, {'from': f'decision:{project_id}:001', 'to': f'work:{project_id}:001', 'relation': 'authorizes'}, {'from': f'work:{project_id}:001', 'to': f'evidence:{project_id}:001', 'relation': 'produces'}], 'git_history_is_authoritative': False})}
+    if mode == 'init':
+        files['evidence/init.json'] = canon({'schema_version': CONTROL_SCHEMA_VERSION, 'type': 'ew-init', 'status': 'VERIFIED', 'created_at': created, 'project_id': project_id, 'claims': {'controlled_records_generated': True, 'product_ready': False, 'release_ready': False, 'operational_ready': False}})
+    elif mode == 'adopt' and audit is not None:
+        fingerprint = str(audit['fingerprint'])
+        files['ADOPTION_PLAN.md'] = f"# Adoption Plan\n- Status: `PROPOSED`\n- Project: `{project['name']}`\n- Detected technologies: `{', '.join(audit['detected_technologies']) or 'none'}`\n- Observed minimum risk: `{audit['observed_minimum_risk']}`\n- Selected profile: `{project['profile']}`\n- Source fingerprint: `{fingerprint}`\n- Product source changes performed by adoption: `NONE`\n- Next action: assign authorities, complete Product Definition and authorize the first vertical slice.\n".encode()
+        files['evidence/adoption-audit.json'] = canon(audit)
+        files['snapshots/pre-adoption.json'] = canon({'schema_version': CONTROL_SCHEMA_VERSION, 'type': 'pre-adoption-snapshot', 'status': 'VERIFIED', 'created_at': created, 'project_id': project_id, 'fingerprint': fingerprint, 'inventory': audit['inventory'], 'symlink_records': audit['symlink_records'], 'symlink_acknowledgement': audit['symlink_acknowledgement'], 'sensitive_paths_content_not_read': audit['sensitive_paths_content_not_read']})
+        files['evidence/adopt.json'] = canon({'schema_version': CONTROL_SCHEMA_VERSION, 'type': 'ew-adopt', 'status': 'VERIFIED', 'created_at': created, 'project_id': project_id, 'claims': {'audit_was_read_only': True, 'product_source_modified': False, 'pre_fingerprint': fingerprint, 'post_fingerprint': fingerprint, 'control_plane_ready': True, 'product_ready': False, 'release_ready': False, 'operational_ready': False}})
+        files['rollback.json'] = canon({'schema_version': CONTROL_SCHEMA_VERSION, 'type': 'bootstrap-rollback', 'status': 'AVAILABLE', 'created_at': created, 'project_id': project_id, 'owned_scope': CONTROL, 'action': 'remove-owned-control-directory', 'precondition': 'project-status-discovery-and-manifest-integrity-pass', 'acceptance_marker_must_be_absent': True})
+    else:
+        raise Blocked(f'unsupported render mode: {mode}')
+    hashes = {name: sha(content) for name, content in sorted(files.items())}
+    files['manifest.json'] = canon({'schema_version': CONTROL_SCHEMA_VERSION, 'project_id': project_id, 'generator': 'ew', 'generator_version': CLI_VERSION, 'bootstrap_mode': mode, 'files': hashes, 'content_digest': sha(canon(hashes))})
+    return files

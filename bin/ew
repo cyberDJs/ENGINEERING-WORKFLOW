@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+"""Hardened entrypoint for the ENGINEERING-WORKFLOW CLI."""
+from ew_cli import main
+
+CLI_VERSION = "0.3.0"
+
+if __name__ == "__main__":
+    raise SystemExit(main())

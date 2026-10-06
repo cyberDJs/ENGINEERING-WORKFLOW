@@ -1,13 +1,10 @@
-- Add the current repository threat model and mark GAP-008 implemented but blocked on independent security review.
-- Record GAP-011 as IMPLEMENTED/BLOCKED after a verified offline immutable promotion and rollback rehearsal; real release authority and deployment verification remain required.
-- Add a deterministic offline release promotion/rollback rehearsal with immutable candidate identity and explicit no-production-authority boundaries.
 ---
 id: EW-CHANGELOG
 title: Changelog
 status: current
 owner: Eimy Herrer and Johny
-version: 0.7.0-rc.2
-last-reviewed: 2026-10-04
+version: 0.9.4-rc.1
+last-reviewed: 2026-10-06
 ---
 
 # Changelog
@@ -15,12 +12,16 @@ last-reviewed: 2026-10-04
 All notable changes are recorded here. Versions follow Semantic Versioning.
 
 ## [Unreleased]
+
 - Record GAP-012 reference operated-service evidence and move operations from DESIGNED to IMPLEMENTED while keeping real operational readiness blocked.
 - Add localhost-only reference operated-service rehearsal with health/readiness probes, rehearsal SLI/SLO measurements, backup identity and deterministic restore verification.
 - Reclassify GAP-009 from design-only to implemented supply-chain controls while blocking closure on main/tag attestation, signing verification and independent acceptance.
 - Record current GAP-015 AI context, permission, evaluation and red-team evidence; advance AI engineering to IMPLEMENTED while blocking closure on independent security and human acceptance.
 - Record live GitHub verification for GAP-007 and mark policy enforcement BLOCKED until merge-level required checks or rulesets are active.
 - Add deterministic isolated incident rehearsal for toolchain-policy drift, recovery, timeline evidence, and corrective-action verification.
+- Add the current repository threat model and mark GAP-008 implemented but blocked on independent security review.
+- Record GAP-011 as IMPLEMENTED/BLOCKED after a verified offline immutable promotion and rollback rehearsal; real release authority and deployment verification remain required.
+- Add a deterministic offline release promotion/rollback rehearsal with immutable candidate identity and explicit no-production-authority boundaries.
 
 ### Added
 
@@ -48,6 +49,26 @@ All notable changes are recorded here. Versions follow Semantic Versioning.
 - constitutional and primary-invariant validators with negative regression tests;
 - Product Definition, Decision Record, Authority Assignment and Manual Work templates;
 - independent constitutional CI gate alongside quality, policy and supply-chain gates.
+- proprietary `LICENSE` and `COPYRIGHT` notices reserving project rights to Eimy Herrer;
+- machine-readable IP provenance register and schema;
+- exclusive-rights and proprietary-licensing governance policy;
+- closed-by-default contribution policy requiring a project-specific written exclusive rights agreement;
+- fail-closed distribution gates while contributor and AI provenance remain unresolved;
+- licensing validator with negative regression tests;
+- independent constitutional CI gate alongside quality, policy and supply-chain gates;
+- dependency-free `ew init`, `ew doctor` and `ew self-test` foundation;
+- atomic controlled-directory generation, manifest integrity and profile downgrade protection;
+- preview-first `ew adopt` for existing projects;
+- bounded read-only inventory, technology detection and source fingerprinting;
+- sensitive-path content redaction and explicit acknowledgement gate;
+- pre-adoption evidence snapshot and no-source-change proof;
+- preview-first `ew rollback` limited to manifest-owned bootstrap state;
+- CLI schemas, documentation and negative regression tests;
+- race-aware no-follow file hashing with pre-open, descriptor and post-read identity checks;
+- fail-closed doctor boundary for linked or unsafe control directories;
+- R3 symlink acknowledgement with rationale evidence and hashed link targets;
+- Linux, macOS and Windows portability matrix for Python 3.11 and 3.12;
+- adversarial filesystem tests for link substitution and concurrent mutation.
 
 ### Planned
 
@@ -57,6 +78,12 @@ All notable changes are recorded here. Versions follow Semantic Versioning.
 - compliance evidence generation;
 - successful signed main/tag evidence execution;
 - real new-project and existing-project pilots.
+- legal identity verification for the exclusive rights holder;
+- file-level contributor and AI authorship provenance audit;
+- written exclusive rights resolution for any non-Eimy copyrightable contribution;
+- repository visibility change to private as a separate protected action;
+- semantic project migration and upgrade automation;
+- language and deployment golden paths;
 
 ## [0.1.0] - 2026-07-24
 
